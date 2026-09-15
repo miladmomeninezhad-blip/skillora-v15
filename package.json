@@ -1,0 +1,20 @@
+{
+  "name": "skillora-v15",
+  "version": "15.0.0",
+  "private": true,
+  "description": "Skillora v15 - real Node.js backend, SQLite database and frontend",
+  "main": "backend/src/server.js",
+  "scripts": {
+    "start": "node backend/src/server.js",
+    "dev": "node --watch backend/src/server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.7"
+  }
+}
