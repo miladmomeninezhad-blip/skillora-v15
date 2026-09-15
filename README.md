@@ -8,11 +8,12 @@ Skillora v15 ادامه مستقیم Skillora v14 است و همان Node.js + E
 - پروفایل
 - ثبت و نمایش پروژه
 - ارسال پیشنهاد فریلنسر
-- پنل ساده پیشنهادهای هر پروژه برای مشتری
+- مشاهده پیشنهادهای هر پروژه برای مشتری
 - انتخاب فریلنسر توسط مشتری
 - رد خودکار پیشنهادهای دیگر هنگام انتخاب
 - تغییر وضعیت پروژه به `in_progress` و `completed`
 - احراز هویت JWT در HttpOnly cookie
+- endpoint سلامت `/api/health` برای بررسی Deploy
 
 ## اجرا
 Node.js 20+
@@ -25,10 +26,11 @@ npm start
 
 سپس `http://localhost:3000` را باز کنید.
 
-> پرداخت واقعی، پیام‌رسانی، اعلان‌ها و سخت‌سازی کامل برای انتشار عمومی هنوز در این نسخه فعال نیستند.
-
-
 ## Deploy روی Render
-Repository باید مستقیماً شامل package.json، backend/، frontend/ و database/ باشد.
-Build command: `npm install`
-Start command: `npm start`
+- Build Command: `npm install`
+- Start Command: `npm start`
+- Health Check: `/api/health`
+- `JWT_SECRET` به‌صورت Secret تولیدشده توسط Render تنظیم می‌شود.
+
+> این نسخه برای تست و نمونه اولیه است. Render Free فایل‌سیستم محلی را پایدار نگه نمی‌دارد؛ بنابراین SQLite برای تست مناسب است و برای استفاده واقعی باید دیتابیس پایدار مثل Postgres اضافه شود.
+> پرداخت واقعی، پیام‌رسانی، اعلان‌ها و سخت‌سازی کامل برای انتشار عمومی هنوز در این نسخه فعال نیستند.
