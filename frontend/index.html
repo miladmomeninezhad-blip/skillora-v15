@@ -111,8 +111,8 @@ async function loadMe(){
 }
 function renderUser(){
   userArea.textContent=me?`${me.name} · ${me.role==="client"?"مشتری":"فریلنسر"}`:"وارد نشده";
-  createProject.classList.toggle("hidden",!(me&&me.role==="client"));
-}
+  const projectBox = document.getElementById("createProject");
+if (projectBox) projectBox.classList.toggle("hidden", !(me && me.role === "client"));
 async function saveProfile(){
   try{
     const d=await api("/api/me",{method:"PATCH",body:JSON.stringify({
