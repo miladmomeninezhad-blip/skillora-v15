@@ -3,187 +3,271 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Skillora v15</title>
+<title>Skillora</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#f5f7fb;color:#172033}
-header{background:#111827;color:#fff;padding:18px 22px;display:flex;justify-content:space-between;gap:16px;align-items:center}
-header h1{margin:0;font-size:22px}.container{max-width:1050px;margin:24px auto;padding:0 16px}
-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}button{border:0;border-radius:10px;padding:10px 14px;cursor:pointer;background:#2563eb;color:white}
-button.secondary{background:#e5e7eb;color:#111827}.card{background:white;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 5px 20px #0000000b}
-input,textarea,select{width:100%;padding:11px;border:1px solid #d6dbe5;border-radius:10px;margin:6px 0 12px;font:inherit}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}.muted{color:#667085;font-size:13px}
-.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:12px}
-.hidden{display:none}.project{border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin-top:10px}
-.error{color:#b42318;margin:8px 0}.ok{color:#027a48;margin:8px 0}
-h2{margin-top:0}
+*{box-sizing:border-box}
+
+:root{
+--bg:#f4f7fb;
+--ink:#172033;
+--muted:#667085;
+--brand:#4f46e5;
+--brand2:#7c3aed;
+--card:#fff;
+--line:#e6eaf0
+}
+
+body{
+margin:0;
+font-family:Tahoma,Arial,sans-serif;
+background:var(--bg);
+color:var(--ink)
+}
+
+header{
+background:linear-gradient(135deg,#111827,#312e81);
+color:#fff;
+padding:18px 20px;
+position:sticky;
+top:0;
+z-index:5;
+box-shadow:0 8px 25px #0002
+}
+
+.header-inner{
+max-width:1050px;
+margin:auto;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:10px
+}
+
+.logo{
+width:42px;
+height:42px;
+border-radius:13px;
+background:#fff;
+color:var(--brand);
+display:grid;
+place-items:center;
+font-weight:900;
+font-size:20px
+}
+
+header h1{
+margin:0;
+font-size:21px
+}
+
+#userArea{
+font-size:13px;
+opacity:.9
+}
+
+.container{
+max-width:1050px;
+margin:22px auto;
+padding:0 16px
+}
+
+nav{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin-bottom:18px
+}
+
+button{
+border:0;
+border-radius:12px;
+padding:11px 15px;
+cursor:pointer;
+background:var(--brand);
+color:#fff;
+font:inherit;
+font-weight:700;
+transition:.15s
+}
+
+button:active{
+transform:scale(.98)
+}
+
+button.secondary{
+background:#e9edf5;
+color:#253047
+}
+
+.hero{
+background:linear-gradient(135deg,#fff,#eef0ff);
+border:1px solid #e2e5ff;
+border-radius:24px;
+padding:28px;
+margin-bottom:16px;
+box-shadow:0 10px 35px #312e8112
+}
+
+.hero h2{
+font-size:30px;
+margin:0 0 10px
+}
+
+.hero p{
+line-height:2;
+color:#475467;
+margin:0 0 18px
+}
+
+.hero-badge{
+display:inline-block;
+background:#e0e7ff;
+color:#3730a3;
+padding:6px 10px;
+border-radius:999px;
+font-size:12px;
+font-weight:700;
+margin-bottom:12px
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:15px
+}
+
+.card{
+background:var(--card);
+border:1px solid var(--line);
+border-radius:18px;
+padding:20px;
+margin-bottom:16px;
+box-shadow:0 7px 24px #1018280b
+}
+
+.card h2{
+margin-top:0
+}
+
+.feature{
+min-height:130px
+}
+
+.feature-icon{
+font-size:25px;
+margin-bottom:8px
+}
+
+.muted{
+color:var(--muted);
+font-size:13px;
+line-height:1.9
+}
+
+input,
+textarea,
+select{
+width:100%;
+padding:12px;
+border:1px solid #d8dee9;
+border-radius:12px;
+margin:6px 0 12px;
+font:inherit;
+background:#fff
+}
+
+textarea{
+min-height:110px;
+resize:vertical
+}
+
+.project{
+border:1px solid var(--line);
+border-radius:16px;
+padding:16px;
+margin-top:11px;
+background:#fbfcff
+}
+
+.project h3{
+margin:0 0 8px
+}
+
+.project p{
+line-height:1.9
+}
+
+.badge{
+display:inline-block;
+padding:5px 9px;
+border-radius:999px;
+background:#eef2ff;
+color:#3730a3;
+font-size:12px
+}
+
+.hidden{
+display:none
+}
+
+.error{
+color:#b42318;
+margin:8px 0
+}
+
+.ok{
+color:#027a48;
+margin:8px 0
+}
+
+.footer-note{
+margin-top:20px;
+text-align:center
+}
+
+@media(max-width:600px){
+
+header h1{
+font-size:17px
+}
+
+.logo{
+width:38px;
+height:38px
+}
+
+#userArea{
+font-size:11px
+}
+
+.hero{
+padding:21px
+}
+
+.hero h2{
+font-size:25px
+}
+
+nav button{
+flex:1;
+min-width:105px
+}
+
+}
 </style>
 </head>
+
 <body>
-<header><h1>Skillora — مهارتت را به فرصت تبدیل کن</h1><div id="userArea">در حال بررسی...</div></header>
-<div class="container">
-<nav>
-<button onclick="show('home')">خانه</button>
-<button onclick="show('projects')">پروژه‌ها</button>
-<button onclick="show('profile')">پروفایل</button>
-<button onclick="show('auth')">ورود / ثبت‌نام</button>
-<button class="secondary" onclick="logout()">خروج</button>
-</nav>
 
-<section id="home">
-<div class="card"><h2>Skillora v15</h2><p>نسخه متصل به بک‌اند واقعی و دیتابیس SQLite، با مدیریت پیشنهادها و انتخاب فریلنسر. پرداخت واقعی هنوز فعال نیست.</p>
-<button onclick="show('projects')">مشاهده پروژه‌ها</button></div>
-<div class="grid"><div class="card"><b>🔐 ورود واقعی</b><p class="muted">حساب‌ها در دیتابیس ذخیره می‌شوند و رمزها هش می‌شوند.</p></div>
-<div class="card"><b>🗄️ دیتابیس</b><p class="muted">SQLite برای شروع سریع و قابل اجرا.</p></div>
-<div class="card"><b>🧩 API</b><p class="muted">Frontend از APIهای واقعی سرور استفاده می‌کند.</p></div></div>
-</section>
+<header>
+<div class="header-inner">
 
-<section id="auth" class="hidden">
-<div class="grid">
-<div class="card"><h2>ورود</h2><input id="loginPhone" placeholder="شماره موبایل"><input id="loginPassword" type="password" placeholder="رمز عبور">
-<button onclick="login()">ورود</button><div id="loginMsg"></div></div>
-<div class="card"><h2>ثبت‌نام</h2><input id="regName" placeholder="نام"><input id="regPhone" placeholder="شماره موبایل">
-<input id="regPassword" type="password" placeholder="رمز حداقل ۸ کاراکتری">
-<select id="regRole"><option value="client">مشتری</option><option value="freelancer">فریلنسر</option></select>
-<button onclick="register()">ساخت حساب</button><div id="regMsg"></div></div>
-</div>
-</section>
-
-<section id="projects" class="hidden">
-<div id="createProject" class="card hidden"><h2>ثبت پروژه</h2>
-<input id="projectTitle" placeholder="عنوان پروژه"><textarea id="projectDescription" placeholder="توضیحات"></textarea>
-<input id="projectCategory" placeholder="دسته‌بندی"><input id="projectBudget" type="number" min="0" placeholder="بودجه به تومان">
-<button onclick="createProject()">ثبت پروژه</button><div id="projectMsg"></div></div>
-<div class="card"><h2>پروژه‌ها</h2><button onclick="loadProjects()">به‌روزرسانی</button><div id="projectList">در حال بارگذاری...</div></div>
-</section>
-
-<section id="profile" class="hidden">
-<div class="card"><h2>پروفایل من</h2><input id="profileName" placeholder="نام"><textarea id="profileBio" placeholder="معرفی کوتاه"></textarea>
-<input id="profileSkills" placeholder="مهارت‌ها، با ویرگول جدا کن"><button onclick="saveProfile()">ذخیره پروفایل</button><div id="profileMsg"></div></div>
-</section>
-
-<div class="card muted">دموی توسعه‌ای است؛ برای انتشار عمومی باید HTTPS، مدیریت Secret، پشتیبان‌گیری، تأیید شماره موبایل و پرداخت امن اضافه شود.</div>
-</div>
-<script>
-let me=null;
-
-async function api(url, options={}){
-  const res=await fetch(url,{credentials:"include",headers:{"Content-Type":"application/json",...(options.headers||{})},...options});
-  const data=await res.json().catch(()=>({}));
-  if(!res.ok) throw new Error(data.error||"خطا");
-  return data;
-}
-function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
-function money(v){return Number(v||0).toLocaleString("fa-IR")+" تومان"}
-function show(id){
-  document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
-  if(id==="projects")loadProjects();
-  if(id==="profile")loadMe();
-}
-function msg(id,text,ok=false){const el=document.getElementById(id);el.className=ok?"ok":"error";el.textContent=text}
-
-async function register(){
-  try{
-    const d=await api("/api/auth/register",{method:"POST",body:JSON.stringify({
-      name:document.getElementById("regName").value,phone:document.getElementById("regPhone").value,
-      password:document.getElementById("regPassword").value,role:document.getElementById("regRole").value
-    })});
-    me=d.user;renderUser();msg("regMsg","حساب ساخته شد.",true);show("home");
-  }catch(e){msg("regMsg",e.message)}
-}
-async function login(){
-  try{
-    const d=await api("/api/auth/login",{method:"POST",body:JSON.stringify({
-      phone:document.getElementById("loginPhone").value,password:document.getElementById("loginPassword").value
-    })});
-    me=d.user;renderUser();msg("loginMsg","ورود موفق بود.",true);show("home");
-  }catch(e){msg("loginMsg",e.message)}
-}
-async function logout(){
-  try{await api("/api/auth/logout",{method:"POST"})}catch{}
-  me=null;renderUser();show("home");
-}
-async function loadMe(){
-  try{
-    const d=await api("/api/me");me=d.user;renderUser();
-    profileName.value=me.name;profileBio.value=me.bio;profileSkills.value=me.skills;
-  }catch{me=null;renderUser();show("auth")}
-}
-function renderUser(){
-  userArea.textContent=me?`${me.name} · ${me.role==="client"?"مشتری":"فریلنسر"}`:"وارد نشده";
-  const projectBox = document.getElementById("createProject");
-if (projectBox) projectBox.classList.toggle("hidden", !(me && me.role === "client"));
-}
-async function saveProfile(){
-  try{
-    const d=await api("/api/me",{method:"PATCH",body:JSON.stringify({
-      name:profileName.value,bio:profileBio.value,skills:profileSkills.value
-    })});me=d.user;renderUser();msg("profileMsg","پروفایل ذخیره شد.",true);
-  }catch(e){msg("profileMsg",e.message)}
-}
-async function createProject(){
-  try{
-    await api("/api/projects",{method:"POST",body:JSON.stringify({
-      title:projectTitle.value,description:projectDescription.value,
-      category:projectCategory.value,budget:Number(projectBudget.value)
-    })});
-    projectTitle.value=projectDescription.value=projectCategory.value=projectBudget.value="";
-    msg("projectMsg","پروژه ثبت شد.",true);loadProjects();
-  }catch(e){msg("projectMsg",e.message)}
-}
-async function loadProjects(){
-  const list=document.getElementById("projectList");
-  try{
-    const d=await api("/api/projects");
-    if(!d.projects.length){list.innerHTML="<p class='muted'>هنوز پروژه‌ای ثبت نشده.</p>";return}
-    list.innerHTML=d.projects.map(p=>`<div class="project">
-      <h3>${esc(p.title)} <span class="badge">${esc(p.category)}</span></h3>
-      <p>${esc(p.description)}</p><b>${money(p.budget)}</b>
-      <p class="muted">مشتری: ${esc(p.clientName)} · وضعیت: ${esc(p.status)}</p>
-      ${me&&me.role==="freelancer"&&p.status==="open"?`<button onclick="apply(${p.id})">درخواست همکاری</button>`:""}
-      ${me&&me.role==="client"&&p.clientId===me.id?`<button class="secondary" onclick="viewApplications(${p.id})">مشاهده پیشنهادها</button> <button class="secondary" onclick="changeStatus(${p.id},'completed')">تکمیل پروژه</button>`:""}
-      <div id="apps-${p.id}"></div>
-    </div>`).join("");
-  }catch(e){list.innerHTML=`<p class="error">${esc(e.message)}</p>`}
-}
-async function apply(id){
-  const price=prompt("قیمت پیشنهادی به تومان:");
-  if(price===null)return;
-  const message=prompt("پیام برای مشتری:")||"";
-  try{await api(`/api/projects/${id}/apply`,{method:"POST",body:JSON.stringify({price:Number(price),message})});alert("درخواست ارسال شد.");}
-  catch(e){alert(e.message)}
-}
-
-async function viewApplications(id){
-  const box=document.getElementById(`apps-${id}`);
-  box.innerHTML="<p class='muted'>در حال دریافت پیشنهادها...</p>";
-  try{
-    const d=await api(`/api/projects/${id}/applications`);
-    if(!d.applications.length){box.innerHTML="<p class='muted'>هنوز پیشنهادی ثبت نشده.</p>";return}
-    box.innerHTML=d.applications.map(a=>`<div class="project" style="margin-top:8px">
-      <b>${esc(a.freelancerName)}</b> · ${esc(a.skills||"بدون مهارت ثبت‌شده")}<br>
-      <span>${money(a.price)} · وضعیت: ${esc(a.status)}</span>
-      <p>${esc(a.message)}</p>
-      ${a.status==="pending"?`<button onclick="selectFreelancer(${id},${a.freelancerId},${a.id})">انتخاب این فریلنسر</button>`:""}
-    </div>`).join("");
-  }catch(e){box.innerHTML=`<p class='error'>${esc(e.message)}</p>`}
-}
-
-async function selectFreelancer(projectId, freelancerId, applicationId){
-  if(!confirm("این فریلنسر برای پروژه انتخاب شود؟ پیشنهادهای دیگر رد خواهند شد."))return;
-  try{
-    await api(`/api/projects/${projectId}/select-freelancer`,{method:"POST",body:JSON.stringify({freelancerId,applicationId})});
-    alert("فریلنسر انتخاب شد و پروژه وارد مرحله اجرا شد.");
-    loadProjects();
-  }catch(e){alert(e.message)}
-}
-
-async function changeStatus(projectId,status){
-  if(!confirm("وضعیت پروژه به تکمیل‌شده تغییر کند؟"))return;
-  try{await api(`/api/projects/${projectId}/status`,{method:"PATCH",body:JSON.stringify({status})});loadProjects();}
-  catch(e){alert(e.message)}
-}
-(async function init(){try{const d=await api("/api/me");me=d.user}catch{}renderUser();})();
-</script>
-</body>
-</html>
+<div class="brand">
+<div class
