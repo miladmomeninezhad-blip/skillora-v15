@@ -15,7 +15,9 @@
 --brand:#4f46e5;
 --brand2:#7c3aed;
 --card:#fff;
---line:#e6eaf0
+--line:#e6eaf0;
+--danger:#b42318;
+--success:#027a48
 }
 
 body{
@@ -31,7 +33,7 @@ color:#fff;
 padding:18px 20px;
 position:sticky;
 top:0;
-z-index:5;
+z-index:10;
 box-shadow:0 8px 25px #0002
 }
 
@@ -69,7 +71,7 @@ font-size:21px
 
 #userArea{
 font-size:13px;
-opacity:.9
+opacity:.95
 }
 
 .container{
@@ -97,6 +99,10 @@ font-weight:700;
 transition:.15s
 }
 
+button:hover{
+opacity:.92
+}
+
 button:active{
 transform:scale(.98)
 }
@@ -104,6 +110,10 @@ transform:scale(.98)
 button.secondary{
 background:#e9edf5;
 color:#253047
+}
+
+button.danger{
+background:#b42318
 }
 
 .hero{
@@ -188,6 +198,11 @@ min-height:110px;
 resize:vertical
 }
 
+label{
+font-size:13px;
+font-weight:700
+}
+
 .project{
 border:1px solid var(--line);
 border-radius:16px;
@@ -210,26 +225,50 @@ padding:5px 9px;
 border-radius:999px;
 background:#eef2ff;
 color:#3730a3;
-font-size:12px
+font-size:12px;
+margin:2px
 }
 
 .hidden{
-display:none
+display:none!important
 }
 
 .error{
-color:#b42318;
-margin:8px 0
+color:var(--danger);
+margin:8px 0;
+font-size:13px
 }
 
 .ok{
-color:#027a48;
-margin:8px 0
+color:var(--success);
+margin:8px 0;
+font-size:13px
+}
+
+.actions{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin-top:12px
 }
 
 .footer-note{
 margin-top:20px;
-text-align:center
+text-align:center;
+color:var(--muted);
+font-size:12px
+}
+
+hr{
+border:0;
+border-top:1px solid var(--line);
+margin:20px 0
+}
+
+.loading{
+text-align:center;
+padding:30px;
+color:var(--muted)
 }
 
 @media(max-width:600px){
@@ -260,6 +299,9 @@ flex:1;
 min-width:105px
 }
 
+.actions button{
+width:100%
+}
 }
 </style>
 </head>
@@ -270,4 +312,971 @@ min-width:105px
 <div class="header-inner">
 
 <div class="brand">
-<div class
+<div class="logo">S</div>
+<div>
+<h1>Skillora</h1>
+<div style="font-size:11px;opacity:.75">Skill • Project • Opportunity</div>
+</div>
+</div>
+
+<div id="userArea">مهمان</div>
+
+</div>
+</header>
+
+<main class="container">
+
+<nav>
+<button onclick="showPage('home')">خانه</button>
+<button onclick="showPage('projects')">پروژه‌ها</button>
+<button onclick="showPage('profile')">پروفایل</button>
+<button id="createProjectNav" class="hidden" onclick="showPage('create')">ثبت پروژه</button>
+<button id="loginNav" class="secondary" onclick="showPage('login')">ورود</button>
+<button id="registerNav" class="secondary" onclick="showPage('register')">ثبت‌نام</button>
+<button id="logoutNav" class="danger hidden" onclick="logout()">خروج</button>
+</nav>
+
+<div id="message"></div>
+
+<section id="page-home">
+
+<div class="hero">
+<span class="hero-badge">Skillora v15</span>
+<h2>مهارتت را به فرصت تبدیل کن</h2>
+<p>
+Skillora بستری برای ارتباط کارفرماها و فریلنسرهاست؛
+پروژه ایجاد کن، برای پروژه‌ها درخواست بده و همکاری را شروع کن.
+</p>
+
+<div class="actions">
+<button onclick="showPage('projects')">مشاهده پروژه‌ها</button>
+<button class="secondary" onclick="showPage('register')">شروع کار</button>
+</div>
+</div>
+
+<div class="grid">
+
+<div class="card feature">
+<div class="feature-icon">💼</div>
+<h3>پروژه‌ها</h3>
+<p class="muted">
+پروژه‌های موجود را ببین و در صورت داشتن نقش فریلنسر برای آنها درخواست همکاری ارسال کن.
+</p>
+</div>
+
+<div class="card feature">
+<div class="feature-icon">🚀</div>
+<h3>همکاری</h3>
+<p class="muted">
+کارفرما می‌تواند درخواست‌های دریافتی را بررسی و فریلنسر موردنظر را انتخاب کند.
+</p>
+</div>
+
+<div class="card feature">
+<div class="feature-icon">👤</div>
+<h3>پروفایل</h3>
+<p class="muted">
+اطلاعات، مهارت‌ها و معرفی خودت را در پروفایل ثبت و ویرایش کن.
+</p>
+</div>
+
+</div>
+
+</section>
+
+
+<section id="page-login" class="hidden">
+
+<div class="card">
+
+<h2>ورود به Skillora</h2>
+
+<form id="loginForm">
+
+<label>شماره موبایل</label>
+<input id="loginPhone" type="tel" required>
+
+<label>رمز عبور</label>
+<input id="loginPassword" type="password" required>
+
+<div id="loginError" class="error"></div>
+
+<button type="submit">ورود</button>
+
+</form>
+
+</div>
+
+</section>
+
+
+<section id="page-register" class="hidden">
+
+<div class="card">
+
+<h2>ساخت حساب</h2>
+
+<form id="registerForm">
+
+<label>نام</label>
+<input id="registerName" required>
+
+<label>شماره موبایل</label>
+<input id="registerPhone" type="tel" placeholder="+989121234567" required>
+
+<label>رمز عبور</label>
+<input id="registerPassword" type="password" minlength="8" required>
+
+<label>نوع حساب</label>
+<select id="registerRole" required>
+<option value="freelancer">فریلنسر</option>
+<option value="client">کارفرما</option>
+</select>
+
+<div id="registerError" class="error"></div>
+
+<button type="submit">ثبت‌نام</button>
+
+</form>
+
+</div>
+
+</section>
+
+
+<section id="page-projects" class="hidden">
+
+<div class="card">
+
+<h2>پروژه‌ها</h2>
+
+<p class="muted">
+برای مشاهده پروژه‌ها ابتدا وارد حساب خود شوید.
+</p>
+
+<div id="projectsList">
+<div class="loading">در حال بارگذاری...</div>
+</div>
+
+</div>
+
+</section>
+
+
+<section id="page-create" class="hidden">
+
+<div class="card">
+
+<h2>ثبت پروژه جدید</h2>
+
+<form id="createProjectForm">
+
+<label>عنوان پروژه</label>
+<input id="projectTitle" required>
+
+<label>توضیحات</label>
+<textarea id="projectDescription" required></textarea>
+
+<label>دسته‌بندی</label>
+<input id="projectCategory" placeholder="مثلاً طراحی، برنامه‌نویسی، تولید محتوا">
+
+<label>بودجه</label>
+<input id="projectBudget" type="number" min="0" step="1" required>
+
+<div id="createProjectError" class="error"></div>
+<div id="createProjectOk" class="ok"></div>
+
+<button type="submit">ثبت پروژه</button>
+
+</form>
+
+</div>
+
+</section>
+
+
+<section id="page-profile" class="hidden">
+
+<div class="card">
+
+<h2>پروفایل من</h2>
+
+<div id="profileContent">
+<div class="loading">در حال بارگذاری...</div>
+</div>
+
+</div>
+
+</section>
+
+
+<section id="page-apply" class="hidden">
+
+<div class="card">
+
+<h2>درخواست همکاری</h2>
+
+<div id="applyProjectInfo"></div>
+
+<form id="applyForm">
+
+<label>مبلغ پیشنهادی</label>
+<input id="applyPrice" type="number" min="0" step="1" required>
+
+<label>پیام</label>
+<textarea id="applyMessage" placeholder="توضیح کوتاه درباره پیشنهاد شما"></textarea>
+
+<div id="applyError" class="error"></div>
+<div id="applyOk" class="ok"></div>
+
+<button type="submit">ارسال درخواست</button>
+
+</form>
+
+</div>
+
+</section>
+
+
+<section id="page-applications" class="hidden">
+
+<div class="card">
+
+<h2>درخواست‌های پروژه</h2>
+
+<div id="applicationsList">
+<div class="loading">در حال بارگذاری...</div>
+</div>
+
+</div>
+
+</section>
+
+
+<div class="footer-note">
+Skillora v15 — ساخته شده برای اتصال مهارت و فرصت
+</div>
+
+</main>
+
+
+<script>
+
+let currentUser = null;
+let currentProject = null;
+
+const pages = [
+"home",
+"login",
+"register",
+"projects",
+"create",
+"profile",
+"apply",
+"applications"
+];
+
+function $(id){
+return document.getElementById(id);
+}
+
+function showPage(name){
+
+pages.forEach(page=>{
+const el = $("page-"+page);
+if(el) el.classList.toggle("hidden",page!==name);
+});
+
+if(name==="projects") loadProjects();
+if(name==="profile") loadProfile();
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+}
+
+function setMessage(text,type="error"){
+
+const box=$("message");
+
+if(!text){
+box.innerHTML="";
+return;
+}
+
+box.className=type==="ok"?"ok":"error";
+box.textContent=text;
+}
+
+async function api(url,options={}){
+
+const config={
+...options,
+headers:{
+"Content-Type":"application/json",
+...(options.headers||{})
+},
+credentials:"same-origin"
+};
+
+const response=await fetch(url,config);
+
+let data={};
+
+try{
+data=await response.json();
+}catch(e){}
+
+if(!response.ok){
+throw new Error(data.error || "خطایی رخ داد.");
+}
+
+return data;
+}
+
+
+function updateHeader(){
+
+if(currentUser){
+
+$("userArea").textContent=
+currentUser.name+" — "+
+(currentUser.role==="client"?"کارفرما":"فریلنسر");
+
+$("loginNav").classList.add("hidden");
+$("registerNav").classList.add("hidden");
+$("logoutNav").classList.remove("hidden");
+
+if(currentUser.role==="client"){
+$("createProjectNav").classList.remove("hidden");
+}else{
+$("createProjectNav").classList.add("hidden");
+}
+
+}else{
+
+$("userArea").textContent="مهمان";
+
+$("loginNav").classList.remove("hidden");
+$("registerNav").classList.remove("hidden");
+$("logoutNav").classList.add("hidden");
+$("createProjectNav").classList.add("hidden");
+}
+}
+
+
+async function checkSession(){
+
+try{
+
+const data=await api("/api/me");
+
+currentUser=data.user;
+
+}catch(e){
+
+currentUser=null;
+
+}
+
+updateHeader();
+}
+
+
+$("loginForm").addEventListener("submit",async e=>{
+
+e.preventDefault();
+
+$("loginError").textContent="";
+
+try{
+
+const data=await api("/api/auth/login",{
+method:"POST",
+body:JSON.stringify({
+phone:$("loginPhone").value,
+password:$("loginPassword").value
+})
+});
+
+currentUser=data.user;
+
+updateHeader();
+
+setMessage("با موفقیت وارد شدید.","ok");
+
+showPage("home");
+
+}catch(error){
+
+$("loginError").textContent=error.message;
+
+}
+
+});
+
+
+$("registerForm").addEventListener("submit",async e=>{
+
+e.preventDefault();
+
+$("registerError").textContent="";
+
+try{
+
+const data=await api("/api/auth/register",{
+method:"POST",
+body:JSON.stringify({
+name:$("registerName").value,
+phone:$("registerPhone").value,
+password:$("registerPassword").value,
+role:$("registerRole").value
+})
+});
+
+currentUser=data.user;
+
+updateHeader();
+
+setMessage("حساب شما با موفقیت ساخته شد.","ok");
+
+showPage("home");
+
+}catch(error){
+
+$("registerError").textContent=error.message;
+
+}
+
+});
+
+
+async function logout(){
+
+try{
+
+await api("/api/auth/logout",{
+method:"POST"
+});
+
+currentUser=null;
+
+updateHeader();
+
+setMessage("با موفقیت خارج شدید.","ok");
+
+showPage("home");
+
+}catch(error){
+
+setMessage(error.message);
+
+}
+
+}
+
+
+async function loadProjects(){
+
+const list=$("projectsList");
+
+list.innerHTML='<div class="loading">در حال بارگذاری...</div>';
+
+if(!currentUser){
+
+list.innerHTML=`
+<div class="muted">
+برای مشاهده پروژه‌ها ابتدا وارد حساب خود شوید.
+</div>
+`;
+
+return;
+}
+
+try{
+
+const data=await api("/api/projects");
+
+if(!data.projects || data.projects.length===0){
+
+list.innerHTML=`
+<div class="muted">
+هنوز پروژه‌ای ثبت نشده است.
+</div>
+`;
+
+return;
+}
+
+list.innerHTML="";
+
+data.projects.forEach(project=>{
+
+const statusText={
+open:"باز",
+in_progress:"در حال انجام",
+completed:"تکمیل شده",
+cancelled:"لغو شده"
+}[project.status] || project.status;
+
+const div=document.createElement("div");
+
+div.className="project";
+
+div.innerHTML=`
+
+<h3>${escapeHtml(project.title)}</h3>
+
+<p>${escapeHtml(project.description)}</p>
+
+<div>
+<span class="badge">
+${escapeHtml(project.category || "عمومی")}
+</span>
+
+<span class="badge">
+بودجه: ${Number(project.budget).toLocaleString()}
+</span>
+
+<span class="badge">
+${statusText}
+</span>
+</div>
+
+<p class="muted">
+کارفرما: ${escapeHtml(project.clientName || "-")}
+</p>
+
+<div class="actions">
+
+${
+currentUser.role==="freelancer" && project.status==="open"
+?
+`<button onclick="openApply(${project.id})">
+درخواست همکاری
+</button>`
+:""
+}
+
+${
+currentUser.role==="client" &&
+project.clientId===currentUser.id
+?
+`<button onclick="viewApplications(${project.id})">
+مشاهده درخواست‌ها
+</button>`
+:""
+}
+
+${
+currentUser.role==="client" &&
+project.clientId===currentUser.id &&
+project.status==="in_progress"
+?
+`<button class="secondary" onclick="changeProjectStatus(${project.id},'completed')">
+تکمیل پروژه
+</button>`
+:""
+}
+
+</div>
+`;
+
+list.appendChild(div);
+
+});
+
+}catch(error){
+
+list.innerHTML=
+`<div class="error">${escapeHtml(error.message)}</div>`;
+
+}
+}
+
+
+function escapeHtml(value){
+
+return String(value ?? "")
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
+
+}
+
+
+async function openApply(projectId){
+
+if(!currentUser){
+
+showPage("login");
+return;
+}
+
+if(currentUser.role!=="freelancer"){
+
+setMessage("فقط حساب فریلنسر می‌تواند درخواست همکاری ارسال کند.");
+
+return;
+}
+
+try{
+
+const data=await api("/api/projects");
+
+currentProject=data.projects.find(p=>p.id===projectId);
+
+if(!currentProject){
+
+setMessage("پروژه پیدا نشد.");
+return;
+}
+
+$("applyProjectInfo").innerHTML=`
+
+<div class="project">
+
+<h3>${escapeHtml(currentProject.title)}</h3>
+
+<p>${escapeHtml(currentProject.description)}</p>
+
+<span class="badge">
+بودجه: ${Number(currentProject.budget).toLocaleString()}
+</span>
+
+</div>
+`;
+
+$("applyError").textContent="";
+$("applyOk").textContent="";
+$("applyPrice").value="";
+$("applyMessage").value="";
+
+showPage("apply");
+
+}catch(error){
+
+setMessage(error.message);
+
+}
+}
+
+
+$("applyForm").addEventListener("submit",async e=>{
+
+e.preventDefault();
+
+if(!currentProject)return;
+
+$("applyError").textContent="";
+$("applyOk").textContent="";
+
+try{
+
+await api(
+"/api/projects/"+currentProject.id+"/apply",
+{
+method:"POST",
+body:JSON.stringify({
+price:Number($("applyPrice").value),
+message:$("applyMessage").value
+})
+}
+);
+
+$("applyOk").textContent=
+"درخواست همکاری با موفقیت ارسال شد.";
+
+}catch(error){
+
+$("applyError").textContent=error.message;
+
+}
+
+});
+
+
+$("createProjectForm").addEventListener("submit",async e=>{
+
+e.preventDefault();
+
+$("createProjectError").textContent="";
+$("createProjectOk").textContent="";
+
+try{
+
+await api("/api/projects",{
+method:"POST",
+body:JSON.stringify({
+title:$("projectTitle").value,
+description:$("projectDescription").value,
+category:$("projectCategory").value,
+budget:Number($("projectBudget").value)
+})
+});
+
+$("createProjectOk").textContent=
+"پروژه با موفقیت ثبت شد.";
+
+$("createProjectForm").reset();
+
+}catch(error){
+
+$("createProjectError").textContent=error.message;
+
+}
+
+});
+
+
+async function loadProfile(){
+
+const box=$("profileContent");
+
+if(!currentUser){
+
+box.innerHTML=`
+<p class="muted">
+برای مشاهده پروفایل ابتدا وارد شوید.
+</p>
+`;
+
+return;
+}
+
+try{
+
+const data=await api("/api/me");
+
+currentUser=data.user;
+
+updateHeader();
+
+box.innerHTML=`
+
+<form id="profileForm">
+
+<label>نام</label>
+<input id="profileName" value="${escapeHtml(currentUser.name)}" required>
+
+<label>درباره من</label>
+<textarea id="profileBio">${escapeHtml(currentUser.bio || "")}</textarea>
+
+<label>مهارت‌ها</label>
+<input id="profileSkills" value="${escapeHtml(currentUser.skills || "")}" placeholder="مثلاً JavaScript, طراحی, تولید محتوا">
+
+<label>شماره موبایل</label>
+<input value="${escapeHtml(currentUser.phone)}" disabled>
+
+<label>نوع حساب</label>
+<input value="${currentUser.role==="client"?"کارفرما":"فریلنسر"}" disabled>
+
+<div id="profileError" class="error"></div>
+<div id="profileOk" class="ok"></div>
+
+<button type="submit">ذخیره تغییرات</button>
+
+</form>
+`;
+
+$("profileForm").addEventListener("submit",saveProfile);
+
+}catch(error){
+
+box.innerHTML=
+`<div class="error">${escapeHtml(error.message)}</div>`;
+
+}
+
+}
+
+
+async function saveProfile(e){
+
+e.preventDefault();
+
+$("profileError").textContent="";
+$("profileOk").textContent="";
+
+try{
+
+const data=await api("/api/me",{
+method:"PATCH",
+body:JSON.stringify({
+name:$("profileName").value,
+bio:$("profileBio").value,
+skills:$("profileSkills").value
+})
+});
+
+currentUser=data.user;
+
+updateHeader();
+
+$("profileOk").textContent=
+"پروفایل با موفقیت ذخیره شد.";
+
+}catch(error){
+
+$("profileError").textContent=error.message;
+
+}
+
+}
+
+
+async function viewApplications(projectId){
+
+if(!currentUser || currentUser.role!=="client"){
+
+setMessage("دسترسی غیرمجاز.");
+
+return;
+}
+
+currentProject={id:projectId};
+
+const box=$("applicationsList");
+
+box.innerHTML=
+'<div class="loading">در حال بارگذاری...</div>';
+
+showPage("applications");
+
+try{
+
+const data=await api(
+"/api/projects/"+projectId+"/applications"
+);
+
+if(!data.applications || data.applications.length===0){
+
+box.innerHTML=
+'<div class="muted">هنوز درخواستی ثبت نشده است.</div>';
+
+return;
+}
+
+box.innerHTML="";
+
+data.applications.forEach(app=>{
+
+const div=document.createElement("div");
+
+div.className="project";
+
+div.innerHTML=`
+
+<h3>${escapeHtml(app.freelancerName)}</h3>
+
+<p>
+${escapeHtml(app.message || "بدون پیام")}
+</p>
+
+<div>
+<span class="badge">
+پیشنهاد: ${Number(app.price).toLocaleString()}
+</span>
+
+<span class="badge">
+${escapeHtml(app.status)}
+</span>
+</div>
+
+<p class="muted">
+مهارت‌ها: ${escapeHtml(app.skills || "ثبت نشده")}
+</p>
+
+<div class="actions">
+
+${
+app.status==="pending"
+?
+`<button onclick="selectFreelancer(${projectId},${app.freelancerId},${app.id})">
+انتخاب این فریلنسر
+</button>`
+:""
+}
+
+</div>
+`;
+
+box.appendChild(div);
+
+});
+
+}catch(error){
+
+box.innerHTML=
+`<div class="error">${escapeHtml(error.message)}</div>`;
+
+}
+
+}
+
+
+async function selectFreelancer(projectId,freelancerId,applicationId){
+
+if(!confirm("این فریلنسر انتخاب شود؟"))return;
+
+try{
+
+await api(
+"/api/projects/"+projectId+"/select-freelancer",
+{
+method:"POST",
+body:JSON.stringify({
+freelancerId:freelancerId,
+applicationId:applicationId
+})
+}
+);
+
+setMessage("فریلنسر با موفقیت انتخاب شد.","ok");
+
+viewApplications(projectId);
+
+}catch(error){
+
+setMessage(error.message);
+
+}
+
+}
+
+
+async function changeProjectStatus(projectId,status){
+
+try{
+
+await api(
+"/api/projects/"+projectId+"/status",
+{
+method:"PATCH",
+body:JSON.stringify({status})
+}
+);
+
+setMessage("وضعیت پروژه تغییر کرد.","ok");
+
+loadProjects();
+
+}catch(error){
+
+setMessage(error.message);
+
+}
+
+}
+
+
+checkSession();
+
+showPage("home");
+
+</script>
+
+</
