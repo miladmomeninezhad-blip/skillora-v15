@@ -54,7 +54,11 @@ function publicUser(row) {
 }
 
 app.get("/api/health", (_req, res) => {
-  res.json({ ok: true, service: "Skillora v15", database: "sqlite" });
+  res.json({
+    ok: true,
+    service: "Skillora v15",
+    database: "sqlite"
+  });
 });
 
 app.post("/api/auth/register", (req, res) => {
@@ -63,8 +67,15 @@ app.post("/api/auth/register", (req, res) => {
   const password = String(req.body.password || "");
   const role = req.body.role;
 
-  if (!name || !/^\+?[0-9]{8,15}$/.test(phone) || password.length < 8 || !["client","freelancer"].includes(role)) {
-    return res.status(400).json({ error: "نام، شماره معتبر، رمز حداقل ۸ کاراکتری و نقش معتبر لازم است." });
+  if (
+    !name ||
+    !/^\+?[0-9]{8,15}$/.test(phone) ||
+    password.length < 8 ||
+    !["client", "freelancer"].includes(role)
+  ) {
+    return res.status(400).json({
+      error: "نام، شماره معتبر، رمز حداقل ۸ کاراکتری و نقش معتبر لازم است."
+    });
   }
 
   try {
@@ -73,25 +84,38 @@ app.post("/api/auth/register", (req, res) => {
       VALUES (?, ?, ?, ?)
     `).run(name, phone, hashPassword(password), role);
 
-    const user = db.prepare("SELECT * FROM users WHERE id=?").get(result.lastInsertRowid);
+    const user = db
+      .prepare("SELECT * FROM users WHERE id=?")
+      .get(result.lastInsertRowid);
+
     setSessionCookie(res, signToken(user));
     res.status(201).json({ user: publicUser(user) });
   } catch (err) {
     if (String(err.message).includes("UNIQUE")) {
-      return res.status(409).json({ error: "این شماره موبایل قبلاً ثبت شده است." });
+      return res.status(409).json({
+        error: "این شماره موبایل قبلاً ثبت شده است."
+      });
     }
+
     console.error(err);
-    res.status(500).json({ error: "خطای داخلی سرور." });
+    res.status(500).json({
+      error: "خطای داخلی سرور."
+    });
   }
 });
 
 app.post("/api/auth/login", loginLimiter, (req, res) => {
   const phone = normalizePhone(req.body.phone);
   const password = String(req.body.password || "");
-  const user = db.prepare("SELECT * FROM users WHERE phone=?").get(phone);
+
+  const user = db
+    .prepare("SELECT * FROM users WHERE phone=?")
+    .get(phone);
 
   if (!user || !verifyPassword(password, user.password_hash)) {
-    return res.status(401).json({ error: "شماره موبایل یا رمز عبور اشتباه است." });
+    return res.status(401).json({
+      error: "شماره موبایل یا رمز عبور اشتباه است."
+    });
   }
 
   setSessionCookie(res, signToken(user));
@@ -99,13 +123,26 @@ app.post("/api/auth/login", loginLimiter, (req, res) => {
 });
 
 app.post("/api/auth/logout", (_req, res) => {
-  res.clearCookie(COOKIE_NAME, { httpOnly: true, sameSite: "lax", path: "/" });
+  res.clearCookie(COOKIE_NAME, {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/"
+  });
+
   res.json({ ok: true });
 });
 
 app.get("/api/me", requireAuth, (req, res) => {
-  const user = db.prepare("SELECT * FROM users WHERE id=?").get(req.auth.sub);
-  if (!user) return res.status(401).json({ error: "کاربر پیدا نشد." });
+  const user = db
+    .prepare("SELECT * FROM users WHERE id=?")
+    .get(req.auth.sub);
+
+  if (!user) {
+    return res.status(401).json({
+      error: "کاربر پیدا نشد."
+    });
+  }
+
   res.json({ user: publicUser(user) });
 });
 
@@ -113,158 +150,134 @@ app.patch("/api/me", requireAuth, (req, res) => {
   const name = cleanText(req.body.name, 80);
   const bio = cleanText(req.body.bio, 1000);
   const skills = cleanText(req.body.skills, 500);
-  if (!name) return res.status(400).json({ error: "نام نمی‌تواند خالی باشد." });
 
-  db.prepare("UPDATE users SET name=?, bio=?, skills=? WHERE id=?")
-    .run(name, bio, skills, req.auth.sub);
+  if (!name) {
+    return res.status(400).json({
+      error: "نام نمی‌تواند خالی باشد."
+    });
+  }
 
-  const user = db.prepare("SELECT * FROM users WHERE id=?").get(req.auth.sub);
+  db.prepare(`
+    UPDATE users
+    SET name=?, bio=?, skills=?
+    WHERE id=?
+  `).run(name, bio, skills, req.auth.sub);
+
+  const user = db
+    .prepare("SELECT * FROM users WHERE id=?")
+    .get(req.auth.sub);
+
   res.json({ user: publicUser(user) });
 });
 
 app.get("/api/projects", requireAuth, (_req, res) => {
   const projects = db.prepare(`
-    SELECT p.id, p.title, p.description, p.category, p.budget, p.status,
-           p.client_id AS clientId, p.selected_freelancer_id AS selectedFreelancerId,
-           p.created_at AS createdAt, u.name AS clientName
-    FROM projects p JOIN users u ON u.id=p.client_id
+    SELECT
+      p.id,
+      p.title,
+      p.description,
+      p.category,
+      p.budget,
+      p.status,
+      p.client_id AS clientId,
+      p.selected_freelancer_id AS selectedFreelancerId,
+      p.created_at AS createdAt,
+      u.name AS clientName
+    FROM projects p
+    JOIN users u ON u.id=p.client_id
     ORDER BY p.id DESC
   `).all();
+
   res.json({ projects });
 });
 
-app.post("/api/projects", requireAuth, requireRole("client"), (req, res) => {
-  const title = cleanText(req.body.title, 120);
-  const description = cleanText(req.body.description, 3000);
-  const category = cleanText(req.body.category, 60) || "عمومی";
-  const budget = Number(req.body.budget);
+app.post(
+  "/api/projects",
+  requireAuth,
+  requireRole("client"),
+  (req, res) => {
+    const title = cleanText(req.body.title, 120);
+    const description = cleanText(req.body.description, 3000);
+    const category = cleanText(req.body.category, 60) || "عمومی";
+    const budget = Number(req.body.budget);
 
-  if (!title || !description || !Number.isInteger(budget) || budget < 0) {
-    return res.status(400).json({ error: "عنوان، توضیحات و بودجه معتبر لازم است." });
-  }
+    if (
+      !title ||
+      !description ||
+      !Number.isInteger(budget) ||
+      budget < 0
+    ) {
+      return res.status(400).json({
+        error: "عنوان، توضیحات و بودجه معتبر لازم است."
+      });
+    }
 
-  const result = db.prepare(`
-    INSERT INTO projects (client_id, title, description, category, budget)
-    VALUES (?, ?, ?, ?, ?)
-  `).run(req.auth.sub, title, description, category, budget);
-
-  const project = db.prepare("SELECT * FROM projects WHERE id=?").get(result.lastInsertRowid);
-  res.status(201).json({ project });
-});
-
-app.post("/api/projects/:id/apply", requireAuth, requireRole("freelancer"), (req, res) => {
-  const projectId = Number(req.params.id);
-  const price = Number(req.body.price);
-  const message = cleanText(req.body.message, 1500);
-
-  if (!Number.isInteger(projectId) || !Number.isInteger(price) || price < 0) {
-    return res.status(400).json({ error: "پروژه یا مبلغ درخواست معتبر نیست." });
-  }
-
-  const project = db.prepare("SELECT * FROM projects WHERE id=?").get(projectId);
-  if (!project) return res.status(404).json({ error: "پروژه پیدا نشد." });
-  if (project.status !== "open") return res.status(409).json({ error: "این پروژه دیگر باز نیست." });
-
-  try {
     const result = db.prepare(`
-      INSERT INTO applications (project_id, freelancer_id, price, message)
-      VALUES (?, ?, ?, ?)
-    `).run(projectId, req.auth.sub, price, message);
+      INSERT INTO projects
+      (client_id, title, description, category, budget)
+      VALUES (?, ?, ?, ?, ?)
+    `).run(
+      req.auth.sub,
+      title,
+      description,
+      category,
+      budget
+    );
 
-    res.status(201).json({ applicationId: result.lastInsertRowid });
-  } catch (err) {
-    if (String(err.message).includes("UNIQUE")) {
-      return res.status(409).json({ error: "قبلاً برای این پروژه درخواست داده‌اید." });
+    const project = db
+      .prepare("SELECT * FROM projects WHERE id=?")
+      .get(result.lastInsertRowid);
+
+    res.status(201).json({ project });
+  }
+);
+
+app.post(
+  "/api/projects/:id/apply",
+  requireAuth,
+  requireRole("freelancer"),
+  (req, res) => {
+    const projectId = Number(req.params.id);
+    const price = Number(req.body.price);
+    const message = cleanText(req.body.message, 1500);
+
+    if (
+      !Number.isInteger(projectId) ||
+      !Number.isInteger(price) ||
+      price < 0
+    ) {
+      return res.status(400).json({
+        error: "پروژه یا مبلغ درخواست معتبر نیست."
+      });
     }
-    res.status(500).json({ error: "خطای داخلی سرور." });
-  }
-});
 
-app.get("/api/projects/:id/applications", requireAuth, (req, res) => {
-  const projectId = Number(req.params.id);
-  const project = db.prepare("SELECT * FROM projects WHERE id=?").get(projectId);
-  if (!project) return res.status(404).json({ error: "پروژه پیدا نشد." });
+    const project = db
+      .prepare("SELECT * FROM projects WHERE id=?")
+      .get(projectId);
 
-  if (req.auth.role === "client") {
-    if (project.client_id !== req.auth.sub) {
-      return res.status(403).json({ error: "دسترسی غیرمجاز." });
+    if (!project) {
+      return res.status(404).json({
+        error: "پروژه پیدا نشد."
+      });
     }
-  } else if (req.auth.role === "freelancer") {
-    const own = db.prepare(`
-      SELECT a.id, a.price, a.message, a.status, a.created_at AS createdAt,
-             u.id AS freelancerId, u.name AS freelancerName, u.skills, u.rating
-      FROM applications a JOIN users u ON u.id=a.freelancer_id
-      WHERE a.project_id=? AND a.freelancer_id=?
-      ORDER BY a.id DESC
-    `).all(projectId, req.auth.sub);
-    return res.json({ applications: own });
-  }
 
-  const applications = db.prepare(`
-    SELECT a.id, a.price, a.message, a.status, a.created_at AS createdAt,
-           u.id AS freelancerId, u.name AS freelancerName, u.skills, u.rating
-    FROM applications a JOIN users u ON u.id=a.freelancer_id
-    WHERE a.project_id=? ORDER BY a.id DESC
-  `).all(projectId);
+    if (project.status !== "open") {
+      return res.status(409).json({
+        error: "این پروژه دیگر باز نیست."
+      });
+    }
 
-  res.json({ applications });
-});
+    try {
+      const result = db.prepare(`
+        INSERT INTO applications
+        (project_id, freelancer_id, price, message)
+        VALUES (?, ?, ?, ?)
+      `).run(
+        projectId,
+        req.auth.sub,
+        price,
+        message
+      );
 
-app.post("/api/projects/:id/select-freelancer", requireAuth, requireRole("client"), (req, res) => {
-  const projectId = Number(req.params.id);
-  const freelancerId = Number(req.body.freelancerId);
-  if (!Number.isInteger(projectId) || !Number.isInteger(freelancerId)) {
-    return res.status(400).json({ error: "شناسه پروژه یا فریلنسر معتبر نیست." });
-  }
-
-  const project = db.prepare("SELECT * FROM projects WHERE id=?").get(projectId);
-  if (!project) return res.status(404).json({ error: "پروژه پیدا نشد." });
-  if (project.client_id !== req.auth.sub) return res.status(403).json({ error: "دسترسی غیرمجاز." });
-  if (project.status !== "open") return res.status(409).json({ error: "این پروژه قبلاً تعیین تکلیف شده است." });
-
-  const application = db.prepare("SELECT * FROM applications WHERE id=? AND project_id=? AND freelancer_id=?").get(
-    Number(req.body.applicationId), projectId, freelancerId
-  );
-  if (!application) return res.status(404).json({ error: "درخواست فریلنسر پیدا نشد." });
-
-  const tx = db.transaction(() => {
-    db.prepare("UPDATE projects SET selected_freelancer_id=?, status='in_progress' WHERE id=?")
-      .run(freelancerId, projectId);
-    db.prepare("UPDATE applications SET status='accepted' WHERE project_id=? AND id=?")
-      .run(projectId, application.id);
-    db.prepare("UPDATE applications SET status='rejected' WHERE project_id=? AND id<>?")
-      .run(projectId, application.id);
-  });
-  tx();
-
-  const updated = db.prepare("SELECT * FROM projects WHERE id=?").get(projectId);
-  res.json({ project: updated, selectedApplicationId: application.id });
-});
-
-app.patch("/api/projects/:id/status", requireAuth, requireRole("client"), (req, res) => {
-  const projectId = Number(req.params.id);
-  const status = cleanText(req.body.status, 30);
-  const allowed = ["open", "in_progress", "completed", "cancelled"];
-  if (!allowed.includes(status)) return res.status(400).json({ error: "وضعیت پروژه معتبر نیست." });
-
-  const project = db.prepare("SELECT * FROM projects WHERE id=?").get(projectId);
-  if (!project) return res.status(404).json({ error: "پروژه پیدا نشد." });
-  if (project.client_id !== req.auth.sub) return res.status(403).json({ error: "دسترسی غیرمجاز." });
-  if (status === "in_progress" && !project.selected_freelancer_id) {
-    return res.status(409).json({ error: "ابتدا یک فریلنسر را انتخاب کنید." });
-  }
-
-  db.prepare("UPDATE projects SET status=? WHERE id=?").run(status, projectId);
-  res.json({ project: db.prepare("SELECT * FROM projects WHERE id=?").get(projectId) });
-});
-
-app.use(express.static(frontend));
-
-app.use((err, _req, res, _next) => {
-  console.error(err);
-  res.status(500).json({ error: "خطای داخلی سرور." });
-});
-
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Skillora v15 running at http://localhost:${PORT}`);
-});
+      res.status(201).json({
+        applicationId: result
