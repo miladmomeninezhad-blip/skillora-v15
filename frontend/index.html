@@ -5,168 +5,50 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Skillora | مهارت به فرصت</title>
 <style>
-*{box-sizing:border-box}
-:root{--bg:#f5f7fc;--card:#fff;--ink:#11182d;--muted:#68728a;--line:#e7eaf2;--brand:#6657ff;--brand2:#8b5cf6;--nav:#0c1530;--green:#10b981;--red:#ef4444;--gold:#f59e0b;--shadow:0 16px 45px rgba(20,28,60,.08)}
+*{box-sizing:border-box} :root{--bg:#f5f7fc;--card:#fff;--ink:#11182d;--muted:#68728a;--line:#e7eaf2;--brand:#6657ff;--brand2:#8b5cf6;--nav:#0c1530;--green:#10b981;--red:#ef4444;--gold:#f59e0b;--shadow:0 16px 45px rgba(20,28,60,.08)}
 body{margin:0;background:radial-gradient(circle at 90% 0,#e9e6ff,transparent 26%),radial-gradient(circle at 0 30%,#e9f1ff,transparent 24%),var(--bg);font-family:Tahoma,Arial,sans-serif;color:var(--ink)}
-button,input,textarea,select{font:inherit}
-button{border:0;cursor:pointer}
-.hidden{display:none!important}
-.muted{color:var(--muted);line-height:1.9;font-size:13px}
-.container{max-width:1440px;margin:auto;padding:22px 22px 50px}
-
-.top{position:sticky;top:0;z-index:20;background:rgba(12,21,48,.96);color:#fff;box-shadow:0 10px 30px rgba(5,10,30,.18)}
-.topin{max-width:1440px;margin:auto;min-height:74px;padding:10px 22px;display:flex;align-items:center;gap:22px}
-.brand{display:flex;align-items:center;gap:10px;min-width:210px}
-.logo{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;font-weight:900;font-size:25px;background:linear-gradient(135deg,#806cff,#4f46e5);box-shadow:0 10px 28px #4f46e555}
-.brand b{font-size:22px}
-.tag{font-size:10px;color:#bfc6dc;margin-top:2px}
-.topnav{display:flex;gap:5px;flex:1;justify-content:center}
-.topnav button{background:transparent;color:#dce2f2;padding:11px 12px;border-radius:12px}
-.topnav button:hover,.topnav button.active{background:#ffffff12;color:#fff}
-.userbox{display:flex;align-items:center;gap:9px}
-.avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#ddd8ff,#fff);color:#5b4be7;font-weight:900}
-.usertext{font-size:12px;text-align:right}
-.usertext strong{display:block}
-.usertext span{color:#aeb7cf}
-
-.layout{display:grid;grid-template-columns:220px 1fr;gap:22px}
-.side{background:linear-gradient(180deg,#0c1530,#121d40);border-radius:24px;color:#fff;padding:16px;height:max-content;position:sticky;top:96px}
-.side button{width:100%;text-align:right;background:transparent;color:#cbd3e8;padding:13px 14px;border-radius:13px;margin:2px 0}
-.side button:hover,.side button.active{background:#6b5cff;color:#fff}
-.side .sep{height:1px;background:#ffffff15;margin:14px 3px}
-.side .promo{margin-top:20px;padding:16px;border:1px solid #ffffff1a;border-radius:18px;background:linear-gradient(135deg,#ffffff0c,#ffffff03)}
-
-.main{min-width:0}
-.hero{border-radius:26px;min-height:280px;padding:34px;position:relative;overflow:hidden;color:#fff;background:linear-gradient(135deg,#101a3a,#4135a5 55%,#7656e8);box-shadow:0 24px 60px #4437a833}
-.hero:after{content:"S";position:absolute;left:25px;bottom:-75px;font-size:300px;line-height:1;font-weight:900;color:#ffffff0a}
-.hero>*{position:relative;z-index:1}
-.pill{display:inline-block;padding:7px 12px;border:1px solid #ffffff25;background:#ffffff14;border-radius:999px;font-size:11px}
-.hero h1{font-size:38px;margin:18px 0 10px;line-height:1.45}
-.hero p{max-width:690px;color:#e8e9fb;line-height:2;font-size:14px}
-.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
-.primary,.secondary,.danger,.ghost{padding:11px 17px;border-radius:12px;font-weight:700}
-.primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;box-shadow:0 8px 20px #6657ff35}
-.secondary{background:#eef0f8;color:#29324a}
-.danger{background:#feecec;color:#c62828}
-.ghost{background:#ffffff12;color:#fff;border:1px solid #ffffff25}
-
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin:18px 0}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:19px;padding:19px;box-shadow:var(--shadow)}
-.stat .ico{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:#efedff;font-size:21px}
-.stat small{display:block;color:var(--muted);margin:13px 0 7px}
-.stat strong{font-size:23px}
-.green{color:#079669}
-.gold{color:#c77a00}
-
-.grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:18px}
-.card{background:#fff;border:1px solid var(--line);border-radius:21px;padding:22px;box-shadow:var(--shadow);margin-bottom:18px}
-.card h2{font-size:18px;margin:0 0 14px}
-.cardhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}
-.link{color:#5b4be7;cursor:pointer;font-size:12px;font-weight:700}
-.projectgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.project{border:1px solid var(--line);border-radius:17px;padding:16px;background:linear-gradient(180deg,#fff,#fafaff)}
-.project h3{font-size:15px;margin:0 0 8px}
-.project p{font-size:12px;line-height:1.9;color:var(--muted)}
-.badges{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0}
-.badge{padding:5px 8px;border-radius:999px;background:#f0efff;color:#5146c9;font-size:10px}
-.badge.greenb{background:#eafbf4;color:#07835d}
-.badge.orange{background:#fff6e8;color:#a86200}
-
-.tx{display:flex;align-items:center;gap:10px;padding:13px 0;border-bottom:1px solid #eef0f5}
-.tx:last-child{border-bottom:0}
-.txicon{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:#f0efff}
-.tx .desc{flex:1;font-size:12px}
-.tx .desc small{display:block;color:#9aa2b5;margin-top:3px}
-.amt{font-weight:800;font-size:12px}
-.credit{color:#079669}
-.debit{color:#d64545}
-
-.reward{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:15px;margin-bottom:9px}
-.reward .ricon{width:38px;height:38px;border-radius:12px;background:#fff5dc;display:grid;place-items:center}
-.reward .rbody{flex:1}
-.reward b{font-size:12px}
-.reward small{display:block;color:var(--muted);margin-top:4px}
-.progress{height:8px;border-radius:99px;background:#edf0f6;overflow:hidden}
-.progress>i{display:block;height:100%;background:linear-gradient(90deg,#6657ff,#a56bff);border-radius:99px}
-
-label{display:block;font-size:12px;font-weight:700;margin:11px 0 5px}
-input,textarea,select{width:100%;padding:12px 13px;border:1px solid #dfe3ec;border-radius:12px;background:#fbfcff;color:var(--ink);outline:none}
-input:focus,textarea:focus,select:focus{border-color:#7669ff;box-shadow:0 0 0 4px #6657ff12}
-textarea{min-height:110px;resize:vertical}
-.notice,.error,.ok{padding:10px 12px;border-radius:11px;font-size:12px;margin:10px 0}
-.notice{background:#eef4ff;color:#31549c}
-.error{background:#fff0f0;color:#c62828}
-.ok{background:#eafbf4;color:#087443}
-.loading{text-align:center;padding:35px;color:var(--muted)}
-
-.profile{display:grid;grid-template-columns:1fr 280px;gap:18px}
-.profilecard{text-align:center}
-.bigavatar{width:88px;height:88px;border-radius:28px;margin:0 auto 12px;display:grid;place-items:center;font-size:35px;font-weight:900;color:#5b4be7;background:linear-gradient(135deg,#e9e6ff,#f9f8ff)}
-.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:18px}
-.mini div{background:#f7f8fc;border-radius:13px;padding:11px}
-.mini b{display:block;font-size:17px}
-.mini span{font-size:10px;color:var(--muted)}
-
-.footer{text-align:center;color:#8992a8;font-size:11px;padding:20px}
-.modal{position:fixed;inset:0;background:#0b102b99;display:grid;place-items:center;padding:20px;z-index:50}
-.modalbox{width:min(480px,100%);background:#fff;border-radius:22px;padding:22px;box-shadow:0 30px 80px #0003}
-
-@media(max-width:1050px){
-.layout{grid-template-columns:1fr}
-.side{position:static;display:flex;overflow:auto;gap:5px}
-.side button{white-space:nowrap;width:auto}
-.side .sep,.side .promo{display:none}
-.projectgrid{grid-template-columns:1fr 1fr}
-.stats{grid-template-columns:1fr 1fr}
-.grid2,.profile{grid-template-columns:1fr}
-}
-
-@media(max-width:700px){
-.topin{padding:9px 12px}
-.topnav{display:none}
-.brand{min-width:0}
-.usertext{display:none}
-.container{padding:12px}
-.hero{padding:25px 21px}
-.hero h1{font-size:28px}
-.stats{grid-template-columns:1fr 1fr;gap:9px}
-.stat{padding:14px}
-.stat strong{font-size:18px}
-.projectgrid{grid-template-columns:1fr}
-.side{border-radius:17px}
-.side button{padding:10px}
-.mini{grid-template-columns:1fr 1fr}
-}
+button,input,textarea,select{font:inherit} button{border:0;cursor:pointer}.hidden{display:none!important}.muted{color:var(--muted);line-height:1.9;font-size:13px}.container{max-width:1440px;margin:auto;padding:22px 22px 50px}
+.top{position:sticky;top:0;z-index:20;background:rgba(12,21,48,.96);color:#fff;box-shadow:0 10px 30px rgba(5,10,30,.18)}.topin{max-width:1440px;margin:auto;min-height:74px;padding:10px 22px;display:flex;align-items:center;gap:22px}.brand{display:flex;align-items:center;gap:10px;min-width:210px}.logo{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;font-weight:900;font-size:25px;background:linear-gradient(135deg,#806cff,#4f46e5);box-shadow:0 10px 28px #4f46e555}.brand b{font-size:22px}.tag{font-size:10px;color:#bfc6dc;margin-top:2px}.topnav{display:flex;gap:5px;flex:1;justify-content:center}.topnav button{background:transparent;color:#dce2f2;padding:11px 12px;border-radius:12px}.topnav button:hover,.topnav button.active{background:#ffffff12;color:#fff}.userbox{display:flex;align-items:center;gap:9px}.avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#ddd8ff,#fff);color:#5b4be7;font-weight:900}.usertext{font-size:12px;text-align:right}.usertext strong{display:block}.usertext span{color:#aeb7cf}
+.layout{display:grid;grid-template-columns:220px 1fr;gap:22px}.side{background:linear-gradient(180deg,#0c1530,#121d40);border-radius:24px;color:#fff;padding:16px;height:max-content;position:sticky;top:96px}.side button{width:100%;text-align:right;background:transparent;color:#cbd3e8;padding:13px 14px;border-radius:13px;margin:2px 0}.side button:hover,.side button.active{background:#6b5cff;color:#fff}.side .sep{height:1px;background:#ffffff15;margin:14px 3px}.side .promo{margin-top:20px;padding:16px;border:1px solid #ffffff1a;border-radius:18px;background:linear-gradient(135deg,#ffffff0c,#ffffff03)}
+.main{min-width:0}.hero{border-radius:26px;min-height:280px;padding:34px;position:relative;overflow:hidden;color:#fff;background:linear-gradient(135deg,#101a3a,#4135a5 55%,#7656e8);box-shadow:0 24px 60px #4437a833}.hero:after{content:"S";position:absolute;left:25px;bottom:-75px;font-size:300px;line-height:1;font-weight:900;color:#ffffff0a}.hero>*{position:relative;z-index:1}.pill{display:inline-block;padding:7px 12px;border:1px solid #ffffff25;background:#ffffff14;border-radius:999px;font-size:11px}.hero h1{font-size:38px;margin:18px 0 10px;line-height:1.45}.hero p{max-width:690px;color:#e8e9fb;line-height:2;font-size:14px}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}.primary,.secondary,.danger,.ghost{padding:11px 17px;border-radius:12px;font-weight:700}.primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;box-shadow:0 8px 20px #6657ff35}.secondary{background:#eef0f8;color:#29324a}.danger{background:#feecec;color:#c62828}.ghost{background:#ffffff12;color:#fff;border:1px solid #ffffff25}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin:18px 0}.stat{background:var(--card);border:1px solid var(--line);border-radius:19px;padding:19px;box-shadow:var(--shadow)}.stat .ico{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:#efedff;font-size:21px}.stat small{display:block;color:var(--muted);margin:13px 0 7px}.stat strong{font-size:23px}.green{color:#079669}.gold{color:#c77a00}
+.grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:18px}.card{background:#fff;border:1px solid var(--line);border-radius:21px;padding:22px;box-shadow:var(--shadow);margin-bottom:18px}.card h2{font-size:18px;margin:0 0 14px}.cardhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}.link{color:#5b4be7;cursor:pointer;font-size:12px;font-weight:700}.projectgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.project{border:1px solid var(--line);border-radius:17px;padding:16px;background:linear-gradient(180deg,#fff,#fafaff)}.project h3{font-size:15px;margin:0 0 8px}.project p{font-size:12px;line-height:1.9;color:var(--muted)}.badges{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0}.badge{padding:5px 8px;border-radius:999px;background:#f0efff;color:#5146c9;font-size:10px}.badge.greenb{background:#eafbf4;color:#07835d}.badge.orange{background:#fff6e8;color:#a86200}
+.tx{display:flex;align-items:center;gap:10px;padding:13px 0;border-bottom:1px solid #eef0f5}.tx:last-child{border-bottom:0}.txicon{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:#f0efff}.tx .desc{flex:1;font-size:12px}.tx .desc small{display:block;color:#9aa2b5;margin-top:3px}.amt{font-weight:800;font-size:12px}.credit{color:#079669}.debit{color:#d64545}
+.reward{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:15px;margin-bottom:9px}.reward .ricon{width:38px;height:38px;border-radius:12px;background:#fff5dc;display:grid;place-items:center}.reward .rbody{flex:1}.reward b{font-size:12px}.reward small{display:block;color:var(--muted);margin-top:4px}.progress{height:8px;border-radius:99px;background:#edf0f6;overflow:hidden}.progress>i{display:block;height:100%;background:linear-gradient(90deg,#6657ff,#a56bff);border-radius:99px}
+label{display:block;font-size:12px;font-weight:700;margin:11px 0 5px}input,textarea,select{width:100%;padding:12px 13px;border:1px solid #dfe3ec;border-radius:12px;background:#fbfcff;color:var(--ink);outline:none}input:focus,textarea:focus,select:focus{border-color:#7669ff;box-shadow:0 0 0 4px #6657ff12}textarea{min-height:110px;resize:vertical}.notice,.error,.ok{padding:10px 12px;border-radius:11px;font-size:12px;margin:10px 0}.notice{background:#eef4ff;color:#31549c}.error{background:#fff0f0;color:#c62828}.ok{background:#eafbf4;color:#087443}.loading{text-align:center;padding:35px;color:var(--muted)}
+.profile{display:grid;grid-template-columns:1fr 280px;gap:18px}.profilecard{text-align:center}.bigavatar{width:88px;height:88px;border-radius:28px;margin:0 auto 12px;display:grid;place-items:center;font-size:35px;font-weight:900;color:#5b4be7;background:linear-gradient(135deg,#e9e6ff,#f9f8ff)}.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:18px}.mini div{background:#f7f8fc;border-radius:13px;padding:11px}.mini b{display:block;font-size:17px}.mini span{font-size:10px;color:var(--muted)}
+.footer{text-align:center;color:#8992a8;font-size:11px;padding:20px}.modal{position:fixed;inset:0;background:#0b102b99;display:grid;place-items:center;padding:20px;z-index:50}.modalbox{width:min(480px,100%);background:#fff;border-radius:22px;padding:22px;box-shadow:0 30px 80px #0003}
+@media(max-width:1050px){.layout{grid-template-columns:1fr}.side{position:static;display:flex;overflow:auto;gap:5px}.side button{white-space:nowrap;width:auto}.side .sep,.side .promo{display:none}.projectgrid{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr}.grid2,.profile{grid-template-columns:1fr}}
+@media(max-width:700px){.topin{padding:9px 12px}.topnav{display:none}.brand{min-width:0}.usertext{display:none}.container{padding:12px}.hero{padding:25px 21px}.hero h1{font-size:28px}.stats{grid-template-columns:1fr 1fr;gap:9px}.stat{padding:14px}.stat strong{font-size:18px}.projectgrid{grid-template-columns:1fr}.side{border-radius:17px}.side button{padding:10px}.mini{grid-template-columns:1fr 1fr}}
 </style>
 </head>
-
 <body>
 
 <header class="top">
-<div class="topin">
-<div class="brand">
-<div class="logo">S</div>
-<div>
-<b>Skillora</b>
-<div class="tag">Skill • Project • Opportunity</div>
-</div>
-</div>
+  <div class="topin">
+    <div class="brand">
+      <div class="logo">S</div>
+      <div>
+        <b>Skillora</b>
+        <div class="tag">Skill • Project • Opportunity</div>
+      </div>
+    </div>
 
-<div class="topnav">
-<button onclick="showPage('dashboard')">خانه</button>
-<button onclick="showPage('projects')">کشف پروژه‌ها</button>
-<button onclick="showPage('wallet')">کیف پول</button>
-<button onclick="showPage('rewards')">پاداش‌ها</button>
-</div>
+    <div class="topnav">
+      <button onclick="showPage('dashboard')">خانه</button>
+      <button onclick="showPage('projects')">کشف پروژه‌ها</button>
+      <button onclick="showPage('wallet')">کیف پول</button>
+      <button onclick="showPage('rewards')">پاداش‌ها</button>
+    </div>
 
-<div class="userbox">
-<div class="avatar" id="avatar">S</div>
-<div class="usertext">
-<strong id="userName">مهمان</strong>
-<span id="userRole">ورود / ثبت‌نام</span>
-</div>
-</div>
-</div>
+    <div class="userbox">
+      <div class="avatar" id="avatar">S</div>
+      <div class="usertext">
+        <strong id="userName">مهمان</strong>
+        <span id="userRole">ورود / ثبت‌نام</span>
+      </div>
+    </div>
+  </div>
 </header>
 
 <div class="container">
@@ -174,25 +56,53 @@ textarea{min-height:110px;resize:vertical}
 
 <aside class="side">
 
-<button id="navDashboard" onclick="showPage('dashboard')">🏠 داشبورد</button>
-<button id="navProjects" onclick="showPage('projects')">💼 پروژه‌ها</button>
-<button id="navCreate" class="hidden" onclick="showPage('create')">➕ ثبت پروژه</button>
-<button id="navApplications" onclick="showPage('applications')">📋 درخواست‌های من</button>
-<button id="navWallet" onclick="showPage('wallet')">💳 کیف پول</button>
-<button id="navRewards" onclick="showPage('rewards')">🎁 پاداش‌ها</button>
-<button id="navProfile" onclick="showPage('profile')">👤 پروفایل</button>
+<button id="navDashboard" onclick="showPage('dashboard')">
+🏠 داشبورد
+</button>
+
+<button id="navProjects" onclick="showPage('projects')">
+💼 پروژه‌ها
+</button>
+
+<button id="navCreate" class="hidden" onclick="showPage('create')">
+➕ ثبت پروژه
+</button>
+
+<button id="navApplications" onclick="showPage('applications')">
+📋 درخواست‌های من
+</button>
+
+<button id="navWallet" onclick="showPage('wallet')">
+💳 کیف پول
+</button>
+
+<button id="navRewards" onclick="showPage('rewards')">
+🎁 پاداش‌ها
+</button>
+
+<button id="navProfile" onclick="showPage('profile')">
+👤 پروفایل
+</button>
 
 <div class="sep"></div>
 
-<button id="loginBtn" onclick="showPage('login')">ورود</button>
-<button id="registerBtn" onclick="showPage('register')">ثبت‌نام</button>
-<button id="logoutBtn" class="hidden" onclick="logout()">خروج</button>
+<button id="loginBtn" onclick="showPage('login')">
+ورود
+</button>
+
+<button id="registerBtn" onclick="showPage('register')">
+ثبت‌نام
+</button>
+
+<button id="logoutBtn" class="hidden" onclick="logout()">
+خروج
+</button>
 
 <div class="promo">
-<b>نسخه حرفه‌ای</b>
-<p class="muted" style="color:#aeb7cf">
-کیف پول، پرداخت پروژه، امتیاز و پاداش در یک داشبورد.
-</p>
+  <b>نسخه حرفه‌ای</b>
+  <p class="muted" style="color:#aeb7cf">
+    کیف پول، پرداخت پروژه، امتیاز و پاداش در یک داشبورد.
+  </p>
 </div>
 
 </aside>
@@ -204,15 +114,29 @@ textarea{min-height:110px;resize:vertical}
 <section id="page-dashboard">
 
 <div class="hero">
+
 <span class="pill">Skillora v15 Pro</span>
-<h1>مهارتت را به فرصت تبدیل کن</h1>
+
+<h1>
+مهارتت را به فرصت تبدیل کن
+</h1>
+
 <p>
 پروژه پیدا کن، همکاری بساز، درآمدت را مدیریت کن و برای فعالیت‌های موفق پاداش بگیر.
 </p>
 
 <div class="actions">
-<button class="primary" onclick="showPage('projects')">کشف پروژه‌ها</button>
-<button class="ghost" onclick="showPage('wallet')">مشاهده کیف پول</button>
+
+<button class="primary"
+onclick="showPage('projects')">
+کشف پروژه‌ها
+</button>
+
+<button class="ghost"
+onclick="showPage('wallet')">
+مشاهده کیف پول
+</button>
+
 </div>
 </div>
 
@@ -227,19 +151,25 @@ textarea{min-height:110px;resize:vertical}
 <div class="stat">
 <div class="ico">💰</div>
 <small>درآمد / اعتبار</small>
-<strong id="sIncome" class="green">۰ تومان</strong>
+<strong id="sIncome" class="green">
+۰ تومان
+</strong>
 </div>
 
 <div class="stat">
 <div class="ico">🎁</div>
 <small>امتیاز پاداش</small>
-<strong id="sRewards" class="gold">۰</strong>
+<strong id="sRewards" class="gold">
+۰
+</strong>
 </div>
 
 <div class="stat">
 <div class="ico">🚀</div>
 <small>پروژه‌های فعال</small>
-<strong id="sActive">۰</strong>
+<strong id="sActive">
+۰
+</strong>
 </div>
 
 </div>
@@ -247,19 +177,36 @@ textarea{min-height:110px;resize:vertical}
 <div class="grid2">
 
 <div class="card">
+
 <div class="cardhead">
 <h2>پروژه‌های پیشنهادی</h2>
-<span class="link" onclick="showPage('projects')">مشاهده همه</span>
+
+<span class="link"
+onclick="showPage('projects')">
+مشاهده همه
+</span>
+
 </div>
+
 <div id="dashProjects" class="projectgrid"></div>
+
 </div>
 
 <div class="card">
+
 <div class="cardhead">
+
 <h2>تراکنش‌های اخیر</h2>
-<span class="link" onclick="showPage('wallet')">کیف پول</span>
+
+<span class="link"
+onclick="showPage('wallet')">
+کیف پول
+</span>
+
 </div>
+
 <div id="dashTx"></div>
+
 </div>
 
 </div>
@@ -267,18 +214,38 @@ textarea{min-height:110px;resize:vertical}
 <div class="grid2">
 
 <div class="card">
+
 <div class="cardhead">
+
 <h2>پاداش‌های شما</h2>
-<span class="link" onclick="showPage('rewards')">جزئیات</span>
+
+<span class="link"
+onclick="showPage('rewards')">
+جزئیات
+</span>
+
 </div>
+
 <div id="dashRewards"></div>
+
 </div>
 
 <div class="card">
+
 <h2>امنیت و اعتماد</h2>
-<div class="notice">✓ حساب کاربری فعال</div>
-<div class="notice">✓ پرداخت داخلی ثبت‌شده در کیف پول</div>
-<div class="notice">✓ سابقه پروژه و درخواست‌ها قابل مشاهده</div>
+
+<div class="notice">
+✓ حساب کاربری فعال
+</div>
+
+<div class="notice">
+✓ پرداخت داخلی ثبت‌شده در کیف پول
+</div>
+
+<div class="notice">
+✓ سابقه پروژه و درخواست‌ها قابل مشاهده
+</div>
+
 </div>
 
 </div>
@@ -293,10 +260,15 @@ textarea{min-height:110px;resize:vertical}
 
 <div>
 <h2>کشف پروژه‌ها</h2>
-<p class="muted">پروژه مناسب مهارتت را پیدا کن و پیشنهاد بفرست.</p>
+
+<p class="muted">
+پروژه مناسب مهارتت را پیدا کن و پیشنهاد بفرست.
+</p>
 </div>
 
-<button id="createProjectTop" class="primary hidden" onclick="showPage('create')">
+<button id="createProjectTop"
+class="primary hidden"
+onclick="showPage('create')">
 ثبت پروژه
 </button>
 
@@ -323,14 +295,22 @@ textarea{min-height:110px;resize:vertical}
 <textarea id="pdesc" required></textarea>
 
 <label>دسته‌بندی</label>
-<input id="pcat" placeholder="مثلاً طراحی، برنامه‌نویسی، محتوا">
+<input
+id="pcat"
+placeholder="مثلاً طراحی، برنامه‌نویسی، محتوا">
 
 <label>بودجه (تومان)</label>
-<input id="pbudget" type="number" min="0" required>
+<input
+id="pbudget"
+type="number"
+min="0"
+required>
 
 <div id="createMsg"></div>
 
-<button class="primary">انتشار پروژه</button>
+<button class="primary">
+انتشار پروژه
+</button>
 
 </form>
 
@@ -360,7 +340,8 @@ textarea{min-height:110px;resize:vertical}
 
 <div>
 
-<div class="card" style="background:linear-gradient(135deg,#10183b,#5140ca);color:#fff">
+<div class="card"
+style="background:linear-gradient(135deg,#10183b,#5140ca);color:#fff">
 
 <small style="color:#cbd2e8">
 موجودی کیف پول Skillora
@@ -377,11 +358,13 @@ style="font-size:35px;font-weight:900;margin:15px 0">
 
 <div class="actions">
 
-<button class="primary" onclick="openDeposit()">
+<button class="primary"
+onclick="openDeposit()">
 شارژ آزمایشی
 </button>
 
-<button class="ghost" onclick="openWithdraw()">
+<button class="ghost"
+onclick="openWithdraw()">
 برداشت
 </button>
 
@@ -423,14 +406,22 @@ style="font-size:35px;font-weight:900;margin:15px 0">
 
 <h2>مرکز پاداش‌ها</h2>
 
-<div class="stat" style="margin-bottom:15px">
+<div class="stat"
+style="margin-bottom:15px">
 
 <small>امتیاز کل</small>
 
-<strong id="rewardTotal">۰</strong>
+<strong id="rewardTotal">
+۰
+</strong>
 
-<div class="progress" style="margin-top:12px">
-<i id="rewardBar" style="width:12%"></i>
+<div class="progress"
+style="margin-top:12px">
+
+<i id="rewardBar"
+style="width:12%">
+</i>
+
 </div>
 
 </div>
@@ -444,30 +435,57 @@ style="font-size:35px;font-weight:900;margin:15px 0">
 <h2>قوانین پاداش</h2>
 
 <div class="reward">
+
 <div class="ricon">👤</div>
+
 <div class="rbody">
+
 <b>تکمیل پروفایل</b>
-<small>نام، درباره من و مهارت‌ها را کامل کن.</small>
+
+<small>
+نام، درباره من و مهارت‌ها را کامل کن.
+</small>
+
 </div>
+
 <strong>+100</strong>
+
 </div>
 
 <div class="reward">
+
 <div class="ricon">🚀</div>
+
 <div class="rbody">
+
 <b>اولین درخواست</b>
-<small>اولین پیشنهاد همکاری را ارسال کن.</small>
+
+<small>
+اولین پیشنهاد همکاری را ارسال کن.
+</small>
+
 </div>
+
 <strong>+75</strong>
+
 </div>
 
 <div class="reward">
+
 <div class="ricon">🏆</div>
+
 <div class="rbody">
+
 <b>اولین پروژه موفق</b>
-<small>یک پروژه را با موفقیت به پایان برسان.</small>
+
+<small>
+یک پروژه را با موفقیت به پایان برسان.
+</small>
+
 </div>
+
 <strong>+200</strong>
+
 </div>
 
 </div>
@@ -493,7 +511,10 @@ style="font-size:35px;font-weight:900;margin:15px 0">
 <textarea id="pbio"></textarea>
 
 <label>مهارت‌ها</label>
-<input id="pskills" placeholder="مثلاً JavaScript, طراحی UI, تولید محتوا">
+
+<input
+id="pskills"
+placeholder="مثلاً JavaScript, طراحی UI, تولید محتوا">
 
 <div id="profileMsg"></div>
 
@@ -507,11 +528,19 @@ style="font-size:35px;font-weight:900;margin:15px 0">
 
 <div class="card profilecard">
 
-<div class="bigavatar" id="bigAvatar">S</div>
+<div class="bigavatar"
+id="bigAvatar">
+S
+</div>
 
-<h2 id="profileName">مهمان</h2>
+<h2 id="profileName">
+مهمان
+</h2>
 
-<p class="muted" id="profileRole">—</p>
+<p class="muted"
+id="profileRole">
+—
+</p>
 
 <div class="mini">
 
@@ -540,7 +569,8 @@ style="font-size:35px;font-weight:900;margin:15px 0">
 
 <section id="page-login" class="hidden">
 
-<div class="card" style="max-width:520px;margin:auto">
+<div class="card"
+style="max-width:520px;margin:auto">
 
 <h2>ورود به Skillora</h2>
 
@@ -566,7 +596,8 @@ style="font-size:35px;font-weight:900;margin:15px 0">
 
 <section id="page-register" class="hidden">
 
-<div class="card" style="max-width:520px;margin:auto">
+<div class="card"
+style="max-width:520px;margin:auto">
 
 <h2>ساخت حساب Skillora</h2>
 
@@ -576,16 +607,33 @@ style="font-size:35px;font-weight:900;margin:15px 0">
 <input id="rname" required>
 
 <label>شماره موبایل</label>
-<input id="rphone" type="tel" placeholder="+989121234567" required>
+
+<input
+id="rphone"
+type="tel"
+placeholder="+989121234567"
+required>
 
 <label>رمز عبور</label>
-<input id="rpass" type="password" minlength="8" required>
+
+<input
+id="rpass"
+type="password"
+minlength="8"
+required>
 
 <label>نوع حساب</label>
 
 <select id="rrole">
-<option value="freelancer">فریلنسر</option>
-<option value="client">کارفرما</option>
+
+<option value="freelancer">
+فریلنسر
+</option>
+
+<option value="client">
+کارفرما
+</option>
+
 </select>
 
 <div id="registerMsg"></div>
@@ -614,19 +662,29 @@ Skillora v15 Pro — اتصال مهارت، پروژه و فرصت
 
 <div class="cardhead">
 
-<h2 id="modalTitle">عملیات</h2>
+<h2 id="modalTitle">
+عملیات
+</h2>
 
-<button class="secondary" onclick="closeModal()">
+<button
+class="secondary"
+onclick="closeModal()">
 بستن
 </button>
 
 </div>
 
-<input id="modalAmount" type="number" min="1" placeholder="مبلغ به تومان">
+<input
+id="modalAmount"
+type="number"
+min="1"
+placeholder="مبلغ به تومان">
 
 <div id="modalMsg"></div>
 
-<button id="modalAction" class="primary">
+<button
+id="modalAction"
+class="primary">
 تأیید
 </button>
 
@@ -636,20 +694,34 @@ Skillora v15 Pro — اتصال مهارت، پروژه و فرصت
 
 <script>
 
-let currentUser=null,currentProject=null,currentModal=null;
+let currentUser=null,
+currentProject=null,
+currentModal=null;
 
-const pages=['dashboard','projects','create','applications','wallet','rewards','profile','login','register'];
+const pages=[
+'dashboard',
+'projects',
+'create',
+'applications',
+'wallet',
+'rewards',
+'profile',
+'login',
+'register'
+];
 
 const $=id=>document.getElementById(id);
 
-const money=n=>Number(n||0).toLocaleString('fa-IR')+' تومان';
+const money=n=>
+Number(n||0).toLocaleString('fa-IR')+' تومان';
 
-const esc=v=>String(v??'')
+const esc=v=>
+String(v??'')
 .replaceAll('&','&amp;')
 .replaceAll('<','&lt;')
 .replaceAll('>','&gt;')
 .replaceAll('"','&quot;')
-.replaceAll("'","&#039;");
+.replaceAll("'",'&#039;');
 
 async function api(url,opt={}){
 
@@ -671,7 +743,7 @@ d=await r.json()
 if(!r.ok)
 throw Error(d.error||'خطایی رخ داد.');
 
-return d
+return d;
 }
 
 function showPage(name){
@@ -681,21 +753,32 @@ pages.forEach(p=>{
 const e=$('page-'+p);
 
 if(e)
-e.classList.toggle('hidden',p!==name)
+e.classList.toggle('hidden',p!==name);
 
 });
 
-if(name==='dashboard')loadDashboard();
-if(name==='projects')loadProjects();
-if(name==='applications')loadApplications();
-if(name==='wallet')loadWallet();
-if(name==='rewards')loadRewards();
-if(name==='profile')loadProfile();
+if(name==='dashboard')
+loadDashboard();
+
+if(name==='projects')
+loadProjects();
+
+if(name==='applications')
+loadApplications();
+
+if(name==='wallet')
+loadWallet();
+
+if(name==='rewards')
+loadRewards();
+
+if(name==='profile')
+loadProfile();
 
 window.scrollTo({
 top:0,
 behavior:'smooth'
-})
+});
 
 }
 
@@ -706,11 +789,11 @@ const e=$(id);
 if(!e)return;
 
 e.className=text?
-(type==='ok'?'ok':type==='notice'?'notice':'error')
+(type==='ok'?'ok':
+type==='notice'?'notice':'error')
 :'';
 
-e.textContent=text
-
+e.textContent=text;
 }
 
 function updateUI(){
@@ -722,8 +805,8 @@ logged?currentUser.name:'مهمان';
 
 $('userRole').textContent=
 logged?
-(currentUser.role==='client'?'کارفرما':'فریلنسر')
-:'ورود / ثبت‌نام';
+(currentUser.role==='client'?'کارفرما':'فریلنسر'):
+'ورود / ثبت‌نام';
 
 $('avatar').textContent=
 logged?currentUser.name.slice(0,1):'S';
@@ -731,9 +814,20 @@ logged?currentUser.name.slice(0,1):'S';
 $('bigAvatar').textContent=
 logged?currentUser.name.slice(0,1):'S';
 
-$('loginBtn').classList.toggle('hidden',logged);
-$('registerBtn').classList.toggle('hidden',logged);
-$('logoutBtn').classList.toggle('hidden',!logged);
+$('loginBtn').classList.toggle(
+'hidden',
+logged
+);
+
+$('registerBtn').classList.toggle(
+'hidden',
+logged
+);
+
+$('logoutBtn').classList.toggle(
+'hidden',
+!logged
+);
 
 $('navCreate').classList.toggle(
 'hidden',
@@ -743,7 +837,7 @@ $('navCreate').classList.toggle(
 $('createProjectTop').classList.toggle(
 'hidden',
 !logged||currentUser.role!=='client'
-)
+);
 
 }
 
@@ -753,17 +847,17 @@ try{
 
 const d=await api('/api/me');
 
-currentUser=d.user
+currentUser=d.user;
 
 }catch{
 
-currentUser=null
+currentUser=null;
 
 }
 
 updateUI();
 
-showPage('dashboard')
+showPage('dashboard');
 
 }
 
@@ -775,13 +869,16 @@ msg('loginMsg','');
 
 try{
 
-const d=await api('/api/auth/login',{
+const d=await api(
+'/api/auth/login',
+{
 method:'POST',
 body:JSON.stringify({
 phone:$('lphone').value,
 password:$('lpass').value
 })
-});
+}
+);
 
 currentUser=d.user;
 
@@ -789,11 +886,11 @@ updateUI();
 
 toast('خوش آمدید','ok');
 
-showPage('dashboard')
+showPage('dashboard');
 
 }catch(x){
 
-msg('loginMsg',x.message)
+msg('loginMsg',x.message);
 
 }
 
@@ -807,7 +904,9 @@ msg('registerMsg','');
 
 try{
 
-const d=await api('/api/auth/register',{
+const d=await api(
+'/api/auth/register',
+{
 method:'POST',
 body:JSON.stringify({
 name:$('rname').value,
@@ -815,7 +914,8 @@ phone:$('rphone').value,
 password:$('rpass').value,
 role:$('rrole').value
 })
-});
+}
+);
 
 currentUser=d.user;
 
@@ -826,11 +926,11 @@ toast(
 'ok'
 );
 
-showPage('dashboard')
+showPage('dashboard');
 
 }catch(x){
 
-msg('registerMsg',x.message)
+msg('registerMsg',x.message);
 
 }
 
@@ -840,21 +940,25 @@ async function logout(){
 
 try{
 
-await api('/api/auth/logout',{
-method:'POST'
-});
+await api(
+'/api/auth/logout',
+{method:'POST'}
+);
 
 currentUser=null;
 
 updateUI();
 
-toast('از حساب خارج شدید','ok');
+toast(
+'از حساب خارج شدید',
+'ok'
+);
 
-showPage('dashboard')
+showPage('dashboard');
 
 }catch(x){
 
-toast(x.message)
+toast(x.message);
 
 }
 
@@ -867,7 +971,7 @@ msg('message',t,type);
 setTimeout(
 ()=>msg('message',''),
 3500
-)
+);
 
 }
 
@@ -878,7 +982,7 @@ if(!currentUser){
 $('dashProjects').innerHTML=
 '<div class="muted">برای استفاده از داشبورد وارد حساب شوید.</div>';
 
-return
+return;
 
 }
 
@@ -886,36 +990,47 @@ try{
 
 const d=await api('/api/dashboard');
 
-$('sWallet').textContent=money(d.stats.wallet);
+$('sWallet').textContent=
+money(d.stats.wallet);
 
-$('sIncome').textContent=money(d.stats.wallet);
+$('sIncome').textContent=
+money(d.stats.wallet);
 
 $('sRewards').textContent=
-Number(d.stats.rewards).toLocaleString('fa-IR');
+Number(d.stats.rewards)
+.toLocaleString('fa-IR');
 
 $('sActive').textContent=
-Number(d.stats.activeProjects).toLocaleString('fa-IR');
+Number(d.stats.activeProjects)
+.toLocaleString('fa-IR');
 
 const p=await api('/api/projects');
 
 $('dashProjects').innerHTML=
-p.projects.slice(0,3).map(projectCard).join('')
+p.projects
+.slice(0,3)
+.map(projectCard)
+.join('')
 ||
 '<div class="muted">پروژه‌ای نیست.</div>';
 
 $('dashTx').innerHTML=
-d.recent.map(txRow).join('')
+d.recent
+.map(txRow)
+.join('')
 ||
 '<div class="muted">تراکنشی ثبت نشده.</div>';
 
 $('dashRewards').innerHTML=
-d.claims.map(r=>rewardRow(r,false)).join('')
+d.claims
+.map(r=>rewardRow(r,false))
+.join('')
 ||
-'<div class="muted">هنوز پاداشی نگرفته‌اید.</div>'
+'<div class="muted">هنوز پاداشی نگرفته‌اید.</div>';
 
 }catch(x){
 
-toast(x.message)
+toast(x.message);
 
 }
 
@@ -923,7 +1038,8 @@ toast(x.message)
 
 function projectCard(p){
 
-return `<div class="project">
+return `
+<div class="project">
 
 <h3>${esc(p.title)}</h3>
 
@@ -941,22 +1057,28 @@ ${esc(p.category)}
 ${money(p.budget)}
 </span>
 
-<span class="badge ${p.status==='open'?'greenb':'orange'}">
+<span class="badge ${
+p.status==='open'?'greenb':'orange'
+}">
 ${statusText(p.status)}
 </span>
 
 </div>
 
-<button class="primary"
+<button
+class="primary"
 onclick="projectAction(${p.id})">
 
-${currentUser?.role==='freelancer'&&p.status==='open'
+${
+currentUser?.role==='freelancer'&&p.status==='open'
 ?'ارسال پیشنهاد'
-:'جزئیات'}
+:'جزئیات'
+}
 
 </button>
 
-</div>`
+</div>
+`;
 
 }
 
@@ -967,777 +1089,950 @@ open:'باز',
 in_progress:'در حال انجام',
 completed:'تکمیل شده',
 cancelled:'لغو شده'
-})[s]||s
+})[s]||s;
+function txRow(t){
+
+  const isCredit=t.type==='credit';
+
+  return `
+  <div class="tx">
+
+    <div class="txicon">
+      ${isCredit?'↗':'↙'}
+    </div>
+
+    <div class="desc">
+      <b>${esc(t.title)}</b>
+      <small>${esc(t.description||'')}</small>
+    </div>
+
+    <div class="amt ${isCredit?'credit':'debit'}">
+      ${isCredit?'+':'-'}${money(t.amount)}
+    </div>
+
+  </div>
+  `;
 
 }
+
+
+function rewardRow(r,showButton=true){
+
+  return `
+  <div class="reward">
+
+    <div class="ricon">🎁</div>
+
+    <div class="rbody">
+
+      <b>${esc(r.title)}</b>
+
+      <small>
+        ${Number(r.points).toLocaleString('fa-IR')} امتیاز
+      </small>
+
+    </div>
+
+    ${
+      showButton
+      ?
+      `<button class="secondary"
+        onclick="claimReward('${esc(r.code)}')">
+        دریافت
+      </button>`
+      :
+      `<strong class="gold">
+        +${Number(r.points).toLocaleString('fa-IR')}
+      </strong>`
+    }
+
+  </div>
+  `;
+
+}
+
 
 async function loadProjects(){
 
-if(!currentUser){
+  if(!currentUser){
 
-$('projectsList').innerHTML=
-'<div class="notice">برای مشاهده پروژه‌ها وارد حساب شوید.</div>';
+    $('projectsList').innerHTML=
+      '<div class="notice">ابتدا وارد حساب شوید.</div>';
 
-return
+    return;
 
-}
+  }
 
-try{
+  try{
 
-const d=await api('/api/projects');
+    const d=await api('/api/projects');
 
-$('projectsList').innerHTML=
+    if(!d.projects.length){
 
-d.projects.map(p=>`
+      $('projectsList').innerHTML=
+        '<div class="loading">هنوز پروژه‌ای ثبت نشده است.</div>';
 
-<div class="project" style="margin-bottom:12px">
+      return;
 
-<div class="cardhead">
+    }
 
-<div>
+    $('projectsList').innerHTML=`
+      <div class="projectgrid">
+        ${d.projects.map(projectCard).join('')}
+      </div>
+    `;
 
-<h3>${esc(p.title)}</h3>
+  }catch(x){
 
-<p class="muted">
-کارفرما: ${esc(p.clientName)}
-</p>
+    toast(x.message);
 
-</div>
-
-<span class="badge">
-${statusText(p.status)}
-</span>
-
-</div>
-
-<p>
-${esc(p.description)}
-</p>
-
-<div class="badges">
-
-<span class="badge">
-${esc(p.category)}
-</span>
-
-<span class="badge">
-بودجه: ${money(p.budget)}
-</span>
-
-${p.paid?
-'<span class="badge greenb">پرداخت شده</span>'
-:''}
-
-</div>
-
-<div class="actions">
-
-${currentUser.role==='freelancer'&&p.status==='open'?
-
-`<button class="primary"
-onclick="openApply(${p.id})">
-ارسال پیشنهاد
-</button>`:''}
-
-${currentUser.role==='client'&&p.clientId===currentUser.id?
-
-`<button class="secondary"
-onclick="viewApplications(${p.id})">
-مشاهده درخواست‌ها
-</button>`:''}
-
-${currentUser.role==='client'&&
-p.clientId===currentUser.id&&
-p.status==='in_progress'?
-
-`<button class="primary"
-onclick="payProject(${p.id})">
-پرداخت پروژه
-</button>`:''}
-
-</div>
-
-</div>
-
-`).join('')
-
-||
-
-'<div class="muted">
-پروژه‌ای ثبت نشده است.
-</div>'
-
-}catch(x){
-
-msg('message',x.message)
+  }
 
 }
 
-}
 
 async function projectAction(id){
 
-if(currentUser?.role==='freelancer')
-openApply(id);
-else
-showPage('projects')
+  currentProject=id;
+
+  try{
+
+    const d=await api('/api/projects');
+
+    const p=d.projects.find(x=>x.id===id);
+
+    if(!p)return;
+
+    if(
+      currentUser.role==='freelancer' &&
+      p.status==='open'
+    ){
+
+      openApply(p);
+
+      return;
+
+    }
+
+    showPage('applications');
+
+  }catch(x){
+
+    toast(x.message);
+
+  }
 
 }
 
-async function openApply(id){
 
-try{
+function openApply(project){
 
-const d=await api('/api/projects');
+  currentProject=project.id;
 
-currentProject=d.projects.find(
-x=>x.id===id
-);
+  $('modalTitle').textContent=
+    'ارسال پیشنهاد برای پروژه';
 
-if(!currentProject)return;
+  $('modal').classList.remove('hidden');
 
-const price=prompt(
-'مبلغ پیشنهادی (تومان):',
-currentProject.budget
-);
+  $('modalAmount').value=
+    project.budget;
 
-if(price===null)return;
+  $('modalMsg').innerHTML=`
+    <div class="notice">
+      پروژه: ${esc(project.title)}
+      <br>
+      بودجه: ${money(project.budget)}
+    </div>
 
-const text=prompt(
-'پیام کوتاه برای کارفرما:',
-'سلام، آماده همکاری روی این پروژه هستم.'
-);
+    <label>پیام شما</label>
 
-await api(
-'/api/projects/'+id+'/apply',
-{
-method:'POST',
-body:JSON.stringify({
-price:Number(price),
-message:text||''
-})
-}
-);
+    <textarea id="applyMessage"
+      placeholder="توضیح کوتاه درباره پیشنهاد شما"></textarea>
+  `;
 
-toast(
-'درخواست همکاری ارسال شد.',
-'ok'
-);
+  currentModal='apply';
 
-loadProjects();
-loadDashboard()
+  $('modalAction').textContent=
+    'ارسال پیشنهاد';
 
-}catch(x){
-
-toast(x.message)
+  $('modalAction').onclick=
+    submitApply;
 
 }
 
+
+async function submitApply(){
+
+  try{
+
+    const price=Number(
+      $('modalAmount').value
+    );
+
+    const message=
+      $('applyMessage')?.value||'';
+
+    await api(
+      `/api/projects/${currentProject}/apply`,
+      {
+        method:'POST',
+        body:JSON.stringify({
+          price,
+          message
+        })
+      }
+    );
+
+    closeModal();
+
+    toast(
+      'درخواست همکاری با موفقیت ارسال شد.',
+      'ok'
+    );
+
+    showPage('applications');
+
+  }catch(x){
+
+    msg('modalMsg',x.message);
+
+  }
+
 }
+
 
 async function loadApplications(){
 
-if(!currentUser){
+  if(!currentUser){
 
-$('applicationsList').innerHTML=
-'<div class="notice">ابتدا وارد حساب شوید.</div>';
+    $('applicationsList').innerHTML=
+      '<div class="notice">ابتدا وارد حساب شوید.</div>';
 
-return
+    return;
 
-}
+  }
 
-try{
+  try{
 
-const ps=await api('/api/projects');
+    const projects=
+      await api('/api/projects');
 
-let html='';
+    let html='';
 
-for(const p of ps.projects){
+    for(const p of projects.projects){
 
-if(
-currentUser.role==='client' &&
-p.clientId!==currentUser.id
-)continue;
+      const shouldShow=
+        currentUser.role==='client'
+        ?p.clientId===currentUser.id
+        :true;
 
-try{
+      if(!shouldShow)continue;
 
-const d=await api(
-'/api/projects/'+p.id+'/applications'
-);
+      try{
 
-if(d.applications.length){
+        const d=
+          await api(
+            `/api/projects/${p.id}/applications`
+          );
 
-html+=`
+        if(!d.applications.length)continue;
 
-<div class="card">
+        html+=`
+          <div class="card">
 
-<div class="cardhead">
+            <div class="cardhead">
 
-<h2>${esc(p.title)}</h2>
+              <div>
+                <h2>${esc(p.title)}</h2>
 
-<span class="badge">
-${statusText(p.status)}
-</span>
+                <span class="badge">
+                  ${statusText(p.status)}
+                </span>
+              </div>
 
-</div>
-`;
+              ${
+                currentUser.role==='client'
+                ?
+                `<span class="badge">
+                  بودجه ${money(p.budget)}
+                </span>`
+                :''
+              }
 
-html+=d.applications.map(a=>`
+            </div>
 
-<div class="reward">
+            ${d.applications.map(a=>applicationRow(p,a)).join('')}
 
-<div class="rbody">
+          </div>
+        `;
 
-<b>
-${esc(a.freelancerName)}
-</b>
+      }catch{}
 
-<small>
-${esc(a.message||'بدون پیام')}
-•
-پیشنهاد ${money(a.price)}
-</small>
+    }
 
-</div>
+    $('applicationsList').innerHTML=
+      html ||
+      '<div class="loading">درخواستی برای نمایش وجود ندارد.</div>';
 
-<span class="badge">
-${a.status}
-</span>
+  }catch(x){
 
-${currentUser.role==='client'&&a.status==='pending'?
+    toast(x.message);
 
-`<button class="primary"
-onclick="selectFreelancer(${p.id},${a.id},${a.freelancerId})">
-انتخاب
-</button>`
-:''}
-
-</div>
-
-`).join('');
-
-html+='</div>'
+  }
 
 }
 
-}catch{}
+
+function applicationRow(p,a){
+
+  const client=
+    currentUser.role==='client';
+
+  return `
+  <div class="tx">
+
+    <div class="avatar">
+      ${esc((a.freelancerName||'?').slice(0,1))}
+    </div>
+
+    <div class="desc">
+
+      <b>${esc(a.freelancerName||'فریلنسر')}</b>
+
+      <small>
+        پیشنهاد: ${money(a.price)}
+      </small>
+
+      <small>
+        ${esc(a.message||'بدون پیام')}
+      </small>
+
+      ${
+        a.skills
+        ?
+        `<small>مهارت‌ها: ${esc(a.skills)}</small>`
+        :''
+      }
+
+    </div>
+
+    <div>
+
+      <span class="badge ${
+        a.status==='accepted'
+        ?'greenb'
+        :''
+      }">
+
+        ${
+          a.status==='accepted'
+          ?'انتخاب شده'
+          :a.status==='rejected'
+          ?'رد شده'
+          :'در انتظار'
+        }
+
+      </span>
+
+      ${
+        client &&
+        p.status==='open' &&
+        a.status==='pending'
+        ?
+        `
+        <button
+          class="primary"
+          style="margin-top:7px"
+          onclick="selectFreelancer(
+            ${p.id},
+            ${a.freelancerId},
+            ${a.id}
+          )">
+          انتخاب
+        </button>
+        `
+        :''
+      }
+
+    </div>
+
+  </div>
+  `;
 
 }
 
-$('applicationsList').innerHTML=
-html||
-'<div class="muted">درخواستی وجود ندارد.</div>'
 
-}catch(x){
+async function selectFreelancer(
+  projectId,
+  freelancerId,
+  applicationId
+){
 
-msg('message',x.message)
+  if(
+    !confirm(
+      'این فریلنسر برای پروژه انتخاب شود؟'
+    )
+  )return;
 
-}
+  try{
 
-}
+    await api(
+      `/api/projects/${projectId}/select-freelancer`,
+      {
+        method:'POST',
+        body:JSON.stringify({
+          freelancerId,
+          applicationId
+        })
+      }
+    );
 
-async function selectFreelancer(pid,aid,fid){
+    toast(
+      'فریلنسر انتخاب شد.',
+      'ok'
+    );
 
-try{
+    loadApplications();
 
-await api(
-'/api/projects/'+pid+'/select-freelancer',
-{
-method:'POST',
-body:JSON.stringify({
-applicationId:aid,
-freelancerId:fid
-})
-}
-);
+  }catch(x){
 
-toast(
-'فریلنسر انتخاب شد. اکنون پروژه آماده پرداخت است.',
-'ok'
-);
+    toast(x.message);
 
-loadApplications();
-loadProjects()
-
-}catch(x){
-
-toast(x.message)
-
-}
+  }
 
 }
 
-async function payProject(id){
-
-if(!confirm(
-'پرداخت مبلغ پروژه از کیف پول داخلی انجام شود؟'
-))return;
-
-try{
-
-const d=await api(
-'/api/projects/'+id+'/pay',
-{
-method:'POST'
-}
-);
-
-toast(d.message,'ok');
-
-loadProjects();
-loadDashboard();
-loadWallet()
-
-}catch(x){
-
-toast(x.message)
-
-}
-
-}
-
-$('createForm').addEventListener(
-'submit',
-async e=>{
-
-e.preventDefault();
-
-msg('createMsg','');
-
-try{
-
-await api('/api/projects',{
-method:'POST',
-body:JSON.stringify({
-title:$('ptitle').value,
-description:$('pdesc').value,
-category:$('pcat').value,
-budget:Number($('pbudget').value)
-})
-});
-
-e.target.reset();
-
-msg(
-'createMsg',
-'پروژه با موفقیت منتشر شد.',
-'ok'
-);
-
-loadProjects()
-
-}catch(x){
-
-msg('createMsg',x.message)
-
-}
-
-});
 
 async function loadWallet(){
 
-if(!currentUser)return;
+  if(!currentUser)return;
 
-try{
+  try{
 
-const d=await api('/api/wallet');
+    const d=
+      await api('/api/wallet');
 
-$('walletBalance').textContent=
-money(d.balance);
+    $('walletBalance').textContent=
+      money(d.balance);
 
-$('walletTx').innerHTML=
-d.transactions.map(txRow).join('')
-||
-'<div class="muted">تراکنشی ثبت نشده.</div>';
+    $('walletTx').innerHTML=
+      d.transactions.map(txRow).join('')
+      ||
+      '<div class="muted">هنوز تراکنشی ثبت نشده است.</div>';
 
-const ps=await api('/api/projects');
+    const projects=
+      await api('/api/projects');
 
-const payable=ps.projects.filter(
-p=>
-currentUser.role==='client' &&
-p.clientId===currentUser.id &&
-p.status==='in_progress' &&
-!p.paid
-);
+    const payable=
+      projects.projects.filter(
+        p=>
+          p.clientId===currentUser.id &&
+          p.status==='in_progress' &&
+          !p.paid
+      );
 
-$('payProjects').innerHTML=
+    $('payProjects').innerHTML=
+      payable.map(p=>`
 
-payable.map(p=>`
+        <div class="reward">
 
-<div class="reward">
+          <div class="ricon">💼</div>
 
-<div class="rbody">
+          <div class="rbody">
 
-<b>${esc(p.title)}</b>
+            <b>${esc(p.title)}</b>
 
-<small>${money(p.budget)}</small>
+            <small>
+              مبلغ پرداخت: ${money(p.budget)}
+            </small>
 
-</div>
+          </div>
 
-<button class="primary"
-onclick="payProject(${p.id})">
-پرداخت
-</button>
+          <button
+            class="primary"
+            onclick="payProject(${p.id})">
+            پرداخت
+          </button>
 
-</div>
+        </div>
 
-`).join('')
+      `).join('')
+      ||
+      '<div class="muted">پروژه‌ای برای پرداخت وجود ندارد.</div>';
 
-||
+  }catch(x){
 
-'<div class="muted">
-پروژه آماده پرداختی ندارید.
-</div>'
+    toast(x.message);
 
-}catch(x){
-
-toast(x.message)
-
-}
-
-}
-
-function txRow(t){
-
-return `<div class="tx">
-
-<div class="txicon">
-${t.type==='credit'?'↗':'↘'}
-</div>
-
-<div class="desc">
-
-<b>${esc(t.title)}</b>
-
-<small>
-${esc(t.description||'')}
-</small>
-
-</div>
-
-<div class="amt ${t.type==='credit'?'credit':'debit'}">
-
-${t.type==='credit'?'+':'-'}
-${money(t.amount)}
-
-</div>
-
-</div>`
+  }
 
 }
+
 
 function openDeposit(){
 
-openModal(
-'شارژ آزمایشی کیف پول',
-'deposit'
-)
+  $('modal').classList.remove('hidden');
+
+  $('modalTitle').textContent=
+    'شارژ آزمایشی کیف پول';
+
+  $('modalMsg').innerHTML=`
+    <div class="notice">
+      این گزینه فقط برای تست سیستم داخلی Skillora است.
+    </div>
+  `;
+
+  $('modalAmount').value=100000;
+
+  $('modalAction').textContent=
+    'شارژ کیف پول';
+
+  $('modalAction').onclick=
+    async()=>{
+
+      try{
+
+        const amount=
+          Number($('modalAmount').value);
+
+        await api(
+          '/api/wallet/demo-deposit',
+          {
+            method:'POST',
+            body:JSON.stringify({amount})
+          }
+        );
+
+        closeModal();
+
+        toast(
+          'کیف پول شارژ شد.',
+          'ok'
+        );
+
+        loadWallet();
+        loadDashboard();
+
+      }catch(x){
+
+        msg('modalMsg',x.message);
+
+      }
+
+    };
 
 }
+
 
 function openWithdraw(){
 
-openModal(
-'برداشت از کیف پول',
-'withdraw'
-)
+  $('modal').classList.remove('hidden');
+
+  $('modalTitle').textContent=
+    'برداشت از کیف پول';
+
+  $('modalMsg').innerHTML=`
+    <div class="notice">
+      برداشت در این نسخه به‌صورت داخلی و آزمایشی ثبت می‌شود.
+    </div>
+  `;
+
+  $('modalAmount').value='';
+
+  $('modalAction').textContent=
+    'ثبت برداشت';
+
+  $('modalAction').onclick=
+    async()=>{
+
+      try{
+
+        const amount=
+          Number($('modalAmount').value);
+
+        await api(
+          '/api/wallet/withdraw',
+          {
+            method:'POST',
+            body:JSON.stringify({amount})
+          }
+        );
+
+        closeModal();
+
+        toast(
+          'برداشت ثبت شد.',
+          'ok'
+        );
+
+        loadWallet();
+        loadDashboard();
+
+      }catch(x){
+
+        msg('modalMsg',x.message);
+
+      }
+
+    };
 
 }
 
-function openModal(title,mode){
 
-currentModal=mode;
+async function payProject(id){
 
-$('modalTitle').textContent=title;
+  if(
+    !confirm(
+      'مبلغ پروژه از کیف پول شما کسر و به کیف پول فریلنسر منتقل شود؟'
+    )
+  )return;
 
-$('modalAmount').value='';
+  try{
 
-$('modalMsg').textContent='';
+    await api(
+      `/api/projects/${id}/pay`,
+      {
+        method:'POST'
+      }
+    );
 
-$('modalAction').textContent=
-mode==='deposit'?'شارژ':'برداشت';
+    toast(
+      'پرداخت پروژه با موفقیت انجام شد.',
+      'ok'
+    );
 
-$('modalAction').onclick=async()=>{
+    loadWallet();
+    loadDashboard();
 
-const amount=Number(
-$('modalAmount').value
-);
+  }catch(x){
 
-try{
+    toast(x.message);
 
-const d=await api(
-'/api/wallet/'+
-(mode==='deposit'?'demo-deposit':'withdraw'),
-{
-method:'POST',
-body:JSON.stringify({amount})
-}
-);
-
-closeModal();
-
-toast(
-mode==='deposit'
-?'کیف پول شارژ شد.'
-:'درخواست برداشت ثبت شد.',
-'ok'
-);
-
-loadWallet();
-loadDashboard()
-
-}catch(x){
-
-msg('modalMsg',x.message)
+  }
 
 }
 
-};
-
-$('modal').classList.remove('hidden')
-
-}
-
-function closeModal(){
-
-$('modal').classList.add('hidden')
-
-}
 
 async function loadRewards(){
 
-if(!currentUser)return;
+  if(!currentUser)return;
 
-try{
+  try{
 
-const d=await api('/api/dashboard');
+    const d=
+      await api('/api/dashboard');
 
-$('rewardTotal').textContent=
-Number(d.stats.rewards).toLocaleString('fa-IR');
+    $('rewardTotal').textContent=
+      Number(d.stats.rewards)
+      .toLocaleString('fa-IR');
 
-$('rewardBar').style.width=
-Math.min(100,(d.stats.rewards%1000)/10)+'%';
+    const percent=
+      Math.min(
+        100,
+        Math.max(
+          8,
+          Number(d.stats.rewards)/10
+        )
+      );
 
-const rules=[
+    $('rewardBar').style.width=
+      percent+'%';
 
-[
-'profile',
-'تکمیل پروفایل',
-'نام، درباره من و مهارت‌ها را کامل کنید.',
-100
-],
+    const claims=
+      new Set(
+        d.claims.map(x=>x.code)
+      );
 
-[
-'first-application',
-'اولین درخواست همکاری',
-'اولین پیشنهاد خود را ارسال کنید.',
-75
-],
+    const rewards=[
 
-[
-'first-project',
-'اولین پروژه موفق',
-'یک پروژه را با موفقیت به پایان برسانید.',
-200
-]
+      {
+        code:'profile',
+        title:'تکمیل پروفایل',
+        points:100,
+        icon:'👤',
+        desc:'اطلاعات حرفه‌ای خود را کامل کنید.'
+      },
 
-];
+      {
+        code:'first-application',
+        title:'اولین درخواست همکاری',
+        points:75,
+        icon:'🚀',
+        desc:'اولین پیشنهاد خود را ارسال کنید.'
+      },
 
-const claimed=
-new Set(
-d.claims.map(x=>x.code)
-);
+      {
+        code:'first-project',
+        title:'اولین پروژه موفق',
+        points:200,
+        icon:'🏆',
+        desc:'اولین پروژه موفق خود را تکمیل کنید.'
+      }
 
-$('rewardList').innerHTML=
+    ];
 
-rules.map(r=>`
+    $('rewardList').innerHTML=
+      rewards.map(r=>`
 
-<div class="reward">
+      <div class="reward">
 
-<div class="ricon">🎁</div>
+        <div class="ricon">
+          ${r.icon}
+        </div>
 
-<div class="rbody">
+        <div class="rbody">
 
-<b>${r[1]}</b>
+          <b>${r.title}</b>
 
-<small>${r[2]}</small>
+          <small>${r.desc}</small>
 
-</div>
+        </div>
 
-<strong>+${r[3]}</strong>
+        ${
+          claims.has(r.code)
+          ?
+          `<span class="badge greenb">دریافت شد</span>`
+          :
+          `<button
+            class="secondary"
+            onclick="claimReward('${r.code}')">
+            +${r.points}
+          </button>`
+        }
 
-${claimed.has(r[0])?
+      </div>
 
-'<span class="badge greenb">دریافت شد</span>'
+      `).join('');
 
-:
+  }catch(x){
 
-`<button class="secondary"
-onclick="claimReward('${r[0]}')">
-دریافت
-</button>`
+    toast(x.message);
 
-}
-
-</div>
-
-`).join('')
-
-}catch(x){
-
-toast(x.message)
-
-}
-
-}
-
-function rewardRow(r){
-
-return `<div class="reward">
-
-<div class="ricon">⭐</div>
-
-<div class="rbody">
-
-<b>${esc(r.title)}</b>
-
-<small>${esc(r.createdAt||'')}</small>
-
-</div>
-
-<strong>+${r.points}</strong>
-
-</div>`
+  }
 
 }
+
 
 async function claimReward(code){
 
-try{
+  try{
 
-await api(
-'/api/rewards/claim',
-{
-method:'POST',
-body:JSON.stringify({code})
+    const d=
+      await api(
+        '/api/rewards/claim',
+        {
+          method:'POST',
+          body:JSON.stringify({code})
+        }
+      );
+
+    toast(
+      `پاداش دریافت شد: +${d.points} امتیاز`,
+      'ok'
+    );
+
+    loadRewards();
+    loadDashboard();
+
+  }catch(x){
+
+    toast(x.message);
+
+  }
+
 }
-);
 
-toast(
-'پاداش با موفقیت اضافه شد.',
-'ok'
-);
-
-loadRewards();
-loadDashboard()
-
-}catch(x){
-
-toast(x.message)
-
-}
-
-}
 
 async function loadProfile(){
 
-if(!currentUser)return;
+  if(!currentUser)return;
 
-try{
+  try{
 
-const d=await api('/api/me');
+    const d=
+      await api('/api/me');
 
-currentUser=d.user;
+    currentUser=d.user;
 
-updateUI();
+    $('pname').value=
+      currentUser.name||'';
 
-$('pname').value=
-currentUser.name||'';
+    $('pbio').value=
+      currentUser.bio||'';
 
-$('pbio').value=
-currentUser.bio||'';
+    $('pskills').value=
+      currentUser.skills||'';
 
-$('pskills').value=
-currentUser.skills||'';
+    $('profileName').textContent=
+      currentUser.name;
 
-$('profileName').textContent=
-currentUser.name;
+    $('profileRole').textContent=
+      currentUser.role==='client'
+      ?'کارفرما'
+      :'فریلنسر';
 
-$('profileRole').textContent=
-currentUser.role==='client'
-?'کارفرما'
-:'فریلنسر';
+    $('profileRating').textContent=
+      currentUser.rating||0;
 
-$('profileRating').textContent=
-currentUser.rating||0;
+    $('profileRewards').textContent=
+      '—';
 
-const dash=
-await api('/api/dashboard');
+    $('profileProjects').textContent=
+      '—';
 
-$('profileRewards').textContent=
-dash.stats.rewards;
+    $('bigAvatar').textContent=
+      currentUser.name.slice(0,1);
 
-$('profileProjects').textContent=
-dash.stats.completed
+  }catch(x){
 
-}catch(x){
+    toast(x.message);
 
-toast(x.message)
-
-}
-
-}
-
-$('profileForm').addEventListener(
-'submit',
-async e=>{
-
-e.preventDefault();
-
-try{
-
-const d=await api(
-'/api/me',
-{
-method:'PATCH',
-body:JSON.stringify({
-name:$('pname').value,
-bio:$('pbio').value,
-skills:$('pskills').value
-})
-}
-);
-
-currentUser=d.user;
-
-updateUI();
-
-msg(
-'profileMsg',
-'پروفایل ذخیره شد. حالا می‌توانید پاداش تکمیل پروفایل را دریافت کنید.',
-'ok'
-)
-
-}catch(x){
-
-msg(
-'profileMsg',
-x.message
-)
+  }
 
 }
 
-});
 
 $('loginForm').addEventListener(
-'submit',
-login
+  'submit',
+  login
 );
 
+
 $('registerForm').addEventListener(
-'submit',
-register
+  'submit',
+  register
 );
+
+
+$('createForm').addEventListener(
+  'submit',
+  async e=>{
+
+    e.preventDefault();
+
+    msg('createMsg','');
+
+    try{
+
+      await api(
+        '/api/projects',
+        {
+          method:'POST',
+          body:JSON.stringify({
+
+            title:$('ptitle').value,
+
+            description:$('pdesc').value,
+
+            category:$('pcat').value,
+
+            budget:Number(
+              $('pbudget').value
+            )
+
+          })
+        }
+      );
+
+      e.target.reset();
+
+      msg(
+        'createMsg',
+        'پروژه با موفقیت منتشر شد.',
+        'ok'
+      );
+
+      setTimeout(
+        ()=>showPage('projects'),
+        800
+      );
+
+    }catch(x){
+
+      msg(
+        'createMsg',
+        x.message
+      );
+
+    }
+
+  }
+);
+
+
+$('profileForm').addEventListener(
+  'submit',
+  async e=>{
+
+    e.preventDefault();
+
+    msg('profileMsg','');
+
+    try{
+
+      const d=
+        await api(
+          '/api/me',
+          {
+            method:'PATCH',
+            body:JSON.stringify({
+
+              name:$('pname').value,
+
+              bio:$('pbio').value,
+
+              skills:$('pskills').value
+
+            })
+          }
+        );
+
+      currentUser=d.user;
+
+      updateUI();
+
+      msg(
+        'profileMsg',
+        'پروفایل با موفقیت ذخیره شد.',
+        'ok'
+      );
+
+    }catch(x){
+
+      msg(
+        'profileMsg',
+        x.message
+      );
+
+    }
+
+  }
+);
+
+
+function closeModal(){
+
+  $('modal').classList.add('hidden');
+
+  $('modalMsg').innerHTML='';
+
+  $('modalAmount').value='';
+
+  currentModal=null;
+
+}
+
+
+$('modal').addEventListener(
+  'click',
+  e=>{
+
+    if(e.target.id==='modal')
+      closeModal();
+
+  }
+);
+
 
 check();
 
@@ -1745,3 +2040,5 @@ check();
 
 </body>
 </html>
+}
+  
