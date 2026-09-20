@@ -39,29 +39,13 @@ CREATE TABLE IF NOT EXISTS applications (
   FOREIGN KEY(freelancer_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_projects_status
-ON projects(status);
-
-CREATE INDEX IF NOT EXISTS idx_applications_project
-ON applications(project_id);
-
-CREATE INDEX IF NOT EXISTS idx_applications_freelancer
-ON applications(freelancer_id);
-
-
-/* کیف پول */
-
 CREATE TABLE IF NOT EXISTS wallets (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL UNIQUE,
   balance INTEGER NOT NULL DEFAULT 0 CHECK(balance >= 0),
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
-
-
-/* تراکنش‌های کیف پول */
 
 CREATE TABLE IF NOT EXISTS wallet_transactions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -70,17 +54,11 @@ CREATE TABLE IF NOT EXISTS wallet_transactions (
   amount INTEGER NOT NULL CHECK(amount > 0),
   title TEXT NOT NULL,
   description TEXT NOT NULL DEFAULT '',
-  reference_type TEXT,
-  reference_id INTEGER,
+  project_id INTEGER,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE SET NULL
 );
-
-CREATE INDEX IF NOT EXISTS idx_wallet_transactions_user
-ON wallet_transactions(user_id);
-
-
-/* پاداش‌ها */
 
 CREATE TABLE IF NOT EXISTS reward_claims (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -93,27 +71,32 @@ CREATE TABLE IF NOT EXISTS reward_claims (
   FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_reward_claims_user
-ON reward_claims(user_id);
-
-
-/* پرداخت پروژه */
-
 CREATE TABLE IF NOT EXISTS project_payments (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   project_id INTEGER NOT NULL UNIQUE,
   client_id INTEGER NOT NULL,
   freelancer_id INTEGER NOT NULL,
   amount INTEGER NOT NULL CHECK(amount > 0),
-  status TEXT NOT NULL DEFAULT 'paid',
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE,
   FOREIGN KEY(client_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY(freelancer_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_project_payments_client
-ON project_payments(client_id);
+CREATE INDEX IF NOT EXISTS idx_projects_status
+ON projects(status);
 
-CREATE INDEX IF NOT EXISTS idx_project_payments_freelancer
-ON project_payments(freelancer_id);
+CREATE INDEX IF NOT EXISTS idx_applications_project
+ON applications(project_id);
+
+CREATE INDEX IF NOT EXISTS idx_applications_freelancer
+ON applications(freelancer_id);
+
+CREATE INDEX IF NOT EXISTS idx_wallet_transactions_user
+ON wallet_transactions(user_id);
+
+CREATE INDEX IF NOT EXISTS idx_reward_claims_user
+ON reward_claims(user_id);
+
+CREATE INDEX IF NOT EXISTS idx_project_payments_project
+ON project_payments(project_id);
