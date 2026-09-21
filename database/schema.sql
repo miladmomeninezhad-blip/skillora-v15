@@ -3,7 +3,7 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
-  email TEXT NOT NULL UNIQUE,
+  phone TEXT NOT NULL UNIQUE,
   password_hash TEXT NOT NULL,
   role TEXT NOT NULL DEFAULT 'freelancer'
     CHECK (role IN ('freelancer', 'client', 'admin')),
@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
   skills TEXT DEFAULT '',
   avatar TEXT DEFAULT '',
   points INTEGER NOT NULL DEFAULT 0,
+  rating REAL NOT NULL DEFAULT 5,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -19,6 +20,7 @@ CREATE TABLE IF NOT EXISTS projects (
   client_id INTEGER NOT NULL,
   title TEXT NOT NULL,
   description TEXT NOT NULL,
+  category TEXT DEFAULT 'عمومی',
   budget INTEGER NOT NULL DEFAULT 0,
   status TEXT NOT NULL DEFAULT 'open'
     CHECK (status IN ('open', 'in_progress', 'completed', 'cancelled')),
