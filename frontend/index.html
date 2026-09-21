@@ -92,4 +92,4 @@ async function loadProfile(){if(!currentUser)return;try{const d=await api('/api/
 $('profileForm').addEventListener('submit',async e=>{e.preventDefault();try{const d=await api('/api/me',{method:'PATCH',body:JSON.stringify({name:$('pname').value,bio:$('pbio').value,skills:$('pskills').value})});currentUser=d.user;updateUI();msg('profileMsg','پروفایل ذخیره شد. حالا می‌توانید پاداش تکمیل پروفایل را دریافت کنید.','ok')}catch(x){msg('profileMsg',x.message)}})
 $('loginForm').addEventListener('submit',login);$('registerForm').addEventListener('submit',register);check();
 </script>
-</body></html>
+</body></html> 
