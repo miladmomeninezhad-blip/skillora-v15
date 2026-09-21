@@ -1,4 +1,4 @@
-require("dotenv").config?.();
+require("dotenv").config();
 
 const express = require("express");
 const path = require("path");
@@ -20,9 +20,15 @@ const {
 
 const app = express();
 const PORT = Number(process.env.PORT || 8080);
+
 const frontend = path.resolve(__dirname, "../../frontend");
 
-app.use(helmet({ contentSecurityPolicy: false }));
+app.use(
+  helmet({
+    contentSecurityPolicy: false
+  })
+);
+
 app.use(express.json({ limit: "100kb" }));
 app.use(cookieParser());
 
@@ -30,10 +36,7 @@ const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 30,
   standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    error: "تعداد تلاش‌های ورود زیاد است. کمی بعد دوباره تلاش کنید."
-  }
+  legacyHeaders: false
 });
 
 function cleanText(value, max = 1000) {
@@ -41,87 +44,85 @@ function cleanText(value, max = 1000) {
 }
 
 function normalizePhone(value) {
-  return String(value ?? "").replace(/[\s-]/g, "");
+  return String(value ?? "")
+    .replace(/[\s-]/g, "")
+    .trim();
 }
 
-function money(value) {
-  return Number(value || 0);
+function ensureWallet(userId) {
+  db.prepare(`
+    INSERT OR IGNORE INTO wallets (user_id)
+    VALUES (?)
+  `).run(userId);
 }
 
 function publicUser(row) {
+  if (!row) return null;
+
   return {
     id: row.id,
     name: row.name,
     phone: row.phone,
     role: row.role,
-    bio: row.bio,
-    skills: row.skills,
-    rating: row.rating,
+    bio: row.bio || "",
+    skills: row.skills || "",
+    avatar: row.avatar || "",
+    points: row.points || 0,
+    rating: row.rating ?? 5,
     createdAt: row.created_at
   };
 }
 
-function ensureWallet(userId) {
-  db.prepare(`
-    INSERT OR IGNORE INTO wallets (user_id, balance)
-    VALUES (?, 0)
-  `).run(userId);
-
-  return db
-    .prepare("SELECT * FROM wallets WHERE user_id=?")
-    .get(userId);
-}
-
-function addTransaction({
-  userId,
-  type,
-  amount,
-  title,
-  description = "",
-  projectId = null
-}) {
-  db.prepare(`
-    INSERT INTO wallet_transactions
-      (user_id, type, amount, title, description, project_id)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `).run(
-    userId,
-    type,
-    amount,
-    title,
-    description,
-    projectId
-  );
-}
-
-function rewardPoints(userId) {
-  const row = db.prepare(`
-    SELECT COALESCE(SUM(points), 0) AS total
-    FROM reward_claims
-    WHERE user_id=?
+function getUser(userId) {
+  return db.prepare(`
+    SELECT *
+    FROM users
+    WHERE id = ?
   `).get(userId);
-
-  return Number(row?.total || 0);
 }
 
-function claimReward(userId, code, title, points) {
-  try {
-    const result = db.prepare(`
-      INSERT INTO reward_claims
-        (user_id, code, title, points)
-      VALUES (?, ?, ?, ?)
-    `).run(userId, code, title, points);
+function getWallet(userId) {
+  ensureWallet(userId);
 
-    return result.changes > 0;
-  } catch (err) {
-    if (String(err.message).includes("UNIQUE")) {
-      return false;
-    }
-    throw err;
-  }
+  return db.prepare(`
+    SELECT *
+    FROM wallets
+    WHERE user_id = ?
+  `).get(userId);
 }
 
-/* Health */
+function projectView(project) {
+  if (!project) return null;
+
+  return {
+    id: project.id,
+    clientId: project.client_id,
+    clientName: project.client_name || "",
+    title: project.title,
+    description: project.description,
+    category: project.category || "عمومی",
+    budget: project.budget,
+    status: project.status,
+    freelancerId: project.freelancer_id,
+    freelancerName: project.freelancer_name || "",
+    createdAt: project.created_at,
+    updatedAt: project.updated_at
+  };
+}
+
+function getProject(projectId) {
+  return db.prepare(`
+    SELECT
+      p.*,
+      c.name AS client_name,
+      f.name AS freelancer_name
+    FROM projects p
+    JOIN users c ON c.id = p.client_id
+    LEFT JOIN users f ON f.id = p.freelancer_id
+    WHERE p.id = ?
+  `).get(projectId);
+}
+
 app.get("/api/health", (_req, res) => {
   res.json({
     ok: true,
@@ -130,7 +131,10 @@ app.get("/api/health", (_req, res) => {
   });
 });
 
-/* Auth */
+/* =========================
+   AUTH
+========================= */
+
 app.post("/api/auth/register", (req, res) => {
   const name = cleanText(req.body.name, 80);
   const phone = normalizePhone(req.body.phone);
@@ -144,7 +148,8 @@ app.post("/api/auth/register", (req, res) => {
     !["client", "freelancer"].includes(role)
   ) {
     return res.status(400).json({
-      error: "نام، شماره معتبر، رمز حداقل ۸ کاراکتری و نقش معتبر لازم است."
+      error:
+        "نام، شماره موبایل معتبر، رمز حداقل ۸ کاراکتری و نقش معتبر لازم است."
     });
   }
 
@@ -152,7 +157,8 @@ app.post("/api/auth/register", (req, res) => {
     const result = db.prepare(`
       INSERT INTO users
         (name, phone, password_hash, role)
-      VALUES (?, ?, ?, ?)
+      VALUES
+        (?, ?, ?, ?)
     `).run(
       name,
       phone,
@@ -160,20 +166,14 @@ app.post("/api/auth/register", (req, res) => {
       role
     );
 
-    const user = db
-      .prepare("SELECT * FROM users WHERE id=?")
-      .get(result.lastInsertRowid);
+    const user = getUser(result.lastInsertRowid);
 
     ensureWallet(user.id);
 
-    claimReward(
-      user.id,
-      "welcome",
-      "عضویت در Skillora",
-      50
+    setSessionCookie(
+      res,
+      signToken(user)
     );
-
-    setSessionCookie(res, signToken(user));
 
     res.status(201).json({
       user: publicUser(user)
@@ -193,47 +193,48 @@ app.post("/api/auth/register", (req, res) => {
   }
 });
 
-app.post("/api/auth/login", loginLimiter, (req, res) => {
-  const phone = normalizePhone(req.body.phone);
-  const password = String(req.body.password || "");
+app.post(
+  "/api/auth/login",
+  loginLimiter,
+  (req, res) => {
+    const phone = normalizePhone(req.body.phone);
+    const password = String(req.body.password || "");
 
-  const user = db
-    .prepare("SELECT * FROM users WHERE phone=?")
-    .get(phone);
+    const user = db.prepare(`
+      SELECT *
+      FROM users
+      WHERE phone = ?
+    `).get(phone);
 
-  if (!user || !verifyPassword(password, user.password_hash)) {
-    return res.status(401).json({
-      error: "شماره موبایل یا رمز عبور اشتباه است."
+    if (!user || !verifyPassword(password, user.password_hash)) {
+      return res.status(401).json({
+        error: "شماره موبایل یا رمز عبور اشتباه است."
+      });
+    }
+
+    ensureWallet(user.id);
+
+    setSessionCookie(
+      res,
+      signToken(user)
+    );
+
+    res.json({
+      user: publicUser(user)
     });
   }
-
-  ensureWallet(user.id);
-
-  setSessionCookie(res, signToken(user));
-
-  res.json({
-    user: publicUser(user)
-  });
-});
+);
 
 app.post("/api/auth/logout", (_req, res) => {
-  res.clearCookie(COOKIE_NAME, {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/"
-  });
-
+  res.clearCookie(COOKIE_NAME);
   res.json({ ok: true });
 });
 
-/* User */
 app.get("/api/me", requireAuth, (req, res) => {
-  const user = db
-    .prepare("SELECT * FROM users WHERE id=?")
-    .get(req.auth.sub);
+  const user = getUser(req.user.id);
 
   if (!user) {
-    return res.status(401).json({
+    return res.status(404).json({
       error: "کاربر پیدا نشد."
     });
   }
@@ -245,10 +246,14 @@ app.get("/api/me", requireAuth, (req, res) => {
   });
 });
 
+/* =========================
+   PROFILE
+========================= */
+
 app.patch("/api/me", requireAuth, (req, res) => {
   const name = cleanText(req.body.name, 80);
   const bio = cleanText(req.body.bio, 1000);
-  const skills = cleanText(req.body.skills, 500);
+  const skills = cleanText(req.body.skills, 1000);
 
   if (!name) {
     return res.status(400).json({
@@ -258,129 +263,100 @@ app.patch("/api/me", requireAuth, (req, res) => {
 
   db.prepare(`
     UPDATE users
-    SET name=?, bio=?, skills=?
-    WHERE id=?
+    SET
+      name = ?,
+      bio = ?,
+      skills = ?
+    WHERE id = ?
   `).run(
     name,
     bio,
     skills,
-    req.auth.sub
+    req.user.id
   );
 
-  const user = db
-    .prepare("SELECT * FROM users WHERE id=?")
-    .get(req.auth.sub);
+  const user = getUser(req.user.id);
 
   res.json({
     user: publicUser(user)
   });
 });
 
-/* Dashboard */
+/* =========================
+   DASHBOARD
+========================= */
+
 app.get("/api/dashboard", requireAuth, (req, res) => {
-  const userId = req.auth.sub;
+  const userId = req.user.id;
 
-  const wallet = ensureWallet(userId);
+  const wallet = getWallet(userId);
 
-  let activeProjects = 0;
-  let completed = 0;
+  const activeProjects = db.prepare(`
+    SELECT COUNT(*) AS count
+    FROM projects
+    WHERE
+      (
+        client_id = ?
+        OR freelancer_id = ?
+      )
+      AND status = 'in_progress'
+  `).get(userId, userId).count;
 
-  if (req.auth.role === "client") {
-    activeProjects = db.prepare(`
-      SELECT COUNT(*) AS c
-      FROM projects
-      WHERE client_id=?
-      AND status='in_progress'
-    `).get(userId).c;
-
-    completed = db.prepare(`
-      SELECT COUNT(*) AS c
-      FROM projects
-      WHERE client_id=?
-      AND status='completed'
-    `).get(userId).c;
-  } else {
-    activeProjects = db.prepare(`
-      SELECT COUNT(*) AS c
-      FROM projects
-      WHERE selected_freelancer_id=?
-      AND status='in_progress'
-    `).get(userId).c;
-
-    completed = db.prepare(`
-      SELECT COUNT(*) AS c
-      FROM projects
-      WHERE selected_freelancer_id=?
-      AND status='completed'
-    `).get(userId).c;
-  }
-
-  const recent = db.prepare(`
+  const recentRows = db.prepare(`
     SELECT
-      id,
-      type,
-      amount,
-      title,
-      description,
-      created_at AS createdAt
-    FROM wallet_transactions
-    WHERE user_id=?
-    ORDER BY id DESC
+      p.*,
+      c.name AS client_name,
+      f.name AS freelancer_name
+    FROM projects p
+    JOIN users c ON c.id = p.client_id
+    LEFT JOIN users f ON f.id = p.freelancer_id
+    WHERE
+      p.client_id = ?
+      OR p.freelancer_id = ?
+    ORDER BY p.updated_at DESC
     LIMIT 8
-  `).all(userId);
+  `).all(userId, userId);
 
   const claims = db.prepare(`
-    SELECT
-      id,
-      code,
-      title,
-      points,
-      created_at AS createdAt
+    SELECT COUNT(*) AS count
     FROM reward_claims
-    WHERE user_id=?
-    ORDER BY id DESC
-    LIMIT 8
-  `).all(userId);
+    WHERE user_id = ?
+  `).get(userId).count;
 
   res.json({
     stats: {
-      wallet: money(wallet.balance),
-      rewards: rewardPoints(userId),
-      activeProjects: Number(activeProjects || 0),
-      completed: Number(completed || 0)
+      wallet: wallet.balance,
+      income: wallet.total_income,
+      spent: wallet.total_spent,
+      rewards: getUser(userId).points || 0,
+      activeProjects
     },
-    recent,
+
+    recent: recentRows.map(projectView),
+
     claims
   });
 });
 
-/* Projects */
+/* =========================
+   PROJECTS
+========================= */
+
 app.get("/api/projects", requireAuth, (req, res) => {
-  const projects = db.prepare(`
+  const rows = db.prepare(`
     SELECT
-      p.id,
-      p.title,
-      p.description,
-      p.category,
-      p.budget,
-      p.status,
-      p.client_id AS clientId,
-      p.selected_freelancer_id AS selectedFreelancerId,
-      p.created_at AS createdAt,
-      u.name AS clientName,
-      CASE
-        WHEN pp.id IS NULL THEN 0
-        ELSE 1
-      END AS paid
+      p.*,
+      c.name AS client_name,
+      f.name AS freelancer_name
     FROM projects p
-    JOIN users u
-      ON u.id=p.client_id
-    LEFT JOIN project_payments pp
-      ON pp.project_id=p.id
-    ORDER BY p.id DESC
+    JOIN users c ON c.id = p.client_id
+    LEFT JOIN users f ON f.id = p.freelancer_id
+    ORDER BY p.created_at DESC
   `).all();
 
-  res.json({ projects });
+  res.json({
+    projects: rows.map(projectView)
+  });
 });
 
 app.post(
@@ -390,15 +366,18 @@ app.post(
   (req, res) => {
     const title = cleanText(req.body.title, 120);
     const description = cleanText(req.body.description, 3000);
-    const category =
-      cleanText(req.body.category, 60) || "عمومی";
+    const category = cleanText(
+      req.body.category,
+      100
+    ) || "عمومی";
+
     const budget = Number(req.body.budget);
 
     if (
       !title ||
       !description ||
-      !Number.isInteger(budget) ||
-      budget < 0
+      !Number.isFinite(budget) ||
+      budget <= 0
     ) {
       return res.status(400).json({
         error: "عنوان، توضیحات و بودجه معتبر لازم است."
@@ -407,25 +386,37 @@ app.post(
 
     const result = db.prepare(`
       INSERT INTO projects
-        (client_id, title, description, category, budget)
-      VALUES (?, ?, ?, ?, ?)
+        (
+          client_id,
+          title,
+          description,
+          category,
+          budget,
+          status
+        )
+      VALUES
+        (?, ?, ?, ?, ?, 'open')
     `).run(
-      req.auth.sub,
+      req.user.id,
       title,
       description,
       category,
-      budget
+      Math.round(budget)
     );
 
-    const project = db
-      .prepare("SELECT * FROM projects WHERE id=?")
-      .get(result.lastInsertRowid);
+    const project = getProject(
+      result.lastInsertRowid
+    );
 
     res.status(201).json({
-      project
+      project: projectView(project)
     });
   }
 );
+
+/* =========================
+   APPLICATIONS
+========================= */
 
 app.post(
   "/api/projects/:id/apply",
@@ -433,24 +424,8 @@ app.post(
   requireRole("freelancer"),
   (req, res) => {
     const projectId = Number(req.params.id);
-    const price = Number(req.body.price);
-    const message = cleanText(req.body.message, 1500);
 
-    if (
-      !Number.isInteger(projectId) ||
-      !Number.isInteger(price) ||
-      price < 0
-    ) {
-      return res.status(400).json({
-        error: "پروژه یا مبلغ درخواست معتبر نیست."
-      });
-    }
-
-    const project = db.prepare(`
-      SELECT *
-      FROM projects
-      WHERE id=?
-    `).get(projectId);
+    const project = getProject(projectId);
 
     if (!project) {
       return res.status(404).json({
@@ -459,44 +434,76 @@ app.post(
     }
 
     if (project.status !== "open") {
-      return res.status(409).json({
-        error: "این پروژه دیگر باز نیست."
+      return res.status(400).json({
+        error: "این پروژه دیگر قابل درخواست نیست."
+      });
+    }
+
+    if (project.client_id === req.user.id) {
+      return res.status(400).json({
+        error: "نمی‌توانید برای پروژه خودتان درخواست ارسال کنید."
+      });
+    }
+
+    const message = cleanText(
+      req.body.message,
+      1500
+    );
+
+    const proposedPrice = Number(
+      req.body.proposedPrice ??
+      req.body.proposed_price ??
+      project.budget
+    );
+
+    if (
+      !Number.isFinite(proposedPrice) ||
+      proposedPrice <= 0
+    ) {
+      return res.status(400).json({
+        error: "مبلغ پیشنهادی معتبر نیست."
       });
     }
 
     try {
       const result = db.prepare(`
         INSERT INTO applications
-          (project_id, freelancer_id, price, message)
-        VALUES (?, ?, ?, ?)
+          (
+            project_id,
+            freelancer_id,
+            message,
+            proposed_price
+          )
+        VALUES
+          (?, ?, ?, ?)
       `).run(
         projectId,
-        req.auth.sub,
-        price,
-        message
-      );
-
-      claimReward(
-        req.auth.sub,
-        "first-application",
-        "اولین درخواست همکاری",
-        75
+        req.user.id,
+        message,
+        Math.round(proposedPrice)
       );
 
       res.status(201).json({
-        applicationId: result.lastInsertRowid
+        application: {
+          id: result.lastInsertRowid,
+          projectId,
+          freelancerId: req.user.id,
+          message,
+          proposedPrice: Math.round(proposedPrice),
+          status: "pending"
+        }
       });
     } catch (err) {
       if (String(err.message).includes("UNIQUE")) {
         return res.status(409).json({
-          error: "قبلاً برای این پروژه درخواست داده‌اید."
+          error: "قبلاً برای این پروژه درخواست ارسال کرده‌اید."
         });
       }
 
       console.error(err);
 
       res.status(500).json({
-        error: "خطای داخلی سرور."
+        error: "ارسال درخواست ناموفق بود."
       });
     }
   }
@@ -508,11 +515,7 @@ app.get(
   (req, res) => {
     const projectId = Number(req.params.id);
 
-    const project = db.prepare(`
-      SELECT *
-      FROM projects
-      WHERE id=?
-    `).get(projectId);
+    const project = getProject(projectId);
 
     if (!project) {
       return res.status(404).json({
@@ -520,91 +523,61 @@ app.get(
       });
     }
 
-    if (req.auth.role === "client") {
-      if (project.client_id !== req.auth.sub) {
-        return res.status(403).json({
-          error: "دسترسی غیرمجاز."
-        });
-      }
-    }
-
-    if (req.auth.role === "freelancer") {
-      const own = db.prepare(`
-        SELECT
-          a.id,
-          a.price,
-          a.message,
-          a.status,
-          a.created_at AS createdAt,
-          u.id AS freelancerId,
-          u.name AS freelancerName,
-          u.skills,
-          u.rating
-        FROM applications a
-        JOIN users u
-          ON u.id=a.freelancer_id
-        WHERE a.project_id=?
-        AND a.freelancer_id=?
-        ORDER BY a.id DESC
-      `).all(
-        projectId,
-        req.auth.sub
-      );
-
-      return res.json({
-        applications: own
+    if (
+      project.client_id !== req.user.id &&
+      project.freelancer_id !== req.user.id
+    ) {
+      return res.status(403).json({
+        error: "دسترسی ندارید."
       });
     }
 
-    const applications = db.prepare(`
+    const rows = db.prepare(`
       SELECT
-        a.id,
-        a.price,
-        a.message,
-        a.status,
-        a.created_at AS createdAt,
-        u.id AS freelancerId,
-        u.name AS freelancerName,
-        u.skills,
-        u.rating
+        a.*,
+        u.name AS freelancer_name,
+        u.phone AS freelancer_phone,
+        u.bio AS freelancer_bio,
+        u.skills AS freelancer_skills,
+        u.rating AS freelancer_rating
       FROM applications a
       JOIN users u
-        ON u.id=a.freelancer_id
-      WHERE a.project_id=?
-      ORDER BY a.id DESC
+        ON u.id = a.freelancer_id
+      WHERE a.project_id = ?
+      ORDER BY a.created_at DESC
     `).all(projectId);
 
     res.json({
-      applications
+      applications: rows.map(a => ({
+        id: a.id,
+        projectId: a.project_id,
+        freelancerId: a.freelancer_id,
+        freelancerName: a.freelancer_name,
+        freelancerPhone: a.freelancer_phone,
+        freelancerBio: a.freelancer_bio || "",
+        freelancerSkills: a.freelancer_skills || "",
+        freelancerRating: a.freelancer_rating ?? 5,
+        message: a.message || "",
+        proposedPrice: a.proposed_price,
+        status: a.status,
+        createdAt: a.created_at
+      }))
     });
   }
 );
 
-/* Select freelancer */
 app.post(
   "/api/projects/:id/select-freelancer",
   requireAuth,
   requireRole("client"),
   (req, res) => {
     const projectId = Number(req.params.id);
-    const freelancerId = Number(req.body.freelancerId);
-    const applicationId = Number(req.body.applicationId);
+    const freelancerId = Number(
+      req.body.freelancerId ??
+      req.body.freelancer_id
+    );
 
-    if (
-      !Number.isInteger(projectId) ||
-      !Number.isInteger(freelancerId) ||
-      !Number.isInteger(applicationId)
-    ) {
-      return res.status(400).json({
-        error: "اطلاعات انتخاب فریلنسر معتبر نیست."
-      });
-    }
-
-    const project = db.prepare(`
-      SELECT *
-      FROM projects
-      WHERE id=?
-    `).get(projectId);
+    const project = getProject(projectId);
 
     if (!project) {
       return res.status(404).json({
@@ -612,43 +585,54 @@ app.post(
       });
     }
 
-    if (project.client_id !== req.auth.sub) {
+    if (project.client_id !== req.user.id) {
       return res.status(403).json({
-        error: "دسترسی غیرمجاز."
+        error: "فقط صاحب پروژه می‌تواند فریلنسر را انتخاب کند."
       });
     }
 
     if (project.status !== "open") {
-      return res.status(409).json({
-        error: "این پروژه قبلاً تعیین تکلیف شده است."
+      return res.status(400).json({
+        error: "این پروژه دیگر قابل انتخاب نیست."
+      });
+    }
+
+    const freelancer = getUser(freelancerId);
+
+    if (
+      !freelancer ||
+      freelancer.role !== "freelancer"
+    ) {
+      return res.status(400).json({
+        error: "فریلنسر معتبر نیست."
       });
     }
 
     const application = db.prepare(`
       SELECT *
       FROM applications
-      WHERE id=?
-      AND project_id=?
-      AND freelancer_id=?
+      WHERE
+        project_id = ?
+        AND freelancer_id = ?
     `).get(
-      applicationId,
       projectId,
       freelancerId
     );
 
     if (!application) {
       return res.status(404).json({
-        error: "درخواست فریلنسر پیدا نشد."
+        error: "درخواست این فریلنسر پیدا نشد."
       });
     }
 
-    const tx = db.transaction(() => {
+    const transaction = db.transaction(() => {
       db.prepare(`
         UPDATE projects
         SET
-          selected_freelancer_id=?,
-          status='in_progress'
-        WHERE id=?
+          freelancer_id = ?,
+          status = 'in_progress',
+          updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
       `).run(
         freelancerId,
         projectId
@@ -656,187 +640,34 @@ app.post(
 
       db.prepare(`
         UPDATE applications
-        SET status='accepted'
-        WHERE project_id=?
-        AND id=?
+        SET status = CASE
+          WHEN freelancer_id = ? THEN 'accepted'
+          ELSE 'rejected'
+        END
+        WHERE project_id = ?
       `).run(
-        projectId,
-        applicationId
-      );
-
-      db.prepare(`
-        UPDATE applications
-        SET status='rejected'
-        WHERE project_id=?
-        AND id<>?
-      `).run(
-        projectId,
-        applicationId
+        freelancerId,
+        projectId
       );
     });
 
-    tx();
-
-    const updated = db.prepare(`
-      SELECT *
-      FROM projects
-      WHERE id=?
-    `).get(projectId);
+    transaction();
 
     res.json({
-      project: updated,
-      selectedApplicationId: applicationId
+      project: projectView(
+        getProject(projectId)
+      )
     });
   }
 );
 
-/* Project payment */
+/* =========================
+   PROJECT STATUS
+========================= */
+
 app.post(
-  "/api/projects/:id/pay",
-  requireAuth,
-  requireRole("client"),
-  (req, res) => {
-    const projectId = Number(req.params.id);
-
-    const project = db.prepare(`
-      SELECT *
-      FROM projects
-      WHERE id=?
-    `).get(projectId);
-
-    if (!project) {
-      return res.status(404).json({
-        error: "پروژه پیدا نشد."
-      });
-    }
-
-    if (project.client_id !== req.auth.sub) {
-      return res.status(403).json({
-        error: "دسترسی غیرمجاز."
-      });
-    }
-
-    if (project.status !== "in_progress") {
-      return res.status(409).json({
-        error: "این پروژه هنوز آماده پرداخت نیست."
-      });
-    }
-
-    if (!project.selected_freelancer_id) {
-      return res.status(409).json({
-        error: "ابتدا یک فریلنسر انتخاب کنید."
-      });
-    }
-
-    const alreadyPaid = db.prepare(`
-      SELECT id
-      FROM project_payments
-      WHERE project_id=?
-    `).get(projectId);
-
-    if (alreadyPaid) {
-      return res.status(409).json({
-        error: "این پروژه قبلاً پرداخت شده است."
-      });
-    }
-
-    const clientWallet = ensureWallet(req.auth.sub);
-    const amount = Number(project.budget);
-
-    if (clientWallet.balance < amount) {
-      return res.status(400).json({
-        error:
-          "موجودی کیف پول کافی نیست. ابتدا کیف پول را شارژ کنید."
-      });
-    }
-
-    const tx = db.transaction(() => {
-      db.prepare(`
-        UPDATE wallets
-        SET balance=balance-?
-        WHERE user_id=?
-      `).run(
-        amount,
-        req.auth.sub
-      );
-
-      ensureWallet(project.selected_freelancer_id);
-
-      db.prepare(`
-        UPDATE wallets
-        SET balance=balance+?
-        WHERE user_id=?
-      `).run(
-        amount,
-        project.selected_freelancer_id
-      );
-
-      addTransaction({
-        userId: req.auth.sub,
-        type: "debit",
-        amount,
-        title: "پرداخت پروژه",
-        description: project.title,
-        projectId
-      });
-
-      addTransaction({
-        userId: project.selected_freelancer_id,
-        type: "credit",
-        amount,
-        title: "دریافت درآمد پروژه",
-        description: project.title,
-        projectId
-      });
-
-      db.prepare(`
-        INSERT INTO project_payments
-          (project_id, client_id, freelancer_id, amount)
-        VALUES (?, ?, ?, ?)
-      `).run(
-        projectId,
-        req.auth.sub,
-        project.selected_freelancer_id,
-        amount
-      );
-
-      db.prepare(`
-        UPDATE projects
-        SET status='completed'
-        WHERE id=?
-      `).run(projectId);
-
-      claimReward(
-        project.selected_freelancer_id,
-        "first-project",
-        "اولین پروژه موفق",
-        200
-      );
-    });
-
-    try {
-      tx();
-
-      res.json({
-        ok: true,
-        message:
-          "پرداخت با موفقیت انجام شد و مبلغ به کیف پول فریلنسر منتقل شد."
-      });
-    } catch (err) {
-      console.error(err);
-
-      res.status(500).json({
-        error: "پرداخت انجام نشد."
-      });
-    }
-  }
-);
-
-/* Project status */
-app.patch(
   "/api/projects/:id/status",
   requireAuth,
-  requireRole("client"),
   (req, res) => {
     const projectId = Number(req.params.id);
     const status = cleanText(req.body.status, 30);
@@ -850,15 +681,11 @@ app.patch(
 
     if (!allowed.includes(status)) {
       return res.status(400).json({
-        error: "وضعیت پروژه معتبر نیست."
+        error: "وضعیت نامعتبر است."
       });
     }
 
-    const project = db.prepare(`
-      SELECT *
-      FROM projects
-      WHERE id=?
-    `).get(projectId);
+    const project = getProject(projectId);
 
     if (!project) {
       return res.status(404).json({
@@ -866,66 +693,282 @@ app.patch(
       });
     }
 
-    if (project.client_id !== req.auth.sub) {
-      return res.status(403).json({
-        error: "دسترسی غیرمجاز."
-      });
-    }
-
     if (
-      status === "in_progress" &&
-      !project.selected_freelancer_id
+      project.client_id !== req.user.id &&
+      project.freelancer_id !== req.user.id
     ) {
-      return res.status(409).json({
-        error: "ابتدا یک فریلنسر را انتخاب کنید."
+      return res.status(403).json({
+        error: "دسترسی ندارید."
       });
     }
 
     db.prepare(`
       UPDATE projects
-      SET status=?
-      WHERE id=?
+      SET
+        status = ?,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
     `).run(
       status,
       projectId
     );
 
     res.json({
-      project: db.prepare(`
-        SELECT *
-        FROM projects
-        WHERE id=?
-      `).get(projectId)
+      project: projectView(
+        getProject(projectId)
+      )
     });
   }
 );
 
-/* Wallet */
+/* =========================
+   PROJECT PAYMENT
+========================= */
+
+app.post(
+  "/api/projects/:id/pay",
+  requireAuth,
+  requireRole("client"),
+  (req, res) => {
+    const projectId = Number(req.params.id);
+
+    const project = getProject(projectId);
+
+    if (!project) {
+      return res.status(404).json({
+        error: "پروژه پیدا نشد."
+      });
+    }
+
+    if (project.client_id !== req.user.id) {
+      return res.status(403).json({
+        error: "فقط صاحب پروژه می‌تواند پرداخت کند."
+      });
+    }
+
+    if (!project.freelancer_id) {
+      return res.status(400).json({
+        error: "ابتدا باید یک فریلنسر انتخاب شود."
+      });
+    }
+
+    if (
+      project.status !== "in_progress" &&
+      project.status !== "completed"
+    ) {
+      return res.status(400).json({
+        error: "این پروژه هنوز آماده پرداخت نیست."
+      });
+    }
+
+    const existingPayment = db.prepare(`
+      SELECT *
+      FROM project_payments
+      WHERE project_id = ?
+    `).get(projectId);
+
+    if (
+      existingPayment &&
+      ["paid", "released"].includes(
+        existingPayment.status
+      )
+    ) {
+      return res.status(409).json({
+        error: "پرداخت این پروژه قبلاً انجام شده است."
+      });
+    }
+
+    const clientWallet = getWallet(req.user.id);
+
+    const amount = Number(project.budget);
+
+    if (
+      !Number.isFinite(amount) ||
+      amount <= 0
+    ) {
+      return res.status(400).json({
+        error: "مبلغ پروژه معتبر نیست."
+      });
+    }
+
+    if (clientWallet.balance < amount) {
+      return res.status(400).json({
+        error: "موجودی کیف پول برای پرداخت کافی نیست."
+      });
+    }
+
+    const transaction = db.transaction(() => {
+      db.prepare(`
+        UPDATE wallets
+        SET
+          balance = balance - ?,
+          total_spent = total_spent + ?,
+          updated_at = CURRENT_TIMESTAMP
+        WHERE user_id = ?
+      `).run(
+        amount,
+        amount,
+        req.user.id
+      );
+
+      ensureWallet(project.freelancer_id);
+
+      db.prepare(`
+        UPDATE wallets
+        SET
+          balance = balance + ?,
+          total_income = total_income + ?,
+          updated_at = CURRENT_TIMESTAMP
+        WHERE user_id = ?
+      `).run(
+        amount,
+        amount,
+        project.freelancer_id
+      );
+
+      db.prepare(`
+        INSERT INTO wallet_transactions
+          (
+            user_id,
+            type,
+            amount,
+            description,
+            project_id
+          )
+        VALUES
+          (?, 'payment', ?, ?, ?)
+      `).run(
+        req.user.id,
+        amount,
+        `پرداخت پروژه: ${project.title}`,
+        projectId
+      );
+
+      db.prepare(`
+        INSERT INTO wallet_transactions
+          (
+            user_id,
+            type,
+            amount,
+            description,
+            project_id
+          )
+        VALUES
+          (?, 'income', ?, ?, ?)
+      `).run(
+        project.freelancer_id,
+        amount,
+        `دریافت درآمد پروژه: ${project.title}`,
+        projectId
+      );
+
+      if (existingPayment) {
+        db.prepare(`
+          UPDATE project_payments
+          SET
+            freelancer_id = ?,
+            amount = ?,
+            status = 'released',
+            paid_at = CURRENT_TIMESTAMP,
+            released_at = CURRENT_TIMESTAMP
+          WHERE project_id = ?
+        `).run(
+          project.freelancer_id,
+          amount,
+          projectId
+        );
+      } else {
+        db.prepare(`
+          INSERT INTO project_payments
+            (
+              project_id,
+              client_id,
+              freelancer_id,
+              amount,
+              status,
+              paid_at,
+              released_at
+            )
+          VALUES
+            (?, ?, ?, ?, 'released',
+             CURRENT_TIMESTAMP,
+             CURRENT_TIMESTAMP)
+        `).run(
+          projectId,
+          req.user.id,
+          project.freelancer_id,
+          amount
+        );
+      }
+
+      db.prepare(`
+        UPDATE projects
+        SET
+          status = 'completed',
+          updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      `).run(projectId);
+    });
+
+    try {
+      transaction();
+    } catch (err) {
+      console.error(err);
+
+      return res.status(500).json({
+        error: "پرداخت انجام نشد."
+      });
+    }
+
+    res.json({
+      ok: true,
+      message: "پرداخت پروژه با موفقیت انجام شد.",
+      project: projectView(
+        getProject(projectId)
+      ),
+      wallet: getWallet(req.user.id)
+    });
+  }
+);
+
+/* =========================
+   WALLET
+========================= */
+
 app.get("/api/wallet", requireAuth, (req, res) => {
-  const wallet = ensureWallet(req.auth.sub);
+  const wallet = getWallet(req.user.id);
 
   const transactions = db.prepare(`
     SELECT
-      id,
-      type,
-      amount,
-      title,
-      description,
-      project_id AS projectId,
-      created_at AS createdAt
-    FROM wallet_transactions
-    WHERE user_id=?
-    ORDER BY id DESC
-    LIMIT 50
-  `).all(req.auth.sub);
+      t.*,
+      p.title AS project_title
+    FROM wallet_transactions t
+    LEFT JOIN projects p
+      ON p.id = t.project_id
+    WHERE t.user_id = ?
+    ORDER BY t.created_at DESC
+    LIMIT 100
+  `).all(req.user.id);
 
   res.json({
-    balance: Number(wallet.balance || 0),
-    transactions
+    wallet: {
+      balance: wallet.balance,
+      totalIncome: wallet.total_income,
+      totalSpent: wallet.total_spent
+    },
+
+    transactions: transactions.map(t => ({
+      id: t.id,
+      type: t.type,
+      amount: t.amount,
+      description: t.description || "",
+      projectId: t.project_id,
+      projectTitle: t.project_title || "",
+      createdAt: t.created_at
+    }))
   });
 });
 
-/* Demo deposit */
 app.post(
   "/api/wallet/demo-deposit",
   requireAuth,
@@ -933,46 +976,55 @@ app.post(
     const amount = Number(req.body.amount);
 
     if (
-      !Number.isInteger(amount) ||
+      !Number.isFinite(amount) ||
       amount <= 0 ||
       amount > 1000000000
     ) {
       return res.status(400).json({
-        error: "مبلغ شارژ معتبر نیست."
+        error: "مبلغ شارژ نامعتبر است."
       });
     }
 
-    ensureWallet(req.auth.sub);
+    ensureWallet(req.user.id);
 
-    const tx = db.transaction(() => {
+    const transaction = db.transaction(() => {
       db.prepare(`
         UPDATE wallets
-        SET balance=balance+?
-        WHERE user_id=?
+        SET
+          balance = balance + ?,
+          updated_at = CURRENT_TIMESTAMP
+        WHERE user_id = ?
       `).run(
-        amount,
-        req.auth.sub
+        Math.round(amount),
+        req.user.id
       );
 
-      addTransaction({
-        userId: req.auth.sub,
-        type: "credit",
-        amount,
-        title: "شارژ آزمایشی کیف پول",
-        description: "Demo balance"
-      });
+      db.prepare(`
+        INSERT INTO wallet_transactions
+          (
+            user_id,
+            type,
+            amount,
+            description
+          )
+        VALUES
+          (?, 'deposit', ?, ?)
+      `).run(
+        req.user.id,
+        Math.round(amount),
+        "شارژ آزمایشی کیف پول"
+      );
     });
 
-    tx();
+    transaction();
 
     res.json({
       ok: true,
-      balance: ensureWallet(req.auth.sub).balance
+      wallet: getWallet(req.user.id)
     });
   }
 );
 
-/* Withdraw */
 app.post(
   "/api/wallet/withdraw",
   requireAuth,
@@ -980,170 +1032,262 @@ app.post(
     const amount = Number(req.body.amount);
 
     if (
-      !Number.isInteger(amount) ||
+      !Number.isFinite(amount) ||
       amount <= 0
     ) {
       return res.status(400).json({
-        error: "مبلغ برداشت معتبر نیست."
+        error: "مبلغ برداشت نامعتبر است."
       });
     }
 
-    const wallet = ensureWallet(req.auth.sub);
+    const wallet = getWallet(req.user.id);
 
     if (wallet.balance < amount) {
       return res.status(400).json({
-        error: "موجودی کیف پول کافی نیست."
+        error: "موجودی کافی نیست."
       });
     }
 
-    const tx = db.transaction(() => {
+    const transaction = db.transaction(() => {
       db.prepare(`
         UPDATE wallets
-        SET balance=balance-?
-        WHERE user_id=?
+        SET
+          balance = balance - ?,
+          updated_at = CURRENT_TIMESTAMP
+        WHERE user_id = ?
       `).run(
-        amount,
-        req.auth.sub
+        Math.round(amount),
+        req.user.id
       );
 
-      addTransaction({
-        userId: req.auth.sub,
-        type: "debit",
-        amount,
-        title: "برداشت از کیف پول",
-        description: "برداشت داخلی Skillora"
-      });
+      db.prepare(`
+        INSERT INTO wallet_transactions
+          (
+            user_id,
+            type,
+            amount,
+            description
+          )
+        VALUES
+          (?, 'withdraw', ?, ?)
+      `).run(
+        req.user.id,
+        Math.round(amount),
+        "برداشت از کیف پول"
+      );
     });
 
-    tx();
+    transaction();
 
     res.json({
       ok: true,
-      balance: ensureWallet(req.auth.sub).balance
+      wallet: getWallet(req.user.id)
     });
   }
 );
 
-/* Rewards */
+/* =========================
+   REWARDS
+========================= */
+
+const REWARDS = [
+  {
+    key: "profile",
+    title: "تکمیل پروفایل",
+    description: "نام، معرفی و مهارت‌ها را تکمیل کنید.",
+    points: 100
+  },
+  {
+    key: "first_project",
+    title: "اولین پروژه",
+    description: "اولین پروژه خود را ثبت کنید.",
+    points: 150
+  },
+  {
+    key: "first_application",
+    title: "اولین درخواست همکاری",
+    description: "برای اولین پروژه درخواست ارسال کنید.",
+    points: 100
+  }
+];
+
+app.get("/api/rewards", requireAuth, (req, res) => {
+  const user = getUser(req.user.id);
+
+  const claims = db.prepare(`
+    SELECT reward_key
+    FROM reward_claims
+    WHERE user_id = ?
+  `).all(req.user.id);
+
+  const claimed = new Set(
+    claims.map(x => x.reward_key)
+  );
+
+  res.json({
+    points: user.points || 0,
+
+    rewards: REWARDS.map(r => ({
+      ...r,
+      claimed: claimed.has(r.key)
+    }))
+  });
+});
+
 app.post(
   "/api/rewards/claim",
   requireAuth,
   (req, res) => {
-    const code = cleanText(req.body.code, 50);
-
-    const rules = {
-      profile: {
-        title: "تکمیل پروفایل",
-        points: 100
-      },
-      "first-application": {
-        title: "اولین درخواست همکاری",
-        points: 75
-      },
-      "first-project": {
-        title: "اولین پروژه موفق",
-        points: 200
-      }
-    };
-
-    const rule = rules[code];
-
-    if (!rule) {
-      return res.status(400).json({
-        error: "پاداش معتبر نیست."
-      });
-    }
-
-    const user = db.prepare(`
-      SELECT *
-      FROM users
-      WHERE id=?
-    `).get(req.auth.sub);
-
-    if (code === "profile") {
-      if (
-        !user.name ||
-        !user.bio ||
-        !user.skills
-      ) {
-        return res.status(400).json({
-          error:
-            "برای دریافت این پاداش، پروفایل را کامل کنید."
-        });
-      }
-    }
-
-    if (code === "first-application") {
-      const application = db.prepare(`
-        SELECT id
-        FROM applications
-        WHERE freelancer_id=?
-        LIMIT 1
-      `).get(req.auth.sub);
-
-      if (!application) {
-        return res.status(400).json({
-          error:
-            "هنوز درخواست همکاری ارسال نکرده‌اید."
-        });
-      }
-    }
-
-    if (code === "first-project") {
-      const payment = db.prepare(`
-        SELECT id
-        FROM project_payments
-        WHERE freelancer_id=?
-        LIMIT 1
-      `).get(req.auth.sub);
-
-      if (!payment) {
-        return res.status(400).json({
-          error:
-            "هنوز پروژه موفقی برای شما پرداخت نشده است."
-        });
-      }
-    }
-
-    const claimed = claimReward(
-      req.auth.sub,
-      code,
-      rule.title,
-      rule.points
+    const rewardKey = cleanText(
+      req.body.rewardKey ??
+      req.body.key,
+      100
     );
 
-    if (!claimed) {
-      return res.status(409).json({
-        error: "این پاداش قبلاً دریافت شده است."
+    const reward = REWARDS.find(
+      r => r.key === rewardKey
+    );
+
+    if (!reward) {
+      return res.status(404).json({
+        error: "پاداش پیدا نشد."
       });
+    }
+
+    const user = getUser(req.user.id);
+
+    let eligible = false;
+
+    if (reward.key === "profile") {
+      eligible =
+        Boolean(user.name) &&
+        Boolean(user.bio) &&
+        Boolean(user.skills);
+    }
+
+    if (reward.key === "first_project") {
+      const row = db.prepare(`
+        SELECT COUNT(*) AS count
+        FROM projects
+        WHERE client_id = ?
+      `).get(req.user.id);
+
+      eligible = row.count > 0;
+    }
+
+    if (reward.key === "first_application") {
+      const row = db.prepare(`
+        SELECT COUNT(*) AS count
+        FROM applications
+        WHERE freelancer_id = ?
+      `).get(req.user.id);
+
+      eligible = row.count > 0;
+    }
+
+    if (!eligible) {
+      return res.status(400).json({
+        error: "شرایط دریافت این پاداش هنوز کامل نشده است."
+      });
+    }
+
+    try {
+      const transaction = db.transaction(() => {
+        db.prepare(`
+          INSERT INTO reward_claims
+            (
+              user_id,
+              reward_key,
+              points
+            )
+          VALUES
+            (?, ?, ?)
+        `).run(
+          req.user.id,
+          reward.key,
+          reward.points
+        );
+
+        db.prepare(`
+          UPDATE users
+          SET points = points + ?
+          WHERE id = ?
+        `).run(
+          reward.points,
+          req.user.id
+        );
+
+        ensureWallet(req.user.id);
+
+        db.prepare(`
+          INSERT INTO wallet_transactions
+            (
+              user_id,
+              type,
+              amount,
+              description
+            )
+          VALUES
+            (?, 'reward', ?, ?)
+        `).run(
+          req.user.id,
+          reward.points,
+          `دریافت پاداش: ${reward.title}`
+        );
+      });
+
+      transaction();
+    } catch (err) {
+      if (String(err.message).includes("UNIQUE")) {
+        return res.status(409).json({
+          error: "این پاداش قبلاً دریافت شده است."
+        });
+      }
+
+      throw err;
     }
 
     res.json({
       ok: true,
-      points: rule.points,
-      total: rewardPoints(req.auth.sub)
+      points: getUser(req.user.id).points
     });
   }
 );
 
-/* Frontend */
-app.use(express.static(frontend));
+/* =========================
+   STATIC FRONTEND
+========================= */
 
-app.get("/", (_req, res) => {
+app.use(
+  express.static(frontend, {
+    extensions: ["html"]
+  })
+);
+
+app.get("*", (req, res) => {
+  if (
+    req.path.startsWith("/api/")
+  ) {
+    return res.status(404).json({
+      error: "API endpoint not found."
+    });
+  }
+
   res.sendFile(
     path.join(frontend, "index.html")
   );
 });
 
-app.get("/index.html", (_req, res) => {
-  res.sendFile(
-    path.join(frontend, "index.html")
-  );
-});
+/* =========================
+   ERROR HANDLER
+========================= */
 
-/* Error handler */
 app.use((err, _req, res, _next) => {
   console.error(err);
+
+  if (res.headersSent) {
+    return;
+  }
 
   res.status(500).json({
     error: "خطای داخلی سرور."
@@ -1152,6 +1296,6 @@ app.use((err, _req, res, _next) => {
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(
-    `Skillora v15 running at http://localhost:${PORT}`
+    `Skillora v15 running on port ${PORT}`
   );
 });
