@@ -46,17 +46,49 @@ const loginLimiter = rateLimit({
   legacyHeaders: false
 });
 
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
 function cleanText(value, max = 1000) {
   return String(value ?? "")
     .trim()
     .slice(0, max);
 }
 
-function normalizePhone(value) {
+
+/*
+ * تبدیل اعداد فارسی و عربی به انگلیسی
+ */
+function normalizeDigits(value) {
   return String(value ?? "")
-    .replace(/[\s-]/g, "")
+    .replace(/[۰-۹]/g, d =>
+      String("۰۱۲۳۴۵۶۷۸۹".indexOf(d))
+    )
+    .replace(/[٠-٩]/g, d =>
+      String("٠١٢٣٤٥٦٧٨٩".indexOf(d))
+    );
+}
+
+
+/*
+ * یکسان‌سازی شماره موبایل
+ */
+function normalizePhone(value) {
+  return normalizeDigits(value)
+    .replace(/[\s\-+]/g, "")
     .trim();
 }
+
+
+/*
+ * یکسان‌سازی رمز Admin برای مقایسه
+ */
+function normalizeAdminSecret(value) {
+  return normalizeDigits(value).trim();
+}
+
 
 function parseMoney(value) {
   const amount = Number(value);
@@ -68,6 +100,7 @@ function parseMoney(value) {
   return Math.max(0, Math.round(amount));
 }
 
+
 function ensureWallet(userId) {
   db.prepare(`
     INSERT OR IGNORE INTO wallets
@@ -76,6 +109,7 @@ function ensureWallet(userId) {
       (?, 0, 0, 0)
   `).run(userId);
 }
+
 
 function getUser(userId) {
   return db
@@ -86,6 +120,7 @@ function getUser(userId) {
     `)
     .get(userId);
 }
+
 
 function publicUser(user) {
   if (!user) {
@@ -106,6 +141,7 @@ function publicUser(user) {
   };
 }
 
+
 function getWallet(userId) {
   ensureWallet(userId);
 
@@ -117,6 +153,11 @@ function getWallet(userId) {
     `)
     .get(userId);
 }
+
+
+/* =========================================================
+   DATABASE MIGRATION
+========================================================= */
 
 function migrate() {
   db.exec(`
@@ -180,6 +221,12 @@ function migrate() {
    ADMIN
 ========================================================= */
 
+/*
+ * ساخت یا تبدیل حساب Admin بر اساس Railway Variables
+ *
+ * اگر شماره Admin قبلاً حساب freelancer یا client بوده،
+ * همان حساب به admin تبدیل می‌شود.
+ */
 function ensureAdminFromEnv() {
   const phone = normalizePhone(
     process.env.SKILLORA_ADMIN_PHONE
@@ -196,9 +243,16 @@ function ensureAdminFromEnv() {
   );
 
   if (!phone || password.length < 8) {
+    console.error(
+      "ADMIN CONFIG ERROR: SKILLORA_ADMIN_PHONE or SKILLORA_ADMIN_PASSWORD is missing/invalid."
+    );
+
     return null;
   }
 
+  /*
+   * ابتدا با شماره نرمال‌شده جستجو می‌کنیم.
+   */
   let existing = db
     .prepare(`
       SELECT *
@@ -207,6 +261,29 @@ function ensureAdminFromEnv() {
     `)
     .get(phone);
 
+
+  /*
+   * اگر شماره در دیتابیس با اعداد فارسی/عربی
+   * ذخیره شده باشد، همه کاربران را بررسی می‌کنیم.
+   */
+  if (!existing) {
+    const allUsers = db
+      .prepare(`
+        SELECT *
+        FROM users
+      `)
+      .all();
+
+    existing = allUsers.find(
+      user =>
+        normalizePhone(user.phone) === phone
+    );
+  }
+
+
+  /*
+   * اگر حساب وجود ندارد، Admin جدید ساخته می‌شود.
+   */
   if (!existing) {
     const result = db.prepare(`
       INSERT INTO users
@@ -230,17 +307,28 @@ function ensureAdminFromEnv() {
       .get(result.lastInsertRowid);
   }
 
+
+  /*
+   * حساب موجود را به صورت قطعی Admin می‌کنیم.
+   */
   db.prepare(`
     UPDATE users
     SET
       name = ?,
+      phone = ?,
       role = 'admin'
     WHERE id = ?
   `).run(
     name,
+    phone,
     existing.id
   );
 
+
+  /*
+   * اگر رمز موجود با رمز Railway یکی نیست،
+   * رمز جدید ذخیره می‌شود.
+   */
   if (
     !verifyPassword(
       password,
@@ -257,7 +345,9 @@ function ensureAdminFromEnv() {
     );
   }
 
+
   ensureWallet(existing.id);
+
 
   return db
     .prepare(`
@@ -270,7 +360,7 @@ function ensureAdminFromEnv() {
 
 
 /* =========================================================
-   AUTH
+   AUTH - REGISTER
 ========================================================= */
 
 app.post(
@@ -295,11 +385,13 @@ app.post(
           ? "client"
           : "freelancer";
 
+
       if (!name) {
         return res.status(400).json({
           error: "نام را وارد کنید."
         });
       }
+
 
       if (!phone) {
         return res.status(400).json({
@@ -307,12 +399,14 @@ app.post(
         });
       }
 
+
       if (password.length < 8) {
         return res.status(400).json({
           error:
             "رمز عبور باید حداقل ۸ کاراکتر باشد."
         });
       }
+
 
       const exists = db
         .prepare(`
@@ -322,12 +416,14 @@ app.post(
         `)
         .get(phone);
 
+
       if (exists) {
         return res.status(409).json({
           error:
             "این شماره موبایل قبلاً ثبت شده است."
         });
       }
+
 
       const result = db.prepare(`
         INSERT INTO users
@@ -341,20 +437,25 @@ app.post(
         role
       );
 
+
       ensureWallet(result.lastInsertRowid);
+
 
       const user = getUser(
         result.lastInsertRowid
       );
+
 
       setSessionCookie(
         res,
         signToken(user)
       );
 
+
       res.json({
         user: publicUser(user)
       });
+
     } catch (error) {
       console.error(
         "REGISTER ERROR:",
@@ -370,6 +471,10 @@ app.post(
 );
 
 
+/* =========================================================
+   AUTH - LOGIN
+========================================================= */
+
 app.post(
   "/api/auth/login",
   loginLimiter,
@@ -383,6 +488,7 @@ app.post(
         req.body.password || ""
       );
 
+
       const adminPhone = normalizePhone(
         process.env.SKILLORA_ADMIN_PHONE
       );
@@ -391,15 +497,35 @@ app.post(
         process.env.SKILLORA_ADMIN_PASSWORD || ""
       );
 
-      const isConfiguredAdmin =
-        adminPhone &&
-        adminPassword.length >= 8 &&
-        phone === adminPhone &&
-        password === adminPassword;
 
+      /*
+       * برای Admin اعداد فارسی و عربی
+       * در رمز نیز به انگلیسی تبدیل می‌شوند.
+       */
+      const normalizedLoginPassword =
+        normalizeAdminSecret(password);
+
+      const normalizedAdminPassword =
+        normalizeAdminSecret(adminPassword);
+
+
+      const isConfiguredAdmin =
+        Boolean(
+          adminPhone &&
+          adminPassword.length >= 8 &&
+          phone === adminPhone &&
+          normalizedLoginPassword ===
+            normalizedAdminPassword
+        );
+
+
+      /*
+       * ورود Admin
+       */
       if (isConfiguredAdmin) {
         const admin =
           ensureAdminFromEnv();
+
 
         if (!admin) {
           return res.status(500).json({
@@ -408,25 +534,72 @@ app.post(
           });
         }
 
+
         ensureWallet(admin.id);
+
+
+        /*
+         * دوباره از دیتابیس می‌خوانیم
+         * تا role قطعی باشد.
+         */
+        const finalAdmin =
+          getUser(admin.id);
+
+
+        if (
+          !finalAdmin ||
+          finalAdmin.role !== "admin"
+        ) {
+          return res.status(500).json({
+            error:
+              "نقش حساب مدیریت تنظیم نشد."
+          });
+        }
+
 
         setSessionCookie(
           res,
-          signToken(admin)
+          signToken(finalAdmin)
         );
 
+
         return res.json({
-          user: publicUser(admin)
+          user:
+            publicUser(finalAdmin)
         });
       }
 
-      const user = db
+
+      /*
+       * ورود عادی کاربران
+       */
+      let user = db
         .prepare(`
           SELECT *
           FROM users
           WHERE phone = ?
         `)
         .get(phone);
+
+
+      /*
+       * اگر شماره قبلی با اعداد فارسی/عربی
+       * ذخیره شده باشد، آن را نیز پیدا می‌کنیم.
+       */
+      if (!user) {
+        const allUsers = db
+          .prepare(`
+            SELECT *
+            FROM users
+          `)
+          .all();
+
+        user = allUsers.find(
+          item =>
+            normalizePhone(item.phone) === phone
+        );
+      }
+
 
       if (
         !user ||
@@ -441,16 +614,25 @@ app.post(
         });
       }
 
+
       ensureWallet(user.id);
+
+
+      const finalUser =
+        getUser(user.id);
+
 
       setSessionCookie(
         res,
-        signToken(user)
+        signToken(finalUser)
       );
 
+
       res.json({
-        user: publicUser(user)
+        user:
+          publicUser(finalUser)
       });
+
     } catch (error) {
       console.error(
         "LOGIN ERROR:",
@@ -465,6 +647,10 @@ app.post(
   }
 );
 
+
+/* =========================================================
+   AUTH - LOGOUT
+========================================================= */
 
 app.post(
   "/api/auth/logout",
@@ -487,6 +673,10 @@ app.post(
 );
 
 
+/* =========================================================
+   CURRENT USER
+========================================================= */
+
 app.get(
   "/api/me",
   requireAuth,
@@ -495,6 +685,7 @@ app.get(
       req.auth.sub
     );
 
+
     if (!user) {
       return res.status(404).json({
         error:
@@ -502,7 +693,9 @@ app.get(
       });
     }
 
+
     ensureWallet(user.id);
+
 
     res.json({
       user: publicUser(user)
@@ -539,6 +732,7 @@ app.get(
       req.auth.sub
     );
 
+
     if (!user) {
       return res.status(404).json({
         error:
@@ -546,8 +740,10 @@ app.get(
       });
     }
 
+
     const wallet =
       getWallet(user.id);
+
 
     res.json({
       user: publicUser(user),
@@ -576,12 +772,14 @@ app.put(
       1000
     );
 
+
     if (!name) {
       return res.status(400).json({
         error:
           "نام نمی‌تواند خالی باشد."
       });
     }
+
 
     db.prepare(`
       UPDATE users
@@ -597,9 +795,11 @@ app.put(
       req.auth.sub
     );
 
+
     const user = getUser(
       req.auth.sub
     );
+
 
     res.json({
       user: publicUser(user)
@@ -621,7 +821,9 @@ app.get(
         30
       );
 
+
     let projects;
+
 
     if (status) {
       projects = db
@@ -636,6 +838,7 @@ app.get(
           ORDER BY p.id DESC
         `)
         .all(status);
+
     } else {
       projects = db
         .prepare(`
@@ -650,6 +853,7 @@ app.get(
         .all();
     }
 
+
     res.json({
       projects
     });
@@ -662,6 +866,7 @@ app.get(
   (req, res) => {
     const id =
       Number(req.params.id);
+
 
     const project = db
       .prepare(`
@@ -676,12 +881,14 @@ app.get(
       `)
       .get(id);
 
+
     if (!project) {
       return res.status(404).json({
         error:
           "پروژه پیدا نشد."
       });
     }
+
 
     const applications = db
       .prepare(`
@@ -697,6 +904,7 @@ app.get(
         ORDER BY a.id DESC
       `)
       .all(id);
+
 
     res.json({
       project,
@@ -725,12 +933,14 @@ app.post(
       req.body.budget
     );
 
+
     if (!title) {
       return res.status(400).json({
         error:
           "عنوان پروژه را وارد کنید."
       });
     }
+
 
     if (!description) {
       return res.status(400).json({
@@ -739,12 +949,14 @@ app.post(
       });
     }
 
+
     if (budget <= 0) {
       return res.status(400).json({
         error:
           "بودجه پروژه معتبر نیست."
       });
     }
+
 
     const result = db.prepare(`
       INSERT INTO projects
@@ -764,6 +976,7 @@ app.post(
       budget
     );
 
+
     const project = db
       .prepare(`
         SELECT *
@@ -771,6 +984,7 @@ app.post(
         WHERE id = ?
       `)
       .get(result.lastInsertRowid);
+
 
     res.json({
       project
@@ -791,6 +1005,7 @@ app.post(
     const projectId =
       Number(req.params.id);
 
+
     const project = db
       .prepare(`
         SELECT *
@@ -799,6 +1014,7 @@ app.post(
       `)
       .get(projectId);
 
+
     if (!project) {
       return res.status(404).json({
         error:
@@ -806,12 +1022,14 @@ app.post(
       });
     }
 
+
     if (project.status !== "open") {
       return res.status(400).json({
         error:
           "این پروژه دیگر قابل درخواست نیست."
       });
     }
+
 
     if (
       project.client_id ===
@@ -822,6 +1040,7 @@ app.post(
           "نمی‌توانید برای پروژه خودتان درخواست بفرستید."
       });
     }
+
 
     const existing = db
       .prepare(`
@@ -835,6 +1054,7 @@ app.post(
         req.auth.sub
       );
 
+
     if (existing) {
       return res.status(409).json({
         error:
@@ -842,10 +1062,12 @@ app.post(
       });
     }
 
+
     const message = cleanText(
       req.body.message,
       2000
     );
+
 
     const result = db.prepare(`
       INSERT INTO applications
@@ -862,6 +1084,7 @@ app.post(
       req.auth.sub,
       message
     );
+
 
     res.json({
       ok: true,
@@ -893,6 +1116,7 @@ app.get(
       `)
       .all(req.auth.sub);
 
+
     res.json({
       applications
     });
@@ -907,6 +1131,7 @@ app.get(
     const projectId =
       Number(req.params.id);
 
+
     const project = db
       .prepare(`
         SELECT *
@@ -915,12 +1140,14 @@ app.get(
       `)
       .get(projectId);
 
+
     if (!project) {
       return res.status(404).json({
         error:
           "پروژه پیدا نشد."
       });
     }
+
 
     const isOwner =
       project.client_id ===
@@ -929,12 +1156,14 @@ app.get(
     const isAdmin =
       req.auth.role === "admin";
 
+
     if (!isOwner && !isAdmin) {
       return res.status(403).json({
         error:
           "دسترسی غیرمجاز."
       });
     }
+
 
     const applications = db
       .prepare(`
@@ -951,6 +1180,7 @@ app.get(
         ORDER BY a.id DESC
       `)
       .all(projectId);
+
 
     res.json({
       project,
@@ -975,6 +1205,7 @@ app.post(
     const freelancerId =
       Number(req.body.freelancer_id);
 
+
     const project = db
       .prepare(`
         SELECT *
@@ -983,12 +1214,14 @@ app.post(
       `)
       .get(projectId);
 
+
     if (!project) {
       return res.status(404).json({
         error:
           "پروژه پیدا نشد."
       });
     }
+
 
     if (
       req.auth.role !== "admin" &&
@@ -1001,6 +1234,7 @@ app.post(
       });
     }
 
+
     if (
       project.status !== "open"
     ) {
@@ -1009,6 +1243,7 @@ app.post(
           "این پروژه دیگر باز نیست."
       });
     }
+
 
     const application = db
       .prepare(`
@@ -1022,6 +1257,7 @@ app.post(
         freelancerId
       );
 
+
     if (!application) {
       return res.status(404).json({
         error:
@@ -1029,8 +1265,10 @@ app.post(
       });
     }
 
+
     const transaction =
       db.transaction(() => {
+
         db.prepare(`
           UPDATE projects
           SET
@@ -1042,6 +1280,7 @@ app.post(
           projectId
         );
 
+
         db.prepare(`
           UPDATE applications
           SET status = 'accepted'
@@ -1049,6 +1288,7 @@ app.post(
         `).run(
           application.id
         );
+
 
         db.prepare(`
           UPDATE applications
@@ -1062,7 +1302,9 @@ app.post(
         );
       });
 
+
     transaction();
+
 
     res.json({
       ok: true
@@ -1088,6 +1330,7 @@ app.post(
         30
       );
 
+
     const allowed = [
       "open",
       "assigned",
@@ -1096,12 +1339,14 @@ app.post(
       "cancelled"
     ];
 
+
     if (!allowed.includes(status)) {
       return res.status(400).json({
         error:
           "وضعیت پروژه معتبر نیست."
       });
     }
+
 
     const project = db
       .prepare(`
@@ -1111,12 +1356,14 @@ app.post(
       `)
       .get(projectId);
 
+
     if (!project) {
       return res.status(404).json({
         error:
           "پروژه پیدا نشد."
       });
     }
+
 
     const allowedUser =
       project.client_id ===
@@ -1125,12 +1372,14 @@ app.post(
         req.auth.sub ||
       req.auth.role === "admin";
 
+
     if (!allowedUser) {
       return res.status(403).json({
         error:
           "دسترسی غیرمجاز."
       });
     }
+
 
     db.prepare(`
       UPDATE projects
@@ -1140,6 +1389,7 @@ app.post(
       status,
       projectId
     );
+
 
     res.json({
       ok: true
@@ -1160,6 +1410,7 @@ app.post(
     const projectId =
       Number(req.params.id);
 
+
     const project = db
       .prepare(`
         SELECT *
@@ -1168,12 +1419,14 @@ app.post(
       `)
       .get(projectId);
 
+
     if (!project) {
       return res.status(404).json({
         error:
           "پروژه پیدا نشد."
       });
     }
+
 
     if (
       req.auth.role !== "admin" &&
@@ -1186,12 +1439,14 @@ app.post(
       });
     }
 
+
     if (!project.freelancer_id) {
       return res.status(400).json({
         error:
           "هنوز فریلنسری برای پروژه انتخاب نشده است."
       });
     }
+
 
     const existingPayment =
       db
@@ -1202,12 +1457,14 @@ app.post(
         `)
         .get(projectId);
 
+
     if (existingPayment) {
       return res.status(409).json({
         error:
           "پرداخت این پروژه قبلاً ثبت شده است."
       });
     }
+
 
     const admin = db
       .prepare(`
@@ -1219,12 +1476,14 @@ app.post(
       `)
       .get();
 
+
     if (!admin) {
       return res.status(500).json({
         error:
           "حساب مدیریت Skillora هنوز ساخته نشده است."
       });
     }
+
 
     const settings = db
       .prepare(`
@@ -1234,14 +1493,17 @@ app.post(
       `)
       .get();
 
+
     const commissionRate =
       Number(
         settings?.commission_rate ??
           DEFAULT_COMMISSION
       );
 
+
     const grossAmount =
       parseMoney(project.budget);
+
 
     const commissionAmount =
       Math.round(
@@ -1250,9 +1512,11 @@ app.post(
           100
       );
 
+
     const freelancerNet =
       grossAmount -
       commissionAmount;
+
 
     ensureWallet(
       project.client_id
@@ -1266,12 +1530,15 @@ app.post(
       admin.id
     );
 
+
     const transaction =
       db.transaction(() => {
+
         const clientWallet =
           getWallet(
             project.client_id
           );
+
 
         if (
           Number(clientWallet.balance) <
@@ -1281,6 +1548,7 @@ app.post(
             "INSUFFICIENT_BALANCE"
           );
         }
+
 
         db.prepare(`
           UPDATE wallets
@@ -1294,6 +1562,7 @@ app.post(
           grossAmount,
           project.client_id
         );
+
 
         db.prepare(`
           INSERT INTO wallet_transactions
@@ -1311,6 +1580,7 @@ app.post(
           `پرداخت پروژه #${projectId}`
         );
 
+
         db.prepare(`
           UPDATE wallets
           SET
@@ -1324,6 +1594,7 @@ app.post(
           freelancerNet,
           project.freelancer_id
         );
+
 
         db.prepare(`
           INSERT INTO wallet_transactions
@@ -1341,6 +1612,7 @@ app.post(
           `درآمد پروژه #${projectId}`
         );
 
+
         db.prepare(`
           UPDATE wallets
           SET
@@ -1354,6 +1626,7 @@ app.post(
           commissionAmount,
           admin.id
         );
+
 
         db.prepare(`
           INSERT INTO wallet_transactions
@@ -1370,6 +1643,7 @@ app.post(
           commissionAmount,
           `کمیسیون پروژه #${projectId}`
         );
+
 
         db.prepare(`
           INSERT INTO project_payments
@@ -1395,6 +1669,7 @@ app.post(
           freelancerNet
         );
 
+
         db.prepare(`
           INSERT OR IGNORE INTO platform_ledger
             (
@@ -1414,6 +1689,7 @@ app.post(
           freelancerNet
         );
 
+
         db.prepare(`
           UPDATE projects
           SET status = 'completed'
@@ -1421,9 +1697,12 @@ app.post(
         `).run(projectId);
       });
 
+
     try {
       transaction();
+
     } catch (error) {
+
       if (
         error.message ===
         "INSUFFICIENT_BALANCE"
@@ -1434,16 +1713,19 @@ app.post(
         });
       }
 
+
       console.error(
         "PAYMENT ERROR:",
         error
       );
+
 
       return res.status(500).json({
         error:
           "پرداخت انجام نشد."
       });
     }
+
 
     res.json({
       ok: true,
@@ -1470,6 +1752,7 @@ app.get(
     const wallet =
       getWallet(req.auth.sub);
 
+
     const transactions =
       db
         .prepare(`
@@ -1479,6 +1762,7 @@ app.get(
           ORDER BY id DESC
         `)
         .all(req.auth.sub);
+
 
     res.json({
       wallet,
@@ -1495,6 +1779,7 @@ app.post(
     const amount =
       parseMoney(req.body.amount);
 
+
     if (amount <= 0) {
       return res.status(400).json({
         error:
@@ -1502,9 +1787,11 @@ app.post(
       });
     }
 
+
     ensureWallet(
       req.auth.sub
     );
+
 
     db.prepare(`
       UPDATE wallets
@@ -1516,6 +1803,7 @@ app.post(
       amount,
       req.auth.sub
     );
+
 
     db.prepare(`
       INSERT INTO wallet_transactions
@@ -1532,6 +1820,7 @@ app.post(
       amount,
       "افزایش موجودی آزمایشی"
     );
+
 
     res.json({
       ok: true,
@@ -1551,6 +1840,7 @@ app.post(
     const amount =
       parseMoney(req.body.amount);
 
+
     if (amount <= 0) {
       return res.status(400).json({
         error:
@@ -1558,10 +1848,12 @@ app.post(
       });
     }
 
+
     const wallet =
       getWallet(
         req.auth.sub
       );
+
 
     if (
       Number(wallet.balance) <
@@ -1573,6 +1865,7 @@ app.post(
       });
     }
 
+
     db.prepare(`
       UPDATE wallets
       SET
@@ -1583,6 +1876,7 @@ app.post(
       amount,
       req.auth.sub
     );
+
 
     db.prepare(`
       INSERT INTO wallet_transactions
@@ -1599,6 +1893,7 @@ app.post(
       -amount,
       "برداشت آزمایشی"
     );
+
 
     res.json({
       ok: true,
@@ -1623,6 +1918,7 @@ app.get(
       req.auth.sub
     );
 
+
     const rewards = db
       .prepare(`
         SELECT *
@@ -1631,6 +1927,7 @@ app.get(
         ORDER BY id DESC
       `)
       .all(req.auth.sub);
+
 
     res.json({
       points:
@@ -1642,24 +1939,30 @@ app.get(
 
 
 /* =========================================================
-   ADMIN
+   ADMIN API
 ========================================================= */
 
 const adminOnly =
   requireRole("admin");
 
 
+/* ---------------------------------------------------------
+   ADMIN OVERVIEW
+--------------------------------------------------------- */
+
 app.get(
   "/api/admin/overview",
   requireAuth,
   adminOnly,
   (req, res) => {
+
     const admin = db
       .prepare(`
         SELECT
           u.id,
           u.name,
           u.phone,
+          u.role,
           w.balance,
           w.total_income
         FROM users u
@@ -1671,6 +1974,7 @@ app.get(
       `)
       .get();
 
+
     const usersCount =
       db
         .prepare(`
@@ -1679,6 +1983,7 @@ app.get(
           WHERE role != 'admin'
         `)
         .get().count;
+
 
     const freelancersCount =
       db
@@ -1689,6 +1994,7 @@ app.get(
         `)
         .get().count;
 
+
     const clientsCount =
       db
         .prepare(`
@@ -1698,6 +2004,7 @@ app.get(
         `)
         .get().count;
 
+
     const projectsCount =
       db
         .prepare(`
@@ -1705,6 +2012,7 @@ app.get(
           FROM projects
         `)
         .get().count;
+
 
     const completedProjects =
       db
@@ -1714,6 +2022,7 @@ app.get(
           WHERE status = 'completed'
         `)
         .get().count;
+
 
     const totalVolume =
       db
@@ -1727,6 +2036,7 @@ app.get(
         `)
         .get().total;
 
+
     const totalCommission =
       db
         .prepare(`
@@ -1738,6 +2048,7 @@ app.get(
           FROM platform_ledger
         `)
         .get().total;
+
 
     const totalFreelancerNet =
       db
@@ -1751,6 +2062,7 @@ app.get(
         `)
         .get().total;
 
+
     const settings =
       db
         .prepare(`
@@ -1759,6 +2071,7 @@ app.get(
           WHERE id = 1
         `)
         .get();
+
 
     res.json({
       admin,
@@ -1789,11 +2102,16 @@ app.get(
 );
 
 
+/* ---------------------------------------------------------
+   ADMIN USERS
+--------------------------------------------------------- */
+
 app.get(
   "/api/admin/users",
   requireAuth,
   adminOnly,
   (_req, res) => {
+
     const users = db
       .prepare(`
         SELECT
@@ -1823,6 +2141,7 @@ app.get(
       `)
       .all();
 
+
     res.json({
       users
     });
@@ -1830,11 +2149,16 @@ app.get(
 );
 
 
+/* ---------------------------------------------------------
+   ADMIN PROJECTS
+--------------------------------------------------------- */
+
 app.get(
   "/api/admin/projects",
   requireAuth,
   adminOnly,
   (_req, res) => {
+
     const projects = db
       .prepare(`
         SELECT
@@ -1850,6 +2174,7 @@ app.get(
       `)
       .all();
 
+
     res.json({
       projects
     });
@@ -1857,11 +2182,16 @@ app.get(
 );
 
 
+/* ---------------------------------------------------------
+   ADMIN LEDGER
+--------------------------------------------------------- */
+
 app.get(
   "/api/admin/ledger",
   requireAuth,
   adminOnly,
   (_req, res) => {
+
     const ledger = db
       .prepare(`
         SELECT
@@ -1880,6 +2210,7 @@ app.get(
       `)
       .all();
 
+
     res.json({
       ledger
     });
@@ -1887,11 +2218,16 @@ app.get(
 );
 
 
+/* ---------------------------------------------------------
+   ADMIN SETTINGS
+--------------------------------------------------------- */
+
 app.get(
   "/api/admin/settings",
   requireAuth,
   adminOnly,
   (_req, res) => {
+
     const settings =
       db
         .prepare(`
@@ -1900,6 +2236,7 @@ app.get(
           WHERE id = 1
         `)
         .get();
+
 
     res.json({
       settings
@@ -1913,10 +2250,12 @@ app.put(
   requireAuth,
   adminOnly,
   (req, res) => {
+
     let commission =
       Number(
         req.body.commission_rate
       );
+
 
     if (!Number.isFinite(commission)) {
       return res.status(400).json({
@@ -1924,6 +2263,7 @@ app.put(
           "درصد کمیسیون معتبر نیست."
       });
     }
+
 
     commission =
       Math.min(
@@ -1934,6 +2274,7 @@ app.put(
         )
       );
 
+
     db.prepare(`
       UPDATE platform_settings
       SET
@@ -1941,6 +2282,7 @@ app.put(
         updated_at = CURRENT_TIMESTAMP
       WHERE id = 1
     `).run(commission);
+
 
     res.json({
       ok: true,
@@ -1988,7 +2330,23 @@ app.get(
 
 migrate();
 
-ensureAdminFromEnv();
+/*
+ * قبل از شروع سرور، Admin را از Railway
+ * ایجاد/اصلاح می‌کنیم.
+ */
+const startupAdmin =
+  ensureAdminFromEnv();
+
+if (startupAdmin) {
+  console.log(
+    `Skillora Admin ready: ${startupAdmin.phone} / role=${startupAdmin.role}`
+  );
+} else {
+  console.log(
+    "Skillora Admin environment variables are not configured."
+  );
+}
+
 
 app.listen(
   PORT,
