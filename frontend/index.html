@@ -2517,4 +2517,2456 @@
 
 <!-- =========================
      APPLICATION MODAL
+========================= --><!-- =========================
+     APPLICATION MODAL
 ========================= -->
+
+<div id="applicationModal" class="modal hidden">
+  <div class="modal-box">
+
+    <button class="modal-close"
+            onclick="closeModal('applicationModal')">
+      ×
+    </button>
+
+    <h2>درخواست‌های همکاری</h2>
+
+    <p class="muted">
+      پیشنهادهای ارسال‌شده برای این پروژه
+    </p>
+
+    <div id="applicationModalContent">
+      <div class="loading">در حال بارگذاری...</div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- =========================
+     PROJECT MODAL
+========================= -->
+
+<div id="projectModal" class="modal hidden">
+
+  <div class="modal-box">
+
+    <button class="modal-close"
+            onclick="closeModal('projectModal')">
+      ×
+    </button>
+
+    <h2>ثبت پروژه جدید</h2>
+
+    <p class="muted">
+      پروژه خود را در Skillora منتشر کنید.
+    </p>
+
+    <form id="projectForm">
+
+      <label>عنوان پروژه</label>
+
+      <input
+        id="modalProjectTitle"
+        placeholder="مثلاً طراحی سایت"
+        required
+      >
+
+      <label>توضیحات</label>
+
+      <textarea
+        id="modalProjectDescription"
+        placeholder="توضیحات کامل پروژه..."
+        required
+      ></textarea>
+
+      <label>دسته‌بندی</label>
+
+      <input
+        id="modalProjectCategory"
+        placeholder="برنامه‌نویسی، طراحی، تولید محتوا..."
+      >
+
+      <label>بودجه</label>
+
+      <input
+        id="modalProjectBudget"
+        type="number"
+        min="0"
+        required
+        placeholder="5000000"
+      >
+
+      <div id="modalProjectError"></div>
+
+      <button
+        class="form-btn"
+        type="submit">
+        انتشار پروژه
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<!-- =========================
+     PAYMENT MODAL
+========================= -->
+
+<div id="paymentModal" class="modal hidden">
+
+  <div class="modal-box">
+
+    <button class="modal-close"
+            onclick="closeModal('paymentModal')">
+      ×
+    </button>
+
+    <h2>پرداخت پروژه</h2>
+
+    <p class="muted">
+      مبلغ پروژه از کیف پول آزمایشی شما پرداخت می‌شود.
+    </p>
+
+    <div id="paymentInfo"></div>
+
+    <label>مبلغ پرداخت</label>
+
+    <input
+      id="paymentAmount"
+      type="number"
+      min="0"
+      placeholder="مبلغ پروژه"
+    >
+
+    <div id="paymentError"></div>
+
+    <button
+      class="form-btn"
+      onclick="submitPayment()">
+      تأیید پرداخت
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =========================
+     ADMIN MODAL
+========================= -->
+
+<div id="adminModal" class="modal hidden">
+
+  <div class="modal-box large">
+
+    <button class="modal-close"
+            onclick="closeModal('adminModal')">
+      ×
+    </button>
+
+    <h2>مدیریت Skillora</h2>
+
+    <p class="muted">
+      مدیریت درآمد، کاربران و کمیسیون پلتفرم
+    </p>
+
+    <div id="adminContent">
+
+      <div class="loading">
+        در حال بارگذاری...
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<style>
+
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:5000;
+  background:rgba(15,16,35,.62);
+  backdrop-filter:blur(8px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+
+.modal.hidden{
+  display:none!important;
+}
+
+.modal-box{
+  width:min(560px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:white;
+  border-radius:24px;
+  padding:26px;
+  position:relative;
+  box-shadow:0 30px 80px rgba(0,0,0,.25);
+}
+
+.modal-box.large{
+  width:min(900px,100%);
+}
+
+.modal-close{
+  position:absolute;
+  left:16px;
+  top:14px;
+  width:36px;
+  height:36px;
+  border:0;
+  border-radius:10px;
+  background:#f1f2f7;
+  color:#555;
+  font-size:24px;
+}
+
+.modal-box h2{
+  margin:0 0 5px;
+  font-size:22px;
+}
+
+.modal-box .card{
+  box-shadow:none;
+}
+
+.admin-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin:18px 0;
+}
+
+.admin-stat{
+  background:#f7f7fb;
+  border:1px solid #e7e9f1;
+  border-radius:16px;
+  padding:18px;
+}
+
+.admin-stat strong{
+  display:block;
+  color:#635bff;
+  font-size:22px;
+  margin-bottom:3px;
+}
+
+.admin-stat span{
+  color:#73798c;
+  font-size:11px;
+}
+
+.table-wrap{
+  overflow-x:auto;
+  border:1px solid #e7e9f1;
+  border-radius:15px;
+}
+
+.admin-table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:600px;
+}
+
+.admin-table th,
+.admin-table td{
+  padding:12px;
+  border-bottom:1px solid #e7e9f1;
+  text-align:right;
+  font-size:11px;
+}
+
+.admin-table th{
+  background:#f7f7fb;
+}
+
+.wallet-card{
+  background:
+    linear-gradient(135deg,#5148df,#8b5cf6);
+  color:white;
+  border-radius:22px;
+  padding:25px;
+  margin-bottom:18px;
+  box-shadow:0 20px 40px rgba(99,91,255,.2);
+}
+
+.wallet-balance{
+  font-size:30px;
+  font-weight:900;
+  margin-top:8px;
+}
+
+.wallet-label{
+  font-size:11px;
+  opacity:.8;
+}
+
+.action-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
+@media(max-width:700px){
+
+  .modal-box{
+    padding:20px;
+    border-radius:20px;
+  }
+
+  .admin-grid{
+    grid-template-columns:1fr;
+  }
+
+  .action-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+</style>
+
+
+<script>
+
+/* =========================================
+   SKILLORA PLUS FINAL JAVASCRIPT
+========================================= */
+
+let currentUser = null;
+let currentProjectId = null;
+
+
+/* =========================================
+   HELPERS
+========================================= */
+
+function $(id){
+  return document.getElementById(id);
+}
+
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+function money(value){
+
+  return Number(value || 0)
+    .toLocaleString("fa-IR");
+
+}
+
+
+function message(text,type="error"){
+
+  const box = $("message");
+
+  if(!box) return;
+
+  box.className =
+    type === "ok"
+      ? "ok"
+      : "error";
+
+  box.textContent = text;
+
+}
+
+
+function clearMessage(){
+
+  const box = $("message");
+
+  if(!box) return;
+
+  box.className = "";
+
+  box.textContent = "";
+
+}
+
+
+function boxMessage(id,text,type="error"){
+
+  const box = $(id);
+
+  if(!box) return;
+
+  if(!text){
+
+    box.className = "";
+
+    box.textContent = "";
+
+    return;
+
+  }
+
+  box.className =
+    type === "ok"
+      ? "ok"
+      : "error";
+
+  box.textContent = text;
+
+}
+
+
+/* =========================================
+   API
+========================================= */
+
+async function api(url,options={}){
+
+  const config = {
+
+    ...options,
+
+    headers:{
+      "Content-Type":"application/json",
+      ...(options.headers || {})
+    },
+
+    credentials:"same-origin"
+
+  };
+
+  const response =
+    await fetch(url,config);
+
+  let data = {};
+
+  try{
+
+    data = await response.json();
+
+  }catch(e){}
+
+  if(!response.ok){
+
+    throw new Error(
+      data.message ||
+      data.error ||
+      "خطایی رخ داد."
+    );
+
+  }
+
+  return data;
+
+}
+
+
+/* =========================================
+   PAGE
+========================================= */
+
+function showPage(name){
+
+  document
+    .querySelectorAll("[id^='page-']")
+    .forEach(el => {
+
+      el.classList.add("hidden");
+
+    });
+
+  const page = $("page-" + name);
+
+  if(page){
+
+    page.classList.remove("hidden");
+
+  }
+
+  clearMessage();
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+
+  if(name === "projects"){
+
+    loadProjects();
+
+  }
+
+  if(name === "profile"){
+
+    loadProfile();
+
+  }
+
+  if(name === "applications"){
+
+    loadMyApplications();
+
+  }
+
+  if(name === "wallet"){
+
+    loadWallet();
+
+  }
+
+  if(name === "rewards"){
+
+    loadRewards();
+
+  }
+
+  if(name === "admin"){
+
+    loadAdmin();
+
+  }
+
+}
+
+
+/* =========================================
+   MODAL
+========================================= */
+
+function openModal(id){
+
+  const modal = $(id);
+
+  if(modal){
+
+    modal.classList.remove("hidden");
+
+  }
+
+}
+
+
+function closeModal(id){
+
+  const modal = $(id);
+
+  if(modal){
+
+    modal.classList.add("hidden");
+
+  }
+
+}
+
+
+document.addEventListener("click",function(e){
+
+  if(e.target.classList.contains("modal")){
+
+    e.target.classList.add("hidden");
+
+  }
+
+});
+
+
+/* =========================================
+   SESSION
+========================================= */
+
+async function checkSession(){
+
+  try{
+
+    const data =
+      await api("/api/me");
+
+    currentUser =
+      data.user || null;
+
+  }catch(e){
+
+    currentUser = null;
+
+  }
+
+  updateHeader();
+
+}
+
+
+function updateHeader(){
+
+  const login =
+    $("loginNav");
+
+  const register =
+    $("registerNav");
+
+  const logout =
+    $("logoutNav");
+
+  const userArea =
+    $("userArea");
+
+  const create =
+    $("createProjectNav");
+
+  if(currentUser){
+
+    if(login)
+      login.classList.add("hidden");
+
+    if(register)
+      register.classList.add("hidden");
+
+    if(logout)
+      logout.classList.remove("hidden");
+
+    if(userArea){
+
+      userArea.textContent =
+        currentUser.name ||
+        currentUser.phone ||
+        "کاربر";
+
+    }
+
+    if(create &&
+       currentUser.role === "client"){
+
+      create.classList.remove("hidden");
+
+    }
+
+  }else{
+
+    if(login)
+      login.classList.remove("hidden");
+
+    if(register)
+      register.classList.remove("hidden");
+
+    if(logout)
+      logout.classList.add("hidden");
+
+    if(create)
+      create.classList.add("hidden");
+
+    if(userArea)
+      userArea.textContent = "مهمان";
+
+  }
+
+}
+
+
+/* =========================================
+   LOGIN
+========================================= */
+
+const loginForm =
+  $("loginForm");
+
+if(loginForm){
+
+  loginForm.addEventListener(
+    "submit",
+    async function(e){
+
+      e.preventDefault();
+
+      boxMessage("loginError","");
+
+      try{
+
+        const data =
+          await api(
+            "/api/auth/login",
+            {
+              method:"POST",
+
+              body:JSON.stringify({
+
+                phone:
+                  $("loginPhone").value.trim(),
+
+                password:
+                  $("loginPassword").value
+
+              })
+
+            }
+          );
+
+        currentUser =
+          data.user;
+
+        updateHeader();
+
+        message(
+          "با موفقیت وارد شدید.",
+          "ok"
+        );
+
+        showPage("home");
+
+      }catch(error){
+
+        boxMessage(
+          "loginError",
+          error.message
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================
+   REGISTER
+========================================= */
+
+const registerForm =
+  $("registerForm");
+
+if(registerForm){
+
+  registerForm.addEventListener(
+    "submit",
+    async function(e){
+
+      e.preventDefault();
+
+      boxMessage("registerError","");
+
+      try{
+
+        const data =
+          await api(
+            "/api/auth/register",
+            {
+              method:"POST",
+
+              body:JSON.stringify({
+
+                name:
+                  $("registerName").value.trim(),
+
+                phone:
+                  $("registerPhone").value.trim(),
+
+                password:
+                  $("registerPassword").value,
+
+                role:
+                  $("registerRole").value
+
+              })
+
+            }
+          );
+
+        currentUser =
+          data.user;
+
+        updateHeader();
+
+        message(
+          "حساب شما با موفقیت ساخته شد.",
+          "ok"
+        );
+
+        showPage("home");
+
+      }catch(error){
+
+        boxMessage(
+          "registerError",
+          error.message
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+async function logout(){
+
+  try{
+
+    await api(
+      "/api/auth/logout",
+      {
+        method:"POST"
+      }
+    );
+
+  }catch(e){}
+
+  currentUser = null;
+
+  updateHeader();
+
+  message(
+    "از حساب خارج شدید.",
+    "ok"
+  );
+
+  showPage("home");
+
+}
+
+
+/* =========================================
+   PROJECTS
+========================================= */
+
+async function loadProjects(){
+
+  const list =
+    $("projectsList");
+
+  if(!list) return;
+
+  list.innerHTML =
+    '<div class="loading">در حال بارگذاری پروژه‌ها...</div>';
+
+  try{
+
+    const data =
+      await api("/api/projects");
+
+    const projects =
+      data.projects || [];
+
+    if(!projects.length){
+
+      list.innerHTML = `
+
+        <div class="card">
+
+          <h3>هنوز پروژه‌ای ثبت نشده است.</h3>
+
+          <p class="muted">
+            اولین پروژه را در Skillora ثبت کنید.
+          </p>
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+    list.innerHTML = "";
+
+    projects.forEach(project => {
+
+      const div =
+        document.createElement("div");
+
+      div.className = "project";
+
+      let status = "باز";
+
+      if(project.status === "in_progress")
+        status = "در حال انجام";
+
+      if(project.status === "completed")
+        status = "تکمیل شده";
+
+      let actions = "";
+
+      if(
+        currentUser &&
+        currentUser.role === "freelancer" &&
+        project.status === "open"
+      ){
+
+        actions += `
+
+          <button
+            class="small-btn"
+            onclick="openApply(${project.id})">
+            ارسال پیشنهاد
+          </button>
+
+        `;
+
+      }
+
+
+      if(
+        currentUser &&
+        currentUser.role === "client" &&
+        Number(project.clientId) === Number(currentUser.id)
+      ){
+
+        actions += `
+
+          <button
+            class="small-btn secondary"
+            onclick="openApplications(${project.id})">
+            درخواست‌ها
+          </button>
+
+        `;
+
+
+        if(project.status === "in_progress"){
+
+          actions += `
+
+            <button
+              class="small-btn green"
+              onclick="openPayment(${project.id},${Number(project.budget || 0)})">
+              پرداخت پروژه
+            </button>
+
+          `;
+
+        }
+
+      }
+
+
+      div.innerHTML = `
+
+        <div class="project-top">
+
+          <h3>
+            ${escapeHtml(project.title)}
+          </h3>
+
+          <span class="badge">
+            ${escapeHtml(status)}
+          </span>
+
+        </div>
+
+        <div class="badges">
+
+          <span class="badge">
+            ${escapeHtml(project.category || "عمومی")}
+          </span>
+
+          <span class="badge">
+            بودجه:
+            ${money(project.budget)}
+          </span>
+
+        </div>
+
+        <p>
+          ${escapeHtml(project.description)}
+        </p>
+
+        <div class="muted">
+          کارفرما:
+          ${escapeHtml(project.clientName || "-")}
+        </div>
+
+        <div class="project-actions">
+          ${actions}
+        </div>
+
+      `;
+
+      list.appendChild(div);
+
+    });
+
+  }catch(error){
+
+    list.innerHTML = `
+
+      <div class="error">
+        ${escapeHtml(error.message)}
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================
+   CREATE PROJECT
+========================================= */
+
+const projectForm =
+  $("projectForm");
+
+if(projectForm){
+
+  projectForm.addEventListener(
+    "submit",
+    async function(e){
+
+      e.preventDefault();
+
+      boxMessage(
+        "modalProjectError",
+        ""
+      );
+
+      try{
+
+        await api(
+          "/api/projects",
+          {
+            method:"POST",
+
+            body:JSON.stringify({
+
+              title:
+                $("modalProjectTitle").value.trim(),
+
+              description:
+                $("modalProjectDescription").value.trim(),
+
+              category:
+                $("modalProjectCategory").value.trim(),
+
+              budget:
+                Number(
+                  $("modalProjectBudget").value
+                )
+
+            })
+
+          }
+        );
+
+        closeModal("projectModal");
+
+        projectForm.reset();
+
+        message(
+          "پروژه با موفقیت منتشر شد.",
+          "ok"
+        );
+
+        showPage("projects");
+
+      }catch(error){
+
+        boxMessage(
+          "modalProjectError",
+          error.message
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================
+   APPLY
+========================================= */
+
+function openApply(projectId){
+
+  currentProjectId =
+    projectId;
+
+  const info =
+    $("applyProjectInfo");
+
+  if(info){
+
+    info.innerHTML = `
+
+      <div class="badges">
+
+        <span class="badge">
+          پروژه #${projectId}
+        </span>
+
+      </div>
+
+    `;
+
+  }
+
+  showPage("apply");
+
+}
+
+
+const applyForm =
+  $("applyForm");
+
+if(applyForm){
+
+  applyForm.addEventListener(
+    "submit",
+    async function(e){
+
+      e.preventDefault();
+
+      boxMessage(
+        "applyError",
+        ""
+      );
+
+      try{
+
+        await api(
+          "/api/projects/"
+          + currentProjectId
+          + "/apply",
+          {
+            method:"POST",
+
+            body:JSON.stringify({
+
+              price:
+                Number(
+                  $("applyPrice").value
+                ),
+
+              message:
+                $("applyMessage").value.trim()
+
+            })
+
+          }
+        );
+
+        boxMessage(
+          "applyOk",
+          "پیشنهاد شما با موفقیت ارسال شد.",
+          "ok"
+        );
+
+        applyForm.reset();
+
+      }catch(error){
+
+        boxMessage(
+          "applyError",
+          error.message
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================
+   APPLICATIONS
+========================================= */
+
+async function openApplications(projectId){
+
+  currentProjectId =
+    projectId;
+
+  openModal("applicationModal");
+
+  const box =
+    $("applicationModalContent");
+
+  box.innerHTML =
+    '<div class="loading">در حال بارگذاری...</div>';
+
+  try{
+
+    const data =
+      await api(
+        "/api/projects/"
+        + projectId
+        + "/applications"
+      );
+
+    const applications =
+      data.applications || [];
+
+    if(!applications.length){
+
+      box.innerHTML = `
+
+        <div class="card">
+
+          <h3>
+            هنوز درخواستی دریافت نشده است.
+          </h3>
+
+          <p class="muted">
+            پیشنهادهای فریلنسرها در این قسمت نمایش داده می‌شوند.
+          </p>
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+    box.innerHTML = "";
+
+    applications.forEach(application => {
+
+      const div =
+        document.createElement("div");
+
+      div.className =
+        "project";
+
+      let action = "";
+
+      if(
+        application.status === "pending"
+      ){
+
+        action = `
+
+          <button
+            class="small-btn green"
+            onclick="
+              selectFreelancer(
+                ${projectId},
+                ${application.id},
+                ${application.freelancerId}
+              )
+            ">
+            انتخاب فریلنسر
+          </button>
+
+        `;
+
+      }
+
+      div.innerHTML = `
+
+        <div class="project-top">
+
+          <h3>
+            ${escapeHtml(
+              application.freelancerName ||
+              "فریلنسر"
+            )}
+          </h3>
+
+          <span class="badge">
+            ${escapeHtml(
+              application.status ||
+              "pending"
+            )}
+          </span>
+
+        </div>
+
+        <p>
+          ${escapeHtml(
+            application.message ||
+            "بدون پیام"
+          )}
+        </p>
+
+        <div class="badges">
+
+          <span class="badge">
+            مبلغ پیشنهادی:
+            ${money(application.price)}
+          </span>
+
+        </div>
+
+        <div class="project-actions">
+          ${action}
+        </div>
+
+      `;
+
+      box.appendChild(div);
+
+    });
+
+  }catch(error){
+
+    box.innerHTML = `
+
+      <div class="error">
+        ${escapeHtml(error.message)}
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+async function selectFreelancer(
+  projectId,
+  applicationId,
+  freelancerId
+){
+
+  if(
+    !confirm(
+      "آیا این فریلنسر را برای پروژه انتخاب می‌کنید؟"
+    )
+  ) return;
+
+  try{
+
+    await api(
+      "/api/projects/"
+      + projectId
+      + "/select-freelancer",
+      {
+        method:"POST",
+
+        body:JSON.stringify({
+
+          applicationId,
+          freelancerId
+
+        })
+
+      }
+    );
+
+    closeModal(
+      "applicationModal"
+    );
+
+    message(
+      "فریلنسر با موفقیت انتخاب شد.",
+      "ok"
+    );
+
+    loadProjects();
+
+  }catch(error){
+
+    message(
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   PAYMENT
+========================================= */
+
+function openPayment(
+  projectId,
+  amount
+){
+
+  currentProjectId =
+    projectId;
+
+  $("paymentAmount").value =
+    amount || "";
+
+  $("paymentInfo").innerHTML = `
+
+    <div class="wallet-card">
+
+      <div class="wallet-label">
+        مبلغ پروژه
+      </div>
+
+      <div class="wallet-balance">
+        ${money(amount)}
+      </div>
+
+    </div>
+
+  `;
+
+  boxMessage(
+    "paymentError",
+    ""
+  );
+
+  openModal(
+    "paymentModal"
+  );
+
+}
+
+
+async function submitPayment(){
+
+  const amount =
+    Number(
+      $("paymentAmount").value
+    );
+
+  if(!amount || amount <= 0){
+
+    boxMessage(
+      "paymentError",
+      "مبلغ پرداخت معتبر نیست."
+    );
+
+    return;
+
+  }
+
+  try{
+
+    const data =
+      await api(
+        "/api/projects/"
+        + currentProjectId
+        + "/pay",
+        {
+          method:"POST",
+
+          body:JSON.stringify({
+            amount
+          })
+
+        }
+      );
+
+    closeModal(
+      "paymentModal"
+    );
+
+    message(
+      data.message ||
+      "پرداخت با موفقیت انجام شد.",
+      "ok"
+    );
+
+    loadProjects();
+
+  }catch(error){
+
+    boxMessage(
+      "paymentError",
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   WALLET
+========================================= */
+
+async function loadWallet(){
+
+  const box =
+    $("walletContent");
+
+  if(!box) return;
+
+  box.innerHTML =
+    '<div class="loading">در حال بارگذاری کیف پول...</div>';
+
+  try{
+
+    const data =
+      await api("/api/wallet");
+
+    const wallet =
+      data.wallet || data;
+
+    box.innerHTML = `
+
+      <div class="wallet-card">
+
+        <div class="wallet-label">
+          موجودی کیف پول
+        </div>
+
+        <div class="wallet-balance">
+          ${money(wallet.balance)}
+        </div>
+
+      </div>
+
+      <div class="action-grid">
+
+        <button
+          class="small-btn"
+          onclick="demoDeposit()">
+          شارژ آزمایشی
+        </button>
+
+        <button
+          class="small-btn secondary"
+          onclick="loadWalletTransactions()">
+          تراکنش‌ها
+        </button>
+
+      </div>
+
+      <div
+        id="walletTransactions"
+        style="margin-top:18px">
+      </div>
+
+    `;
+
+  }catch(error){
+
+    box.innerHTML = `
+
+      <div class="error">
+        ${escapeHtml(error.message)}
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+async function demoDeposit(){
+
+  const amount =
+    prompt(
+      "مبلغ شارژ آزمایشی را وارد کنید:"
+    );
+
+  if(!amount) return;
+
+  try{
+
+    await api(
+      "/api/wallet/demo-deposit",
+      {
+        method:"POST",
+
+        body:JSON.stringify({
+
+          amount:Number(amount)
+
+        })
+
+      }
+    );
+
+    message(
+      "کیف پول با موفقیت شارژ شد.",
+      "ok"
+    );
+
+    loadWallet();
+
+  }catch(error){
+
+    message(
+      error.message
+    );
+
+  }
+
+}
+
+
+async function loadWalletTransactions(){
+
+  const box =
+    $("walletTransactions");
+
+  if(!box) return;
+
+  box.innerHTML =
+    '<div class="loading">در حال بارگذاری تراکنش‌ها...</div>';
+
+  try{
+
+    const data =
+      await api(
+        "/api/wallet"
+      );
+
+    const transactions =
+      data.transactions || [];
+
+    if(!transactions.length){
+
+      box.innerHTML =
+        '<p class="muted">تراکنشی وجود ندارد.</p>';
+
+      return;
+
+    }
+
+    box.innerHTML = `
+
+      <div class="table-wrap">
+
+        <table class="admin-table">
+
+          <thead>
+
+            <tr>
+              <th>نوع</th>
+              <th>مبلغ</th>
+              <th>تاریخ</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            ${transactions.map(t => `
+
+              <tr>
+
+                <td>
+                  ${escapeHtml(
+                    t.type || "-"
+                  )}
+                </td>
+
+                <td>
+                  ${money(t.amount)}
+                </td>
+
+                <td>
+                  ${escapeHtml(
+                    t.created_at || "-"
+                  )}
+                </td>
+
+              </tr>
+
+            `).join("")}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    `;
+
+  }catch(error){
+
+    box.innerHTML = `
+
+      <div class="error">
+        ${escapeHtml(error.message)}
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================
+   REWARDS
+========================================= */
+
+async function loadRewards(){
+
+  const box =
+    $("rewardsContent");
+
+  if(!box) return;
+
+  box.innerHTML =
+    '<div class="loading">در حال بارگذاری...</div>';
+
+  try{
+
+    const data =
+      await api("/api/rewards");
+
+    box.innerHTML = `
+
+      <div class="card">
+
+        <h3>
+          امتیازهای شما
+        </h3>
+
+        <p class="muted">
+          امتیاز فعلی:
+          <strong>
+            ${money(data.points || 0)}
+          </strong>
+        </p>
+
+        <button
+          class="small-btn"
+          onclick="claimReward()">
+          دریافت پاداش
+        </button>
+
+      </div>
+
+    `;
+
+  }catch(error){
+
+    box.innerHTML = `
+
+      <div class="error">
+        ${escapeHtml(error.message)}
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+async function claimReward(){
+
+  try{
+
+    const data =
+      await api(
+        "/api/rewards/claim",
+        {
+          method:"POST"
+        }
+      );
+
+    message(
+      data.message ||
+      "پاداش دریافت شد.",
+      "ok"
+    );
+
+    loadRewards();
+
+  }catch(error){
+
+    message(
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   PROFILE
+========================================= */
+
+async function loadProfile(){
+
+  const box =
+    $("profileContent");
+
+  if(!box) return;
+
+  if(!currentUser){
+
+    box.innerHTML = `
+
+      <p class="muted">
+        برای مشاهده پروفایل ابتدا وارد حساب شوید.
+      </p>
+
+      <button
+        class="small-btn"
+        onclick="showPage('login')">
+        ورود
+      </button>
+
+    `;
+
+    return;
+
+  }
+
+  try{
+
+    const data =
+      await api("/api/me");
+
+    currentUser =
+      data.user;
+
+    updateHeader();
+
+    box.innerHTML = `
+
+      <form id="profileForm">
+
+        <label>نام</label>
+
+        <input
+          id="profileName"
+          value="${escapeHtml(
+            currentUser.name || ""
+          )}"
+          required
+        >
+
+        <label>شماره موبایل</label>
+
+        <input
+          value="${escapeHtml(
+            currentUser.phone || ""
+          )}"
+          disabled
+        >
+
+        <label>نوع حساب</label>
+
+        <input
+          value="${
+            currentUser.role === "client"
+              ? "کارفرما"
+              : "فریلنسر"
+          }"
+          disabled
+        >
+
+        <label>درباره من</label>
+
+        <textarea id="profileBio">${escapeHtml(
+          currentUser.bio || ""
+        )}</textarea>
+
+        <label>مهارت‌ها</label>
+
+        <input
+          id="profileSkills"
+          value="${escapeHtml(
+            currentUser.skills || ""
+          )}"
+          placeholder="مثلاً طراحی سایت، فتوشاپ، تولید محتوا"
+        >
+
+        <div id="profileError"></div>
+
+        <div id="profileOk"></div>
+
+        <button
+          class="form-btn"
+          type="submit">
+          ذخیره تغییرات
+        </button>
+
+      </form>
+
+    `;
+
+    $("profileForm")
+      .addEventListener(
+        "submit",
+        saveProfile
+      );
+
+  }catch(error){
+
+    box.innerHTML = `
+
+      <div class="error">
+        ${escapeHtml(error.message)}
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+async function saveProfile(e){
+
+  e.preventDefault();
+
+  boxMessage(
+    "profileError",
+    ""
+  );
+
+  try{
+
+    const data =
+      await api(
+        "/api/me",
+        {
+          method:"PATCH",
+
+          body:JSON.stringify({
+
+            name:
+              $("profileName").value.trim(),
+
+            bio:
+              $("profileBio").value.trim(),
+
+            skills:
+              $("profileSkills").value.trim()
+
+          })
+
+        }
+      );
+
+    currentUser =
+      data.user;
+
+    updateHeader();
+
+    boxMessage(
+      "profileOk",
+      "پروفایل با موفقیت ذخیره شد.",
+      "ok"
+    );
+
+  }catch(error){
+
+    boxMessage(
+      "profileError",
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   ADMIN
+========================================= */
+
+async function loadAdmin(){
+
+  const box =
+    $("adminContent");
+
+  if(!box) return;
+
+  box.innerHTML =
+    '<div class="loading">در حال بارگذاری مدیریت...</div>';
+
+  try{
+
+    const data =
+      await api(
+        "/api/admin/overview"
+      );
+
+    const overview =
+      data.overview || data;
+
+    box.innerHTML = `
+
+      <div class="admin-grid">
+
+        <div class="admin-stat">
+
+          <strong>
+            ${money(
+              overview.users ||
+              overview.totalUsers ||
+              0
+            )}
+          </strong>
+
+          <span>
+            کاربران
+          </span>
+
+        </div>
+
+
+        <div class="admin-stat">
+
+          <strong>
+            ${money(
+              overview.projects ||
+              overview.totalProjects ||
+              0
+            )}
+          </strong>
+
+          <span>
+            پروژه‌ها
+          </span>
+
+        </div>
+
+
+        <div class="admin-stat">
+
+          <strong>
+            ${money(
+              overview.revenue ||
+              overview.totalRevenue ||
+              0
+            )}
+          </strong>
+
+          <span>
+            درآمد Skillora
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>
+          کمیسیون Skillora
+        </h3>
+
+        <p class="muted">
+          درصد کمیسیون پلتفرم از هر پروژه
+        </p>
+
+        <div class="action-grid">
+
+          <input
+            id="commissionInput"
+            type="number"
+            min="0"
+            max="100"
+            step="0.1"
+            value="${
+              data.commission ||
+              overview.commission ||
+              5
+            }"
+          >
+
+          <button
+            class="small-btn"
+            onclick="saveCommission()">
+            ذخیره کمیسیون
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div style="margin-top:20px">
+
+        <h3>
+          گردش مالی پلتفرم
+        </h3>
+
+        <div id="adminLedger">
+          در حال بارگذاری...
+        </div>
+
+      </div>
+
+    `;
+
+    loadAdminLedger();
+
+  }catch(error){
+
+    box.innerHTML = `
+
+      <div class="error">
+        ${escapeHtml(error.message)}
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+async function saveCommission(){
+
+  const value =
+    Number(
+      $("commissionInput").value
+    );
+
+  if(
+    value < 0 ||
+    value > 100
+  ){
+
+    message(
+      "درصد کمیسیون باید بین صفر تا صد باشد."
+    );
+
+    return;
+
+  }
+
+  try{
+
+    await api(
+      "/api/admin/settings",
+      {
+        method:"PATCH",
+
+        body:JSON.stringify({
+
+          commissionRate:value
+
+        })
+
+      }
+    );
+
+    message(
+      "کمیسیون با موفقیت ذخیره شد.",
+      "ok"
+    );
+
+  }catch(error){
+
+    message(
+      error.message
+    );
+
+  }
+
+}
+
+
+async function loadAdminLedger(){
+
+  const box =
+    $("adminLedger");
+
+  if(!box) return;
+
+  try{
+
+    const data =
+      await api(
+        "/api/admin/ledger"
+      );
+
+    const ledger =
+      data.ledger || [];
+
+    if(!ledger.length){
+
+      box.innerHTML =
+        '<p class="muted">هنوز تراکنشی ثبت نشده است.</p>';
+
+      return;
+
+    }
+
+    box.innerHTML = `
+
+      <div class="table-wrap">
+
+        <table class="admin-table">
+
+          <thead>
+
+            <tr>
+
+              <th>
+                پروژه
+              </th>
+
+              <th>
+                مبلغ
+              </th>
+
+              <th>
+                کمیسیون
+              </th>
+
+              <th>
+                وضعیت
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            ${ledger.map(item => `
+
+              <tr>
+
+                <td>
+                  ${escapeHtml(
+                    item.project_id ||
+                    item.projectId ||
+                    "-"
+                  )}
+                </td>
+
+                <td>
+                  ${money(
+                    item.amount ||
+                    item.gross_amount ||
+                    0
+                  )}
+                </td>
+
+                <td>
+                  ${money(
+                    item.commission_amount ||
+                    item.commissionAmount ||
+                    0
+                  )}
+                </td>
+
+                <td>
+                  ${escapeHtml(
+                    item.status ||
+                    "completed"
+                  )}
+                </td>
+
+              </tr>
+
+            `).join("")}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    `;
+
+  }catch(error){
+
+    box.innerHTML = `
+
+      <div class="error">
+        ${escapeHtml(error.message)}
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================
+   MY APPLICATIONS
+========================================= */
+
+async function loadMyApplications(){
+
+  const box =
+    $("applicationsList");
+
+  if(!box || !currentUser) return;
+
+  box.innerHTML =
+    '<div class="loading">در حال بارگذاری...</div>';
+
+  try{
+
+    const data =
+      await api(
+        "/api/projects"
+      );
+
+    const projects =
+      data.projects || [];
+
+    const mine =
+      [];
+
+    for(
+      const project of projects
+    ){
+
+      try{
+
+        const result =
+          await api(
+            "/api/projects/"
+            + project.id
+            + "/applications"
+          );
+
+        (
+          result.applications || []
+        ).forEach(application => {
+
+          if(
+            Number(
+              application.freelancerId
+            ) === Number(
+              currentUser.id
+            )
+          ){
+
+            mine.push({
+
+              ...application,
+
+              projectTitle:
+                project.title,
+
+              projectId:
+                project.id
+
+            });
+
+          }
+
+        });
+
+      }catch(e){}
+
+    }
+
+
+    if(!mine.length){
+
+      box.innerHTML = `
+
+        <div class="card">
+
+          <h3>
+            هنوز درخواستی ارسال نکرده‌اید.
+          </h3>
+
+          <p class="muted">
+            از بخش پروژه‌ها یک فرصت مناسب پیدا کنید.
+          </p>
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    box.innerHTML = "";
+
+    mine.forEach(item => {
+
+      const div =
+        document.createElement("div");
+
+      div.className =
+        "project";
+
+      div.innerHTML = `
+
+        <div class="project-top">
+
+          <h3>
+            ${escapeHtml(
+              item.projectTitle
+            )}
+          </h3>
+
+          <span class="badge">
+            ${escapeHtml(
+              item.status || "pending"
+            )}
+          </span>
+
+        </div>
+
+        <p>
+          ${escapeHtml(
+            item.message || ""
+          )}
+        </p>
+
+        <div class="badges">
+
+          <span class="badge">
+            پیشنهاد:
+            ${money(item.price)}
+          </span>
+
+        </div>
+
+      `;
+
+      box.appendChild(div);
+
+    });
+
+  }catch(error){
+
+    box.innerHTML = `
+
+      <div class="error">
+        ${escapeHtml(error.message)}
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================
+   INITIALIZE
+========================================= */
+
+(async function(){
+
+  try{
+
+    await checkSession();
+
+  }catch(e){}
+
+})();
+
+</script>
