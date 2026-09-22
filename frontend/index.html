@@ -1,967 +1,1433 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-
-<title>Skillora | مهارتت را به فرصت تبدیل کن</title>
-
-<style>
-*{box-sizing:border-box}
-
-:root{
-  --bg:#f5f7fb;
-  --surface:#fff;
-  --surface2:#f8f9fd;
-  --text:#151827;
-  --muted:#73798c;
-  --line:#e7e9f1;
-  --primary:#635bff;
-  --primary2:#8b5cf6;
-  --dark:#15162a;
-  --green:#16a34a;
-  --red:#dc2626;
-  --shadow:0 12px 35px rgba(22,24,45,.08);
-}
-
-html{scroll-behavior:smooth}
-
-body{
-  margin:0;
-  background:
-    radial-gradient(circle at 90% 0%,rgba(99,91,255,.11),transparent 28%),
-    radial-gradient(circle at 0% 30%,rgba(139,92,246,.07),transparent 25%),
-    var(--bg);
-  color:var(--text);
-  font-family:Tahoma,Arial,sans-serif;
-  line-height:1.7;
-}
-
-button,input,textarea,select{font-family:inherit}
-
-button{cursor:pointer;touch-action:manipulation}
-
-.hidden{display:none!important}
-
-/* HEADER */
-
-.header{
-  position:sticky;
-  top:0;
-  z-index:1000;
-  background:rgba(255,255,255,.86);
-  backdrop-filter:blur(18px);
-  border-bottom:1px solid rgba(230,232,240,.9);
-}
-
-.header-inner{
-  max-width:1180px;
-  min-height:74px;
-  margin:auto;
-  padding:10px 18px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:20px;
-}
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:11px;
-}
-
-.logo{
-  width:46px;
-  height:46px;
-  border-radius:15px;
-  display:grid;
-  place-items:center;
-  background:linear-gradient(135deg,var(--primary),var(--primary2));
-  color:white;
-  font-size:24px;
-  font-weight:900;
-  box-shadow:0 8px 22px rgba(99,91,255,.25);
-}
-
-.brand-name{
-  font-size:21px;
-  font-weight:900;
-  letter-spacing:-.4px;
-}
-
-.brand-sub{
-  font-size:10px;
-  color:var(--muted);
-  margin-top:-3px;
-}
-
-.user-pill{
-  background:#f5f4ff;
-  color:#5148c8;
-  border:1px solid #e4e1ff;
-  padding:7px 12px;
-  border-radius:999px;
-  font-size:11px;
-  font-weight:bold;
-}
-
-/* LAYOUT */
-
-.container{
-  max-width:1180px;
-  margin:auto;
-  padding:24px 18px 70px;
-}
-
-/* NAV */
-
-.nav{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin-bottom:22px;
-  overflow-x:auto;
-  scrollbar-width:none;
-}
-
-.nav::-webkit-scrollbar{display:none}
-
-.nav-btn{
-  white-space:nowrap;
-  min-height:42px;
-  padding:9px 14px;
-  border-radius:11px;
-  border:1px solid transparent;
-  background:transparent;
-  color:#505568;
-  font-size:13px;
-  font-weight:bold;
-}
-
-.nav-btn:hover{
-  background:#fff;
-  border-color:var(--line);
-}
-
-.nav-btn.primary{
-  color:white;
-  background:linear-gradient(135deg,var(--primary),var(--primary2));
-  box-shadow:0 7px 18px rgba(99,91,255,.2);
-}
-
-.nav-btn.login{
-  color:#5148c8;
-  background:#f2f1ff;
-}
-
-.nav-btn.register{
-  color:white;
-  background:var(--dark);
-}
-
-.nav-btn.logout{
-  color:#b42323;
-  background:#fff0f0;
-}
-
-/* HERO */
-
-.hero{
-  position:relative;
-  overflow:hidden;
-  min-height:430px;
-  border-radius:30px;
-  padding:58px 55px;
-  color:white;
-  background:
-    radial-gradient(circle at 80% 15%,rgba(255,255,255,.17),transparent 25%),
-    radial-gradient(circle at 20% 90%,rgba(255,255,255,.10),transparent 30%),
-    linear-gradient(135deg,#5148df,#7658e9 55%,#8b5cf6);
-  box-shadow:0 24px 60px rgba(81,72,223,.23);
-}
-
-.hero:before{
-  content:"";
-  position:absolute;
-  width:360px;
-  height:360px;
-  left:-130px;
-  bottom:-190px;
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:50%;
-  box-shadow:
-    0 0 0 55px rgba(255,255,255,.025),
-    0 0 0 110px rgba(255,255,255,.018);
-}
-
-.hero:after{
-  content:"";
-  position:absolute;
-  width:180px;
-  height:180px;
-  right:5%;
-  top:-80px;
-  border-radius:50%;
-  background:rgba(255,255,255,.07);
-}
-
-.hero-content{
-  position:relative;
-  z-index:2;
-  max-width:720px;
-}
-
-.hero-tag{
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
-  padding:7px 13px;
-  border-radius:999px;
-  background:rgba(255,255,255,.12);
-  border:1px solid rgba(255,255,255,.19);
-  font-size:11px;
-  font-weight:bold;
-}
-
-.hero h1{
-  margin:20px 0 13px;
-  font-size:clamp(31px,5vw,55px);
-  line-height:1.25;
-  letter-spacing:-1.2px;
-}
-
-.hero h1 span{
-  color:#ddd9ff;
-}
-
-.hero p{
-  margin:0;
-  max-width:670px;
-  color:#eeedff;
-  font-size:15px;
-  line-height:2;
-}
-
-.hero-actions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-top:27px;
-}
-
-.hero-btn{
-  min-height:52px;
-  padding:12px 21px;
-  border-radius:13px;
-  font-weight:900;
-  font-size:13px;
-  border:1px solid transparent;
-}
-
-.hero-btn.white{
-  background:white;
-  color:#5148d7;
-}
-
-.hero-btn.glass{
-  color:white;
-  background:rgba(255,255,255,.10);
-  border-color:rgba(255,255,255,.28);
-}
-
-/* STATS */
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:14px;
-  margin-top:-42px;
-  position:relative;
-  z-index:5;
-  padding:0 35px;
-}
-
-.stat{
-  background:white;
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:20px;
-  box-shadow:var(--shadow);
-}
-
-.stat-number{
-  font-size:25px;
-  font-weight:900;
-  color:var(--primary);
-}
-
-.stat-label{
-  color:var(--muted);
-  font-size:12px;
-}
-
-/* SECTION */
-
-.section{
-  margin-top:55px;
-}
-
-.section-head{
-  display:flex;
-  align-items:end;
-  justify-content:space-between;
-  gap:20px;
-  margin-bottom:20px;
-}
-
-.section-title{
-  margin:0;
-  font-size:27px;
-  letter-spacing:-.6px;
-}
-
-.section-desc{
-  color:var(--muted);
-  font-size:13px;
-  margin:4px 0 0;
-}
-
-.section-link{
-  color:var(--primary);
-  font-size:12px;
-  font-weight:bold;
-}
-
-/* FEATURES */
-
-.feature-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:17px;
-}
-
-.feature{
-  background:white;
-  border:1px solid var(--line);
-  border-radius:21px;
-  padding:25px;
-  box-shadow:0 8px 25px rgba(25,27,50,.045);
-  transition:.2s;
-}
-
-.feature:hover{
-  transform:translateY(-3px);
-  box-shadow:var(--shadow);
-}
-
-.feature-icon{
-  width:52px;
-  height:52px;
-  display:grid;
-  place-items:center;
-  border-radius:15px;
-  background:#f0efff;
-  font-size:25px;
-  margin-bottom:14px;
-}
-
-.feature h3{
-  margin:0 0 7px;
-  font-size:17px;
-}
-
-.feature p{
-  margin:0;
-  color:var(--muted);
-  font-size:12px;
-  line-height:2;
-}
-
-/* HOW */
-
-.steps{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:15px;
-}
-
-.step{
-  position:relative;
-  background:white;
-  border:1px solid var(--line);
-  border-radius:20px;
-  padding:23px;
-}
-
-.step-number{
-  width:35px;
-  height:35px;
-  display:grid;
-  place-items:center;
-  border-radius:11px;
-  background:linear-gradient(135deg,var(--primary),var(--primary2));
-  color:white;
-  font-weight:900;
-  font-size:13px;
-  margin-bottom:13px;
-}
-
-.step h3{
-  margin:0 0 7px;
-  font-size:16px;
-}
-
-.step p{
-  margin:0;
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.9;
-}
-
-/* CARD */
-
-.card{
-  background:rgba(255,255,255,.96);
-  border:1px solid var(--line);
-  border-radius:22px;
-  padding:27px;
-  box-shadow:var(--shadow);
-}
-
-.card-title{
-  margin:0;
-  font-size:24px;
-}
-
-.card-sub{
-  margin:5px 0 20px;
-  color:var(--muted);
-  font-size:12px;
-}
-
-/* FORM */
-
-.form{
-  max-width:570px;
-  margin:auto;
-}
-
-label{
-  display:block;
-  margin:13px 0 6px;
-  color:#35394b;
-  font-size:12px;
-  font-weight:bold;
-}
-
-input,
-textarea,
-select{
-  width:100%;
-  border:1px solid #dfe2eb;
-  border-radius:12px;
-  background:white;
-  color:var(--text);
-  padding:13px 14px;
-  font-size:14px;
-  outline:none;
-  transition:.2s;
-}
-
-input:focus,
-textarea:focus,
-select:focus{
-  border-color:var(--primary);
-  box-shadow:0 0 0 4px rgba(99,91,255,.09);
-}
-
-textarea{
-  min-height:120px;
-  resize:vertical;
-}
-
-.form-btn{
-  width:100%;
-  min-height:49px;
-  margin-top:12px;
-  border-radius:12px;
-  color:white;
-  background:linear-gradient(135deg,var(--primary),var(--primary2));
-  font-size:13px;
-  font-weight:900;
-  box-shadow:0 8px 20px rgba(99,91,255,.18);
-}
-
-/* PROJECTS */
-
-.project-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:15px;
-}
-
-.project{
-  background:white;
-  border:1px solid var(--line);
-  border-radius:19px;
-  padding:20px;
-  transition:.2s;
-}
-
-.project:hover{
-  transform:translateY(-2px);
-  box-shadow:var(--shadow);
-}
-
-.project-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:10px;
-}
-
-.project h3{
-  margin:0;
-  font-size:17px;
-}
-
-.project p{
-  color:var(--muted);
-  font-size:12px;
-  line-height:2;
-}
-
-.badges{
-  display:flex;
-  flex-wrap:wrap;
-  gap:5px;
-  margin:12px 0;
-}
-
-.badge{
-  padding:5px 9px;
-  border-radius:999px;
-  background:#f1f0ff;
-  color:#554bd0;
-  font-size:10px;
-  font-weight:bold;
-}
-
-.project-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:7px;
-  margin-top:15px;
-}
-
-.small-btn{
-  min-height:38px;
-  padding:8px 12px;
-  border-radius:10px;
-  background:linear-gradient(135deg,var(--primary),var(--primary2));
-  color:white;
-  font-size:11px;
-  font-weight:bold;
-}
-
-.small-btn.secondary{
-  background:#f1f2f7;
-  color:#36394b;
-}
-
-.small-btn.green{
-  background:#eaf8ef;
-  color:#087443;
-}
-
-/* MESSAGE */
-
-.error,
-.ok{
-  margin:10px 0;
-  padding:11px 13px;
-  border-radius:11px;
-  font-size:12px;
-}
-
-.error{
-  background:#fff0f0;
-  color:#bd2525;
-}
-
-.ok{
-  background:#ecfdf3;
-  color:#087443;
-}
-
-.muted{
-  color:var(--muted);
-  font-size:12px;
-  line-height:2;
-}
-
-.loading{
-  padding:40px;
-  text-align:center;
-  color:var(--muted);
-}
-
-/* FOOTER */
-
-.footer{
-  margin-top:70px;
-  padding:35px 0 15px;
-  border-top:1px solid var(--line);
-  text-align:center;
-  color:var(--muted);
-  font-size:11px;
-}
-
-.footer strong{
-  color:#4f46c8;
-}
-
-/* MOBILE */
-
-@media(max-width:750px){
-
-  .header-inner{
-    min-height:65px;
-    padding:8px 12px;
-  }
-
-  .logo{
-    width:40px;
-    height:40px;
-    border-radius:13px;
-  }
-
-  .brand-name{
-    font-size:18px;
-  }
-
-  .brand-sub{
-    font-size:9px;
-  }
-
-  .user-pill{
-    font-size:9px;
-    padding:6px 9px;
-  }
-
-  .container{
-    padding:14px 11px 50px;
-  }
-
-  .nav{
-    gap:6px;
-    margin-bottom:15px;
-  }
-
-  .nav-btn{
-    min-height:42px;
-    padding:8px 11px;
-    font-size:11px;
-  }
-
-  .hero{
-    min-height:auto;
-    padding:35px 22px 45px;
-    border-radius:24px;
-  }
-
-  .hero h1{
-    font-size:31px;
-  }
-
-  .hero p{
-    font-size:12px;
-    line-height:2;
-  }
-
-  .hero-actions{
-    display:grid;
-    grid-template-columns:1fr;
-  }
-
-  .hero-btn{
-    width:100%;
-  }
-
-  .stats{
-    grid-template-columns:1fr;
-    padding:0 8px;
-    margin-top:-22px;
-    gap:8px;
-  }
-
-  .stat{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:13px 16px;
-  }
-
-  .stat-number{
-    font-size:21px;
-  }
-
-  .section{
-    margin-top:40px;
-  }
-
-  .section-head{
-    align-items:flex-start;
-  }
-
-  .section-title{
-    font-size:22px;
-  }
-
-  .feature-grid,
-  .steps,
-  .project-grid{
-    grid-template-columns:1fr;
-  }
-
-  .card{
-    padding:19px;
-    border-radius:18px;
-  }
-
-  input,
-  textarea,
-  select{
-    font-size:16px;
-  }
-
-  .project-actions{
-    display:grid;
-    grid-template-columns:1fr;
-  }
-
-  .small-btn{
-    width:100%;
-  }
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Skillora | Skill • Project • Opportunity</title>
+
+  <meta
+    name="description"
+    content="Skillora؛ مهارتت را به فرصت تبدیل کن."
+  />
+
+  <style>
+    :root {
+      --primary: #6d5dfc;
+      --primary-dark: #5144d9;
+      --primary-light: #eeecff;
+
+      --dark: #17152b;
+      --text: #28263b;
+      --muted: #77748a;
+
+      --bg: #f7f7fb;
+      --white: #ffffff;
+      --border: #e9e8f1;
+
+      --success: #19a974;
+      --danger: #e05252;
+      --warning: #e7a426;
+
+      --shadow:
+        0 15px 45px rgba(38, 31, 91, 0.08);
+
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family:
+        Tahoma,
+        Arial,
+        sans-serif;
+
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.8;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font-family: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    header {
+      background: rgba(255,255,255,.95);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .header-inner {
+      max-width: 1180px;
+      margin: auto;
+      padding: 15px 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 190px;
+    }
+
+    .logo {
+      width: 45px;
+      height: 45px;
+
+      border-radius: 14px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--primary),
+          #8f82ff
+        );
+
+      color: white;
+      font-weight: 900;
+      font-size: 23px;
+
+      box-shadow:
+        0 8px 20px
+        rgba(109,93,252,.25);
+    }
+
+    .brand-title {
+      font-weight: 900;
+      font-size: 18px;
+      color: var(--dark);
+    }
+
+    .brand-sub {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    nav {
+      display: flex;
+      gap: 25px;
+      align-items: center;
+    }
+
+    nav a {
+      color: #5f5b70;
+      font-size: 14px;
+      transition: .2s;
+    }
+
+    nav a:hover {
+      color: var(--primary);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 9px;
+    }
+
+    /* =========================
+       BUTTONS
+    ========================= */
+
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      transition: .2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow:
+        0 8px 20px
+        rgba(109,93,252,.2);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background: white;
+      color: var(--primary);
+      border: 1px solid #ddd9ff;
+    }
+
+    .btn-light {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    .btn-danger {
+      background: #fff0f0;
+      color: var(--danger);
+    }
+
+    .btn-success {
+      background: #e8faf3;
+      color: var(--success);
+    }
+
+    .btn-dark {
+      background: var(--dark);
+      color: white;
+    }
+
+    /* =========================
+       HERO
+    ========================= */
+
+    .hero {
+      max-width: 1180px;
+      margin: auto;
+      padding: 75px 20px 55px;
+
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+
+      background: var(--primary-light);
+      color: var(--primary-dark);
+
+      padding: 7px 13px;
+      border-radius: 30px;
+
+      font-size: 12px;
+      font-weight: 700;
+
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      font-size: clamp(38px, 5vw, 64px);
+      line-height: 1.25;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+      color: var(--dark);
+    }
+
+    .hero h1 span {
+      color: var(--primary);
+    }
+
+    .hero p {
+      max-width: 620px;
+      color: var(--muted);
+      font-size: 17px;
+      margin-bottom: 28px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 390px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .laptop {
+      width: min(100%, 500px);
+      background: white;
+      border-radius: 20px;
+      padding: 12px;
+
+      box-shadow:
+        0 30px 70px
+        rgba(40,35,100,.13);
+
+      transform: rotate(-2deg);
+    }
+
+    .laptop-screen {
+      min-height: 310px;
+      border-radius: 14px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #f0edff,
+          #ffffff
+        );
+
+      padding: 24px;
+
+      border: 1px solid #eeeaff;
+    }
+
+    .fake-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .fake-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 900;
+    }
+
+    .fake-logo-box {
+      width: 28px;
+      height: 28px;
+      border-radius: 9px;
+      background: var(--primary);
+      color: white;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fake-menu {
+      width: 110px;
+      height: 9px;
+      border-radius: 20px;
+      background: #dedbf0;
+    }
+
+    .fake-title {
+      width: 72%;
+      height: 28px;
+      border-radius: 8px;
+      background: #25223c;
+      margin-bottom: 14px;
+    }
+
+    .fake-text {
+      width: 90%;
+      height: 11px;
+      border-radius: 10px;
+      background: #d9d6e7;
+      margin-bottom: 8px;
+    }
+
+    .fake-text.short {
+      width: 65%;
+    }
+
+    .fake-cards {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .fake-card {
+      background: white;
+      border: 1px solid #eceaf4;
+      border-radius: 13px;
+      padding: 13px;
+      min-height: 90px;
+    }
+
+    .fake-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      margin-bottom: 12px;
+    }
+
+    .fake-line {
+      width: 80%;
+      height: 8px;
+      background: #dedbea;
+      border-radius: 10px;
+    }
+
+    .floating-card {
+      position: absolute;
+      background: white;
+      padding: 13px 16px;
+      border-radius: 15px;
+
+      box-shadow:
+        0 15px 40px
+        rgba(40,35,100,.12);
+
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .floating-one {
+      top: 35px;
+      right: -10px;
+    }
+
+    .floating-two {
+      bottom: 35px;
+      left: -15px;
+    }
+
+    /* =========================
+       FEATURES
+    ========================= */
+
+    .features {
+      max-width: 1180px;
+      margin: auto;
+      padding: 15px 20px 60px;
+
+      display: grid;
+      grid-template-columns:
+        repeat(4,1fr);
+
+      gap: 15px;
+    }
+
+    .feature {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .feature-icon {
+      width: 43px;
+      height: 43px;
+      border-radius: 13px;
+
+      background: var(--primary-light);
+      color: var(--primary);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      margin-bottom: 13px;
+      font-size: 20px;
+    }
+
+    .feature h3 {
+      font-size: 15px;
+      margin-bottom: 5px;
+    }
+
+    .feature p {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* =========================
+       SECTIONS
+    ========================= */
+
+    .section {
+      max-width: 1180px;
+      margin: auto;
+      padding: 55px 20px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .section-title {
+      font-size: 27px;
+      color: var(--dark);
+    }
+
+    .section-subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    /* =========================
+       PROJECT CARDS
+    ========================= */
+
+    .cards {
+      display: grid;
+      grid-template-columns:
+        repeat(3,1fr);
+      gap: 18px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .project-card {
+      min-height: 205px;
+      transition: .2s;
+    }
+
+    .project-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 8px;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .project-card h3 {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .project-card p {
+      color: var(--muted);
+      font-size: 12px;
+      min-height: 45px;
+    }
+
+    .project-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 17px;
+      padding-top: 13px;
+      border-top: 1px solid #f0eff5;
+    }
+
+    .price {
+      color: var(--primary);
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    /* =========================
+       CTA
+    ========================= */
+
+    .cta {
+      max-width: 1140px;
+      margin: 50px auto;
+      padding: 55px 35px;
+
+      border-radius: 28px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #5e50e9,
+          #8275ff
+        );
+
+      color: white;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
+    }
+
+    .cta h2 {
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+
+    .cta p {
+      opacity: .85;
+      font-size: 14px;
+    }
+
+    /* =========================
+       FOOTER
+    ========================= */
+
+    footer {
+      background: var(--dark);
+      color: white;
+      margin-top: 80px;
+    }
+
+    .footer-inner {
+      max-width: 1180px;
+      margin: auto;
+      padding: 45px 20px;
+
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 45px;
+    }
+
+    .footer-title {
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .footer-text {
+      color: #aaa7b9;
+      font-size: 12px;
+      max-width: 360px;
+    }
+
+    .footer h4 {
+      margin-bottom: 12px;
+    }
+
+    .footer a {
+      display: block;
+      color: #aaa7b9;
+      font-size: 12px;
+      margin-bottom: 7px;
+    }
+
+    .copyright {
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding: 17px 20px;
+      text-align: center;
+      color: #888496;
+      font-size: 11px;
+    }
+
+    /* =========================
+       AUTH
+    ========================= */
+
+    .auth-page {
+      min-height: calc(100vh - 76px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .auth-box {
+      width: 100%;
+      max-width: 460px;
+      background: white;
+      border-radius: 23px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .auth-box h2 {
+      margin-bottom: 6px;
+      color: var(--dark);
+    }
+
+    .auth-box > p {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 25px;
+    }
+
+    /* =========================
+       FORMS
+    ========================= */
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 12px 13px;
+      outline: none;
+      background: white;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow:
+        0 0 0 3px
+        rgba(109,93,252,.08);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 110px;
+    }
+
+    .role-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .role-button {
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: white;
+      cursor: pointer;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .role-button.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    /* =========================
+       APP
+    ========================= */
+
+    .app-layout {
+      max-width: 1250px;
+      margin: auto;
+      padding: 25px 20px 70px;
+
+      display: grid;
+      grid-template-columns: 235px 1fr;
+      gap: 22px;
+    }
+
+    .sidebar {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 15px;
+      height: fit-content;
+      position: sticky;
+      top: 95px;
+    }
+
+    .side-user {
+      padding: 15px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 10px;
+    }
+
+    .side-user strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .side-user span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .side-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 12px;
+      border-radius: 10px;
+      color: #69667a;
+      font-size: 12px;
+      margin-bottom: 4px;
+      cursor: pointer;
+    }
+
+    .side-link:hover,
+    .side-link.active {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      font-weight: 700;
+    }
+
+    .app-content {
+      min-width: 0;
+    }
+
+    .page-title {
+      margin-bottom: 22px;
+    }
+
+    .page-title h1 {
+      font-size: 27px;
+      color: var(--dark);
+    }
+
+    .page-title p {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* =========================
+       STATS
+    ========================= */
+
+    .stats {
+      display: grid;
+      grid-template-columns:
+        repeat(4,1fr);
+
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .stat {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .stat-value {
+      font-size: 23px;
+      font-weight: 900;
+      margin-top: 5px;
+      color: var(--dark);
+    }
+
+    /* =========================
+       TABLE
+    ========================= */
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: right;
+      font-size: 11px;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    /* =========================
+       MODAL
+    ========================= */
+
+    .modal {
+      position: fixed;
+      inset: 0;
+
+      background:
+        rgba(20,17,40,.55);
+
+      z-index: 300;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 20px;
+    }
+
+    .modal-box {
+      width: 100%;
+      max-width: 580px;
+
+      background: white;
+      border-radius: 22px;
+      padding: 25px;
+
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .close {
+      width: 35px;
+      height: 35px;
+      border: 0;
+      border-radius: 10px;
+      background: #f2f1f6;
+      font-size: 18px;
+    }
+
+    /* =========================
+       TOAST
+    ========================= */
+
+    #toast {
+      position: fixed;
+      left: 20px;
+      bottom: 20px;
+      z-index: 999;
+
+      background: var(--dark);
+      color: white;
+
+      padding: 13px 18px;
+      border-radius: 12px;
+
+      font-size: 12px;
+
+      box-shadow:
+        0 15px 35px
+        rgba(0,0,0,.2);
+
+      transform:
+        translateY(100px);
+
+      opacity: 0;
+      transition: .3s;
+    }
+
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    #toast.success {
+      background: var(--success);
+    }
+
+    #toast.error {
+      background: var(--danger);
+    }
+
+    /* =========================
+       EMPTY
+    ========================= */
+
+    .empty {
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--muted);
+      background: white;
+      border: 1px dashed var(--border);
+      border-radius: 17px;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 900px) {
+      nav {
+        display: none;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 25px;
+        padding-top: 45px;
+      }
+
+      .hero-visual {
+        min-height: 330px;
+      }
+
+      .features {
+        grid-template-columns:
+          repeat(2,1fr);
+      }
+
+      .cards {
+        grid-template-columns:
+          repeat(2,1fr);
+      }
+
+      .app-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .stats {
+        grid-template-columns:
+          repeat(2,1fr);
+      }
+
+      .footer-inner {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .header-inner {
+        padding: 11px 13px;
+      }
+
+      .brand-sub {
+        display: none;
+      }
+
+      .brand-title {
+        font-size: 15px;
+      }
+
+      .logo {
+        width: 40px;
+        height: 40px;
+      }
+
+      .header-actions .btn {
+        padding: 8px 10px;
+        font-size: 11px;
+      }
+
+      .hero {
+        padding: 40px 15px;
+      }
+
+      .hero h1 {
+        font-size: 38px;
+      }
+
+      .hero p {
+        font-size: 14px;
+      }
+
+      .hero-visual {
+        min-height: 270px;
+      }
+
+      .laptop-screen {
+        min-height: 230px;
+        padding: 15px;
+      }
+
+      .fake-cards {
+        gap: 6px;
+      }
+
+      .floating-one {
+        right: 0;
+      }
+
+      .floating-two {
+        left: 0;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+        padding: 10px 15px 35px;
+      }
+
+      .section {
+        padding: 40px 15px;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .cta {
+        margin: 30px 15px;
+        padding: 35px 23px;
+        display: block;
+      }
+
+      .cta .btn {
+        margin-top: 20px;
+      }
+
+      .footer-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .app-layout {
+        padding: 15px 12px 50px;
+      }
+
+      .sidebar {
+        border-radius: 15px;
+      }
+
+      .side-links {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+      }
+
+      .side-link {
+        margin: 0;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<header class="header">
+<!-- =========================
+     HEADER
+========================= -->
 
+<header>
   <div class="header-inner">
 
-    <div class="brand">
-
+    <a
+      href="#"
+      class="brand"
+      onclick="showHome(); return false;"
+    >
       <div class="logo">S</div>
 
       <div>
-        <div class="brand-name">Skillora</div>
+        <div class="brand-title">
+          Skillora
+        </div>
+
         <div class="brand-sub">
           Skill • Project • Opportunity
         </div>
       </div>
+    </a>
 
-    </div>
+    <nav id="publicNav">
+      <a href="#home">خانه</a>
+      <a href="#projects">پروژه‌ها</a>
+      <a href="#about">درباره ما</a>
+      <a href="#contact">تماس با ما</a>
+    </nav>
 
-    <div id="userArea" class="user-pill">
-      مهمان
+    <div
+      class="header-actions"
+      id="headerActions"
+    >
+      <button
+        class="btn btn-outline"
+        onclick="showAuth('login')"
+      >
+        ورود
+      </button>
+
+      <button
+        class="btn btn-primary"
+        onclick="showAuth('register')"
+      >
+        ثبت‌نام
+      </button>
     </div>
 
   </div>
-
 </header>
 
 
-<main class="container">
+<!-- =========================
+     PUBLIC HOME
+========================= -->
 
-<nav class="nav">
+<main id="homePage">
 
-  <button class="nav-btn primary"
-          onclick="showPage('home')">
-    خانه
-  </button>
+  <section
+    class="hero"
+    id="home"
+  >
 
-  <button class="nav-btn"
-          onclick="showPage('projects')">
-    پروژه‌ها
-  </button>
+    <div>
 
-  <button class="nav-btn"
-          onclick="showPage('profile')">
-    پروفایل
-  </button>
-
-  <button id="createProjectNav"
-          class="nav-btn hidden"
-          onclick="showPage('create')">
-    ثبت پروژه
-  </button>
-
-  <button id="loginNav"
-          class="nav-btn login"
-          onclick="showPage('login')">
-    ورود
-  </button>
-
-  <button id="registerNav"
-          class="nav-btn register"
-          onclick="showPage('register')">
-    ثبت‌نام
-  </button>
-
-  <button id="logoutNav"
-          class="nav-btn logout hidden"
-          onclick="logout()">
-    خروج
-  </button>
-
-</nav>
-
-
-<div id="message"></div>
-
-
-<!-- HOME -->
-
-<section id="page-home">
-
-  <section class="hero">
-
-    <div class="hero-content">
-
-      <div class="hero-tag">
-        ✦ Skillora v15
+      <div class="hero-badge">
+        ✦ نسل جدید بازار کار آنلاین
       </div>
 
       <h1>
-        مهارتت را<br>
-        <span>به فرصت تبدیل کن</span>
+        مهارتت را
+        <span>
+          به فرصت
+        </span>
+        تبدیل کن
       </h1>
 
       <p>
-        Skillora جایی برای اتصال مهارت، پروژه و فرصت است.
-        پروژه مناسب خودت را پیدا کن، همکاری بساز و مسیر حرفه‌ای خودت را توسعه بده.
+        در Skillora پروژه پیدا کن،
+        مهارتت را ارائه بده،
+        با افراد متخصص همکاری کن
+        و مسیر درآمدت را بساز.
       </p>
 
-      <div class="hero-actions">
+      <div class="hero-buttons">
 
-        <button class="hero-btn white"
-                onclick="showPage('projects')">
+        <button
+          class="btn btn-primary"
+          onclick="showPublicProjects()"
+        >
           مشاهده پروژه‌ها
         </button>
 
-        <button class="hero-btn glass"
-                onclick="showPage('register')">
-          شروع فعالیت
+        <button
+          class="btn btn-outline"
+          onclick="showAuth('register')"
+        >
+          ثبت‌نام رایگان
         </button>
 
       </div>
 
     </div>
 
+
+    <div class="hero-visual">
+
+      <div class="laptop">
+
+        <div class="laptop-screen">
+
+          <div class="fake-top">
+
+            <div class="fake-logo">
+
+              <div class="fake-logo-box">
+                S
+              </div>
+
+              Skillora
+
+            </div>
+
+            <div class="fake-menu"></div>
+
+          </div>
+
+          <div class="fake-title"></div>
+
+          <div class="fake-text"></div>
+          <div class="fake-text short"></div>
+
+          <div class="fake-cards">
+
+            <div class="fake-card">
+              <div class="fake-circle"></div>
+              <div class="fake-line"></div>
+            </div>
+
+            <div class="fake-card">
+              <div class="fake-circle"></div>
+              <div class="fake-line"></div>
+            </div>
+
+            <div class="fake-card">
+              <div class="fake-circle"></div>
+              <div class="fake-line"></div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="floating-card floating-one">
+        ✓ پروژه جدید پیدا شد
+      </div>
+
+      <div class="floating-card floating-two">
+        💰 درآمدت را مدیریت کن
+      </div>
+
+    </div>
+
   </section>
 
 
-  <div class="stats">
+  <!-- FEATURES -->
 
-    <div class="stat">
-      <div>
-        <div class="stat-number">01</div>
-        <div class="stat-label">پروژه پیدا کن</div>
+  <section class="features">
+
+    <div class="feature">
+
+      <div class="feature-icon">
+        💼
       </div>
-      <span>💼</span>
+
+      <h3>
+        پروژه‌های متنوع
+      </h3>
+
+      <p>
+        فرصت‌های مختلف را پیدا کن
+        و پروژه مناسب مهارتت را انتخاب کن.
+      </p>
+
     </div>
 
-    <div class="stat">
-      <div>
-        <div class="stat-number">02</div>
-        <div class="stat-label">پیشنهاد بده</div>
+
+    <div class="feature">
+
+      <div class="feature-icon">
+        🛡️
       </div>
-      <span>🤝</span>
+
+      <h3>
+        امنیت و اعتماد
+      </h3>
+
+      <p>
+        ساختار شفاف پروژه،
+        درخواست و پرداخت برای همکاری مطمئن‌تر.
+      </p>
+
     </div>
 
-    <div class="stat">
-      <div>
-        <div class="stat-number">03</div>
-        <div class="stat-label">همکاری را شروع کن</div>
+
+    <div class="feature">
+
+      <div class="feature-icon">
+        ⭐
       </div>
-      <span>🚀</span>
+
+      <h3>
+        متخصصان حرفه‌ای
+      </h3>
+
+      <p>
+        پروفایل، مهارت و سابقه همکاری
+        خودت را به نمایش بگذار.
+      </p>
+
     </div>
 
-  </div>
+
+    <div class="feature">
+
+      <div class="feature-icon">
+        ⚡
+      </div>
+
+      <h3>
+        شروع سریع
+      </h3>
+
+      <p>
+        ثبت‌نام کن و خیلی سریع
+        وارد فضای پروژه و همکاری شو.
+      </p>
+
+    </div>
+
+  </section>
 
 
-  <section class="section">
+  <!-- PUBLIC PROJECTS -->
 
-    <div class="section-head">
+  <section
+    class="section"
+    id="projects"
+  >
+
+    <div class="section-header">
 
       <div>
         <h2 class="section-title">
-          چرا Skillora؟
+          پروژه‌های جدید
         </h2>
 
-        <p class="section-desc">
-          یک فضای ساده برای تبدیل مهارت به فرصت واقعی.
+        <p class="section-subtitle">
+          پروژه‌هایی که می‌توانند
+          شروع همکاری بعدی تو باشند.
         </p>
       </div>
+
+      <button
+        class="btn btn-outline"
+        onclick="showAuth('register')"
+      >
+        شروع همکاری
+      </button>
 
     </div>
 
+    <div
+      class="cards"
+      id="publicProjects"
+    >
 
-    <div class="feature-grid">
-
-      <div class="feature">
-
-        <div class="feature-icon">
-          🎯
-        </div>
-
-        <h3>
-          پروژه مناسب
-        </h3>
-
-        <p>
-          پروژه‌هایی را پیدا کن که با مهارت‌ها و توانایی‌های تو هماهنگ هستند.
-        </p>
-
-      </div>
-
-
-      <div class="feature">
-
-        <div class="feature-icon">
-          ⚡
-        </div>
-
-        <h3>
-          شروع سریع
-        </h3>
-
-        <p>
-          ثبت‌نام کن، پروفایلت را بساز و بدون پیچیدگی وارد فرآیند همکاری شو.
-        </p>
-
-      </div>
-
-
-      <div class="feature">
-
-        <div class="feature-icon">
-          🤝
-        </div>
-
-        <h3>
-          ارتباط مستقیم
-        </h3>
-
-        <p>
-          کارفرما و فریلنسر در یک فضای مشخص با یکدیگر ارتباط می‌گیرند.
-        </p>
-
+      <div class="empty">
+        برای مشاهده پروژه‌ها
+        وارد حساب خود شوید.
       </div>
 
     </div>
@@ -969,1486 +1435,1086 @@ textarea{
   </section>
 
 
-  <section class="section">
+  <!-- ABOUT -->
 
-    <div class="section-head">
+  <section
+    class="section"
+    id="about"
+  >
+
+    <div class="section-header">
 
       <div>
+
         <h2 class="section-title">
-          چطور کار می‌کند؟
+          Skillora چیست؟
         </h2>
 
-        <p class="section-desc">
-          فقط سه قدم تا شروع.
+        <p class="section-subtitle">
+          یک بازار آنلاین برای اتصال
+          مهارت، پروژه و فرصت.
         </p>
+
       </div>
 
     </div>
 
+    <div class="card">
 
-    <div class="steps">
+      <p style="color:var(--muted);font-size:14px">
 
-      <div class="step">
+        Skillora با هدف ایجاد یک فضای ساده
+        برای ارتباط بین صاحبان پروژه و
+        فریلنسرها طراحی شده است.
 
-        <div class="step-number">
-          1
-        </div>
+        <br><br>
 
-        <h3>
-          حساب بساز
-        </h3>
+        کارفرما پروژه خود را ثبت می‌کند،
+        متخصصان برای آن درخواست می‌فرستند
+        و پس از انتخاب متخصص،
+        فرآیند همکاری و پرداخت انجام می‌شود.
 
-        <p>
-          به عنوان فریلنسر یا کارفرما ثبت‌نام کن.
-        </p>
-
-      </div>
-
-
-      <div class="step">
-
-        <div class="step-number">
-          2
-        </div>
-
-        <h3>
-          فرصت پیدا کن
-        </h3>
-
-        <p>
-          پروژه‌ها را ببین یا پروژه خودت را ثبت کن.
-        </p>
-
-      </div>
-
-
-      <div class="step">
-
-        <div class="step-number">
-          3
-        </div>
-
-        <h3>
-          همکاری کن
-        </h3>
-
-        <p>
-          پیشنهاد بده، انتخاب شو و همکاری را شروع کن.
-        </p>
-
-      </div>
+      </p>
 
     </div>
 
   </section>
 
-</section>
 
+  <!-- CTA -->
 
-<!-- LOGIN -->
-
-<section id="page-login" class="hidden">
-
-  <div class="card form">
-
-    <h2 class="card-title">
-      ورود به Skillora
-    </h2>
-
-    <p class="card-sub">
-      به حساب خودت وارد شو و ادامه بده.
-    </p>
-
-    <form id="loginForm">
-
-      <label>شماره موبایل</label>
-
-      <input
-        id="loginPhone"
-        type="tel"
-        inputmode="tel"
-        autocomplete="tel"
-        placeholder="+989121234567"
-        required
-      >
-
-      <label>رمز عبور</label>
-
-      <input
-        id="loginPassword"
-        type="password"
-        autocomplete="current-password"
-        required
-      >
-
-      <div id="loginError"></div>
-
-      <button class="form-btn"
-              type="submit">
-        ورود به حساب
-      </button>
-
-    </form>
-
-    <p class="muted" style="text-align:center;margin-top:17px">
-      حساب ندارید؟
-
-      <button
-        type="button"
-        class="small-btn"
-        onclick="showPage('register')">
-        ثبت‌نام
-      </button>
-    </p>
-
-  </div>
-
-</section>
-
-
-<!-- REGISTER -->
-
-<section id="page-register" class="hidden">
-
-  <div class="card form">
-
-    <h2 class="card-title">
-      ساخت حساب جدید
-    </h2>
-
-    <p class="card-sub">
-      در کمتر از یک دقیقه وارد Skillora شو.
-    </p>
-
-    <form id="registerForm">
-
-      <label>نام</label>
-
-      <input
-        id="registerName"
-        type="text"
-        autocomplete="name"
-        placeholder="نام شما"
-        required
-      >
-
-      <label>شماره موبایل</label>
-
-      <input
-        id="registerPhone"
-        type="tel"
-        inputmode="tel"
-        autocomplete="tel"
-        placeholder="+989121234567"
-        required
-      >
-
-      <label>رمز عبور</label>
-
-      <input
-        id="registerPassword"
-        type="password"
-        autocomplete="new-password"
-        minlength="8"
-        placeholder="حداقل ۸ کاراکتر"
-        required
-      >
-
-      <label>نوع حساب</label>
-
-      <select id="registerRole" required>
-
-        <option value="freelancer">
-          فریلنسر
-        </option>
-
-        <option value="client">
-          کارفرما
-        </option>
-
-      </select>
-
-      <div id="registerError"></div>
-
-      <button class="form-btn"
-              type="submit">
-        ساخت حساب
-      </button>
-
-    </form>
-
-    <p class="muted" style="text-align:center;margin-top:17px">
-      قبلاً حساب ساخته‌ای؟
-
-      <button
-        type="button"
-        class="small-btn"
-        onclick="showPage('login')">
-        ورود
-      </button>
-    </p>
-
-  </div>
-
-</section>
-
-
-<!-- PROJECTS -->
-
-<section id="page-projects" class="hidden">
-
-  <div class="section-head">
+  <section class="cta">
 
     <div>
-      <h2 class="section-title">
-        پروژه‌ها
+
+      <h2>
+        آماده‌ای پروژه جدید ثبت کنی؟
       </h2>
 
-      <p class="section-desc">
-        فرصت‌های موجود را بررسی کن.
+      <p>
+        اولین قدم برای شروع یک همکاری جدید،
+        همین حالاست.
       </p>
+
     </div>
 
-  </div>
+    <button
+      class="btn"
+      style="background:white;color:var(--primary)"
+      onclick="showAuth('register')"
+    >
+      ثبت‌نام رایگان
+    </button>
 
-  <div id="projectsList" class="project-grid">
-    <div class="loading">
-      در حال بارگذاری پروژه‌ها...
-    </div>
-  </div>
-
-</section>
-
-
-<!-- CREATE -->
-
-<section id="page-create" class="hidden">
-
-  <div class="card form">
-
-    <h2 class="card-title">
-      ثبت پروژه
-    </h2>
-
-    <p class="card-sub">
-      پروژه خود را برای متخصصان Skillora منتشر کن.
-    </p>
-
-    <form id="createProjectForm">
-
-      <label>عنوان پروژه</label>
-
-      <input
-        id="projectTitle"
-        placeholder="مثلاً طراحی سایت فروشگاهی"
-        required
-      >
-
-      <label>توضیحات پروژه</label>
-
-      <textarea
-        id="projectDescription"
-        placeholder="توضیحات کامل پروژه..."
-        required></textarea>
-
-      <label>دسته‌بندی</label>
-
-      <input
-        id="projectCategory"
-        placeholder="طراحی، برنامه‌نویسی، تولید محتوا..."
-      >
-
-      <label>بودجه</label>
-
-      <input
-        id="projectBudget"
-        type="number"
-        min="0"
-        required
-        placeholder="مثلاً 5000000"
-      >
-
-      <div id="createProjectError"></div>
-      <div id="createProjectOk"></div>
-
-      <button class="form-btn"
-              type="submit">
-        انتشار پروژه
-      </button>
-
-    </form>
-
-  </div>
-
-</section>
-
-
-<!-- PROFILE -->
-
-<section id="page-profile" class="hidden">
-
-  <div class="card form">
-
-    <h2 class="card-title">
-      پروفایل من
-    </h2>
-
-    <p class="card-sub">
-      اطلاعات حرفه‌ای خودت را تکمیل کن.
-    </p>
-
-    <div id="profileContent">
-      <div class="loading">
-        در حال بارگذاری...
-      </div>
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- APPLY -->
-
-<section id="page-apply" class="hidden">
-
-  <div class="card form">
-
-    <h2 class="card-title">
-      ارسال پیشنهاد همکاری
-    </h2>
-
-    <p class="card-sub">
-      پیشنهاد خودت را برای کارفرما ارسال کن.
-    </p>
-
-    <div id="applyProjectInfo"></div>
-
-    <form id="applyForm">
-
-      <label>مبلغ پیشنهادی</label>
-
-      <input
-        id="applyPrice"
-        type="number"
-        min="0"
-        required
-      >
-
-      <label>پیام</label>
-
-      <textarea
-        id="applyMessage"
-        placeholder="توضیح کوتاهی درباره پیشنهاد خود بنویسید"></textarea>
-
-      <div id="applyError"></div>
-      <div id="applyOk"></div>
-
-      <button class="form-btn"
-              type="submit">
-        ارسال پیشنهاد
-      </button>
-
-    </form>
-
-  </div>
-
-</section>
-
-
-<!-- APPLICATIONS -->
-
-<section id="page-applications" class="hidden">
-
-  <div class="section-head">
-
-    <div>
-      <h2 class="section-title">
-        درخواست‌های همکاری
-      </h2>
-
-      <p class="section-desc">
-        پیشنهادهای دریافت‌شده برای پروژه.
-      </p>
-    </div>
-
-  </div>
-
-  <div id="applicationsList">
-    <div class="loading">
-      در حال بارگذاری...
-    </div>
-  </div>
-
-</section>
-
-
-<footer class="footer">
-  <strong>Skillora</strong>
-  — Skill • Project • Opportunity
-  <br>
-  مهارتت را به فرصت تبدیل کن.
-</footer>
+  </section>
 
 </main>
 
 
-<script>
-
-let currentUser=null;
-let currentProject=null;
-
-const pages=[
-  "home",
-  "login",
-  "register",
-  "projects",
-  "create",
-  "profile",
-  "apply",
-  "applications"
-];
-
-function $(id){
-  return document.getElementById(id);
-}
-
-function showPage(name){
-
-  pages.forEach(page=>{
-    const el=$("page-"+page);
-
-    if(el){
-      el.classList.toggle(
-        "hidden",
-        page!==name
-      );
-    }
-  });
-
-  setMessage("");
-
-  if(name==="projects"){
-    loadProjects();
-  }
-
-  if(name==="profile"){
-    loadProfile();
-  }
-
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-}
-
-function setMessage(text,type="error"){
-
-  const box=$("message");
-
-  if(!text){
-    box.innerHTML="";
-    box.className="";
-    return;
-  }
-
-  box.className=
-    type==="ok"
-      ?"ok"
-      :"error";
-
-  box.textContent=text;
-}
-
-function setBox(id,text,type="error"){
-
-  const box=$(id);
-
-  if(!box)return;
-
-  if(!text){
-    box.innerHTML="";
-    box.className="";
-    return;
-  }
-
-  box.className=
-    type==="ok"
-      ?"ok"
-      :"error";
-
-  box.textContent=text;
-}
-
-async function api(url,options={}){
-
-  const config={
-    ...options,
-    headers:{
-      "Content-Type":"application/json",
-      ...(options.headers||{})
-    },
-    credentials:"same-origin"
-  };
-
-  const response=await fetch(url,config);
-
-  let data={};
-
-  try{
-    data=await response.json();
-  }catch(e){}
-
-  if(!response.ok){
-    throw new Error(
-      data.error||
-      "خطایی رخ داد."
-    );
-  }
-
-  return data;
-}
-
-function updateHeader(){
-
-  if(currentUser){
-
-    $("userArea").textContent=
-      currentUser.name+
-      " • "+
-      (
-        currentUser.role==="client"
-          ?"کارفرما"
-          :"فریلنسر"
-      );
-
-    $("loginNav").classList.add("hidden");
-    $("registerNav").classList.add("hidden");
-    $("logoutNav").classList.remove("hidden");
-
-    if(currentUser.role==="client"){
-      $("createProjectNav")
-        .classList.remove("hidden");
-    }else{
-      $("createProjectNav")
-        .classList.add("hidden");
-    }
-
-  }else{
-
-    $("userArea").textContent="مهمان";
-
-    $("loginNav").classList.remove("hidden");
-    $("registerNav").classList.remove("hidden");
-    $("logoutNav").classList.add("hidden");
-    $("createProjectNav").classList.add("hidden");
-  }
-}
-
-async function checkSession(){
-
-  try{
-
-    const data=
-      await api("/api/me");
-
-    currentUser=data.user;
-
-  }catch(e){
-
-    currentUser=null;
-  }
-
-  updateHeader();
-}
-
-
-/* LOGIN */
-
-$("loginForm").addEventListener(
-  "submit",
-  async e=>{
-
-    e.preventDefault();
-
-    setBox("loginError","");
-
-    try{
-
-      const data=
-        await api(
-          "/api/auth/login",
-          {
-            method:"POST",
-            body:JSON.stringify({
-
-              phone:
-                $("loginPhone").value.trim(),
-
-              password:
-                $("loginPassword").value
-
-            })
-          }
-        );
-
-      currentUser=data.user;
-
-      updateHeader();
-
-      setMessage(
-        "خوش آمدید؛ ورود با موفقیت انجام شد.",
-        "ok"
-      );
-
-      showPage("home");
-
-    }catch(error){
-
-      setBox(
-        "loginError",
-        error.message
-      );
-    }
-  }
-);
-
-
-/* REGISTER */
-
-$("registerForm").addEventListener(
-  "submit",
-  async e=>{
-
-    e.preventDefault();
-
-    setBox("registerError","");
-
-    try{
-
-      const data=
-        await api(
-          "/api/auth/register",
-          {
-            method:"POST",
-            body:JSON.stringify({
-
-              name:
-                $("registerName").value.trim(),
-
-              phone:
-                $("registerPhone").value.trim(),
-
-              password:
-                $("registerPassword").value,
-
-              role:
-                $("registerRole").value
-
-            })
-          }
-        );
-
-      currentUser=data.user;
-
-      updateHeader();
-
-      setMessage(
-        "حساب شما با موفقیت ساخته شد.",
-        "ok"
-      );
-
-      showPage("home");
-
-    }catch(error){
-
-      setBox(
-        "registerError",
-        error.message
-      );
-    }
-  }
-);
-
-
-/* LOGOUT */
-
-async function logout(){
-
-  try{
-
-    await api(
-      "/api/auth/logout",
-      {method:"POST"}
-    );
-
-    currentUser=null;
-
-    updateHeader();
-
-    setMessage(
-      "با موفقیت خارج شدید.",
-      "ok"
-    );
-
-    showPage("home");
-
-  }catch(error){
-
-    setMessage(error.message);
-  }
-}
-
-
-/* PROJECTS */
-
-async function loadProjects(){
-
-  const list=$("projectsList");
-
-  list.innerHTML=
-    '<div class="loading">در حال بارگذاری پروژه‌ها...</div>';
-
-  if(!currentUser){
-
-    list.innerHTML=`
-
-      <div class="card">
-
-        <h3>برای مشاهده پروژه‌ها وارد شوید</h3>
-
-        <p class="muted">
-          برای استفاده از امکانات پروژه‌ها ابتدا وارد حساب خود شوید.
-        </p>
-
-        <div class="project-actions">
-
-          <button
-            class="small-btn"
-            onclick="showPage('login')">
-            ورود
-          </button>
-
-          <button
-            class="small-btn secondary"
-            onclick="showPage('register')">
-            ثبت‌نام
-          </button>
-
-        </div>
-
-      </div>
-    `;
-
-    return;
-  }
-
-  try{
-
-    const data=
-      await api("/api/projects");
-
-    if(
-      !data.projects||
-      data.projects.length===0
-    ){
-
-      list.innerHTML=`
-
-        <div class="card">
-
-          <h3>
-            هنوز پروژه‌ای ثبت نشده است.
-          </h3>
-
-          <p class="muted">
-            اولین پروژه می‌تواند شروع فعالیت Skillora باشد.
-          </p>
-
-        </div>
-
-      `;
-
-      return;
-    }
-
-    list.innerHTML="";
-
-    data.projects.forEach(project=>{
-
-      const div=
-        document.createElement("div");
-
-      div.className="project";
-
-      const status=
-        project.status==="open"
-          ?"باز"
-          :project.status==="in_progress"
-            ?"در حال انجام"
-            :project.status==="completed"
-              ?"تکمیل شده"
-              :project.status;
-
-      let actions="";
-
-      if(
-        currentUser.role==="freelancer"&&
-        project.status==="open"
-      ){
-
-        actions+=`
-
-          <button
-            class="small-btn"
-            onclick="openApply(${project.id})">
-            ارسال درخواست
-          </button>
-
-        `;
-      }
-
-      if(
-        currentUser.role==="client"&&
-        project.clientId===currentUser.id
-      ){
-
-        actions+=`
-
-          <button
-            class="small-btn secondary"
-            onclick="openApplications(${project.id})">
-            درخواست‌های همکاری
-          </button>
-
-        `;
-
-        if(project.status==="in_progress"){
-
-          actions+=`
-
-            <button
-              class="small-btn green"
-              onclick="changeProjectStatus(${project.id},'completed')">
-              تکمیل پروژه
-            </button>
-
-          `;
-        }
-      }
-
-      div.innerHTML=`
-
-        <div class="project-top">
-
-          <h3>
-            ${escapeHtml(project.title)}
-          </h3>
-
-          <span class="badge">
-            ${escapeHtml(status)}
-          </span>
-
-        </div>
-
-        <div class="badges">
-
-          <span class="badge">
-            ${escapeHtml(project.category||"عمومی")}
-          </span>
-
-          <span class="badge">
-            بودجه:
-            ${Number(project.budget||0).toLocaleString()}
-          </span>
-
-        </div>
-
-        <p>
-          ${escapeHtml(project.description)}
-        </p>
-
-        <div class="muted">
-          کارفرما:
-          ${escapeHtml(project.clientName||"-")}
-        </div>
-
-        <div class="project-actions">
-          ${actions}
-        </div>
-
-      `;
-
-      list.appendChild(div);
-
-    });
-
-  }catch(error){
-
-    list.innerHTML=`
-
-      <div class="error">
-        ${escapeHtml(error.message)}
-      </div>
-
-    `;
-  }
-}
-
-
-/* CREATE */
-
-$("createProjectForm").addEventListener(
-  "submit",
-  async e=>{
-
-    e.preventDefault();
-
-    setBox("createProjectError","");
-    setBox("createProjectOk","");
-
-    try{
-
-      await api(
-        "/api/projects",
-        {
-          method:"POST",
-
-          body:JSON.stringify({
-
-            title:
-              $("projectTitle").value.trim(),
-
-            description:
-              $("projectDescription").value.trim(),
-
-            category:
-              $("projectCategory").value.trim(),
-
-            budget:
-              Number(
-                $("projectBudget").value
-              )
-
-          })
-        }
-      );
-
-      setBox(
-        "createProjectOk",
-        "پروژه با موفقیت منتشر شد.",
-        "ok"
-      );
-
-      $("createProjectForm").reset();
-
-    }catch(error){
-
-      setBox(
-        "createProjectError",
-        error.message
-      );
-    }
-  }
-);
-
-
-/* APPLY */
-
-function openApply(projectId){
-
-  currentProject=projectId;
-
-  $("applyProjectInfo").innerHTML=`
-
-    <div class="badges">
-
-      <span class="badge">
-        پروژه #${projectId}
-      </span>
-
-    </div>
-
-  `;
-
-  setBox("applyError","");
-  setBox("applyOk","");
-
-  showPage("apply");
-}
-
-$("applyForm").addEventListener(
-  "submit",
-  async e=>{
-
-    e.preventDefault();
-
-    setBox("applyError","");
-    setBox("applyOk","");
-
-    try{
-
-      await api(
-        "/api/projects/"
-        +currentProject+
-        "/apply",
-        {
-          method:"POST",
-
-          body:JSON.stringify({
-
-            price:
-              Number(
-                $("applyPrice").value
-              ),
-
-            message:
-              $("applyMessage").value.trim()
-
-          })
-        }
-      );
-
-      setBox(
-        "applyOk",
-        "درخواست همکاری با موفقیت ارسال شد.",
-        "ok"
-      );
-
-      $("applyForm").reset();
-
-    }catch(error){
-
-      setBox(
-        "applyError",
-        error.message
-      );
-    }
-  }
-);
-
-
-/* APPLICATIONS */
-
-async function openApplications(projectId){
-
-  currentProject=projectId;
-
-  showPage("applications");
-
-  const list=$("applicationsList");
-
-  list.innerHTML=
-    '<div class="loading">در حال بارگذاری درخواست‌ها...</div>';
-
-  try{
-
-    const data=
-      await api(
-        "/api/projects/"
-        +projectId+
-        "/applications"
-      );
-
-    if(
-      !data.applications||
-      data.applications.length===0
-    ){
-
-      list.innerHTML=`
-
-        <div class="card">
-
-          <h3>
-            هنوز درخواستی دریافت نشده است.
-          </h3>
-
-          <p class="muted">
-            درخواست‌های فریلنسرها در این بخش نمایش داده می‌شوند.
-          </p>
-
-        </div>
-
-      `;
-
-      return;
-    }
-
-    list.innerHTML="";
-
-    data.applications.forEach(application=>{
-
-      const div=
-        document.createElement("div");
-
-      div.className="project";
-
-      let action="";
-
-      if(
-        currentUser&&
-        currentUser.role==="client"&&
-        application.status==="pending"
-      ){
-
-        action=`
-
-          <button
-            class="small-btn green"
-            onclick="selectFreelancer(
-              ${projectId},
-              ${application.id},
-              ${application.freelancerId}
-            )">
-            انتخاب فریلنسر
-          </button>
-
-        `;
-      }
-
-      div.innerHTML=`
-
-        <div class="project-top">
-
-          <h3>
-            ${escapeHtml(
-              application.freelancerName||
-              "فریلنسر"
-            )}
-          </h3>
-
-          <span class="badge">
-            ${escapeHtml(application.status)}
-          </span>
-
-        </div>
-
-        <div class="badges">
-
-          <span class="badge">
-            پیشنهاد:
-            ${Number(
-              application.price||0
-            ).toLocaleString()}
-          </span>
-
-        </div>
-
-        <p>
-          ${escapeHtml(
-            application.message||
-            "بدون پیام"
-          )}
-        </p>
-
-        <div class="muted">
-          مهارت‌ها:
-          ${escapeHtml(
-            application.skills||
-            "ثبت نشده"
-          )}
-        </div>
-
-        <div class="project-actions">
-          ${action}
-        </div>
-
-      `;
-
-      list.appendChild(div);
-
-    });
-
-  }catch(error){
-
-    list.innerHTML=`
-
-      <div class="error">
-        ${escapeHtml(error.message)}
-      </div>
-
-    `;
-  }
-}
-
-
-/* SELECT */
-
-async function selectFreelancer(
-  projectId,
-  applicationId,
-  freelancerId
-){
-
-  if(
-    !confirm(
-      "آیا این فریلنسر را انتخاب می‌کنید؟"
-    )
-  )return;
-
-  try{
-
-    await api(
-      "/api/projects/"
-      +projectId+
-      "/select-freelancer",
-      {
-        method:"POST",
-
-        body:JSON.stringify({
-
-          applicationId,
-          freelancerId
-
-        })
-      }
-    );
-
-    setMessage(
-      "فریلنسر با موفقیت انتخاب شد.",
-      "ok"
-    );
-
-    showPage("projects");
-
-  }catch(error){
-
-    setMessage(error.message);
-  }
-}
-
-
-/* STATUS */
-
-async function changeProjectStatus(
-  projectId,
-  status
-){
-
-  try{
-
-    await api(
-      "/api/projects/"
-      +projectId+
-      "/status",
-      {
-        method:"PATCH",
-
-        body:JSON.stringify({
-          status
-        })
-      }
-    );
-
-    setMessage(
-      "وضعیت پروژه تغییر کرد.",
-      "ok"
-    );
-
-    loadProjects();
-
-  }catch(error){
-
-    setMessage(error.message);
-  }
-}
-
-
-/* PROFILE */
-
-async function loadProfile(){
-
-  const box=$("profileContent");
-
-  box.innerHTML=
-    '<div class="loading">در حال بارگذاری...</div>';
-
-  if(!currentUser){
-
-    box.innerHTML=`
-
-      <p class="muted">
-        برای مشاهده پروفایل ابتدا وارد حساب شوید.
+<!-- =========================
+     AUTH PAGE
+========================= -->
+
+<section
+  id="authPage"
+  class="auth-page hidden"
+>
+
+  <div class="auth-box">
+
+    <button
+      class="btn btn-light"
+      onclick="showHome()"
+      style="margin-bottom:20px"
+    >
+      ← بازگشت
+    </button>
+
+    <!-- LOGIN -->
+
+    <div id="loginForm">
+
+      <h2>
+        ورود به Skillora
+      </h2>
+
+      <p>
+        وارد حساب خود شوید و ادامه دهید.
       </p>
 
-      <button
-        class="small-btn"
-        onclick="showPage('login')">
-        ورود
-      </button>
+      <form onsubmit="login(event)">
 
-    `;
+        <div class="form-group">
 
-    return;
-  }
+          <label>
+            شماره موبایل
+          </label>
 
-  try{
+          <input
+            id="loginPhone"
+            type="tel"
+            placeholder="09123456789"
+            required
+          />
 
-    const data=
-      await api("/api/me");
+        </div>
 
-    currentUser=data.user;
+        <div class="form-group">
 
-    updateHeader();
+          <label>
+            رمز عبور
+          </label>
 
-    box.innerHTML=`
+          <input
+            id="loginPassword"
+            type="password"
+            placeholder="حداقل ۸ کاراکتر"
+            required
+          />
 
-      <form id="profileForm">
-
-        <label>نام</label>
-
-        <input
-          id="profileName"
-          value="${escapeAttr(
-            currentUser.name||""
-          )}"
-          required
-        >
-
-        <label>شماره موبایل</label>
-
-        <input
-          value="${escapeAttr(
-            currentUser.phone||""
-          )}"
-          disabled
-        >
-
-        <label>نوع حساب</label>
-
-        <input
-          value="${
-            currentUser.role==="client"
-              ?"کارفرما"
-              :"فریلنسر"
-          }"
-          disabled
-        >
-
-        <label>درباره من</label>
-
-        <textarea id="profileBio">${escapeHtml(
-          currentUser.bio||""
-        )}</textarea>
-
-        <label>مهارت‌ها</label>
-
-        <input
-          id="profileSkills"
-          value="${escapeAttr(
-            currentUser.skills||""
-          )}"
-          placeholder="مثلاً طراحی سایت، فتوشاپ، تولید محتوا"
-        >
-
-        <div id="profileError"></div>
-        <div id="profileOk"></div>
+        </div>
 
         <button
-          class="form-btn"
-          type="submit">
-          ذخیره تغییرات
+          class="btn btn-primary"
+          style="width:100%"
+        >
+          ورود
         </button>
 
       </form>
-    `;
 
-    $("profileForm")
-      .addEventListener(
-        "submit",
-        saveProfile
-      );
+      <p
+        style="margin-top:18px;text-align:center"
+      >
+        حساب ندارید؟
 
-  }catch(error){
+        <a
+          href="#"
+          style="color:var(--primary)"
+          onclick="showAuth('register');return false"
+        >
+          ثبت‌نام کنید
+        </a>
 
-    box.innerHTML=`
+      </p>
 
-      <div class="error">
-        ${escapeHtml(error.message)}
+    </div>
+
+
+    <!-- REGISTER -->
+
+    <div
+      id="registerForm"
+      class="hidden"
+    >
+
+      <h2>
+        عضویت در Skillora
+      </h2>
+
+      <p>
+        حساب خود را بسازید و شروع کنید.
+      </p>
+
+      <form onsubmit="register(event)">
+
+        <div class="form-group">
+
+          <label>
+            نام و نام خانوادگی
+          </label>
+
+          <input
+            id="regName"
+            type="text"
+            required
+          />
+
+        </div>
+
+        <div class="form-group">
+
+          <label>
+            شماره موبایل
+          </label>
+
+          <input
+            id="regPhone"
+            type="tel"
+            placeholder="09123456789"
+            required
+          />
+
+        </div>
+
+        <div class="form-group">
+
+          <label>
+            رمز عبور
+          </label>
+
+          <input
+            id="regPassword"
+            type="password"
+            minlength="8"
+            required
+          />
+
+        </div>
+
+        <div class="form-group">
+
+          <label>
+            نوع حساب
+          </label>
+
+          <div class="role-buttons">
+
+            <div
+              class="role-button active"
+              id="roleFreelancer"
+              onclick="selectRole('freelancer')"
+            >
+              👨‍💻
+              <br>
+              فریلنسر
+            </div>
+
+            <div
+              class="role-button"
+              id="roleClient"
+              onclick="selectRole('client')"
+            >
+              💼
+              <br>
+              کارفرما
+            </div>
+
+          </div>
+
+          <input
+            type="hidden"
+            id="registerRole"
+            value="freelancer"
+          />
+
+        </div>
+
+        <button
+          class="btn btn-primary"
+          style="width:100%"
+        >
+          ساخت حساب
+        </button>
+
+      </form>
+
+      <p
+        style="margin-top:18px;text-align:center"
+      >
+        قبلاً ثبت‌نام کرده‌اید؟
+
+        <a
+          href="#"
+          style="color:var(--primary)"
+          onclick="showAuth('login');return false"
+        >
+          ورود
+        </a>
+
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     APP
+========================= -->
+
+<section
+  id="appPage"
+  class="hidden"
+>
+
+  <div class="app-layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+      <div class="side-user">
+
+        <strong id="sideUserName">
+          کاربر
+        </strong>
+
+        <span id="sideUserRole">
+          فریلنسر
+        </span>
+
       </div>
 
-    `;
-  }
-}
+      <div class="side-links">
 
-async function saveProfile(e){
+        <div
+          class="side-link active"
+          onclick="showAppPage('dashboard',this)"
+        >
+          🏠 داشبورد
+        </div>
 
-  e.preventDefault();
+        <div
+          class="side-link"
+          onclick="showAppPage('projects',this)"
+        >
+          💼 پروژه‌ها
+        </div>
 
-  setBox("profileError","");
-  setBox("profileOk","");
+        <div
+          class="side-link"
+          onclick="showAppPage('applications',this)"
+        >
+          📋 درخواست‌های من
+        </div>
 
-  try{
+        <div
+          class="side-link"
+          onclick="showAppPage('wallet',this)"
+        >
+          💳 کیف پول
+        </div>
 
-    const data=
-      await api(
-        "/api/me",
-        {
-          method:"PATCH",
+        <div
+          class="side-link"
+          onclick="showAppPage('rewards',this)"
+        >
+          🎁 پاداش‌ها
+        </div>
 
-          body:JSON.stringify({
+        <div
+          class="side-link"
+          onclick="showAppPage('profile',this)"
+        >
+          👤 پروفایل
+        </div>
 
-            name:
-              $("profileName").value.trim(),
+        <div
+          id="adminNav"
+          class="side-link hidden"
+          onclick="showAppPage('admin',this)"
+        >
+          ⚙️ مدیریت Skillora
+        </div>
 
-            bio:
-              $("profileBio").value.trim(),
+        <div
+          class="side-link"
+          onclick="logout()"
+        >
+          🚪 خروج
+        </div>
 
-            skills:
-              $("profileSkills").value.trim()
+      </div>
 
-          })
-        }
-      );
-
-    currentUser=data.user;
-
-    updateHeader();
-
-    setBox(
-      "profileOk",
-      "پروفایل با موفقیت ذخیره شد.",
-      "ok"
-    );
-
-  }catch(error){
-
-    setBox(
-      "profileError",
-      error.message
-    );
-  }
-}
-
-
-/* HELPERS */
-
-function escapeHtml(value){
-
-  return String(value??"")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-}
-
-function escapeAttr(value){
-  return escapeHtml(value);
-}
+    </aside>
 
 
-/* START */
+    <!-- CONTENT -->
 
-(async function(){
+    <main class="app-content">
 
-  updateHeader();
+      <!-- DASHBOARD -->
 
-  await checkSession();
+      <div
+        id="page-dashboard"
+        class="app-section"
+      >
 
-})();
+        <div class="page-title">
 
-</script>
+          <h1>
+            داشبورد
+          </h1>
 
-</body>
-</html>
+          <p>
+            خلاصه فعالیت و وضعیت حساب شما
+          </p>
+
+        </div>
+
+        <div class="stats">
+
+          <div class="stat">
+            <div class="stat-label">
+              موجودی کیف پول
+            </div>
+            <div
+              class="stat-value"
+              id="statWallet"
+            >
+              ۰
+            </div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">
+              درآمد
+            </div>
+            <div
+              class="stat-value"
+              id="statIncome"
+            >
+              ۰
+            </div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">
+              هزینه
+            </div>
+            <div
+              class="stat-value"
+              id="statSpent"
+            >
+              ۰
+            </div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">
+              پروژه‌های فعال
+            </div>
+            <div
+              class="stat-value"
+              id="statProjects"
+            >
+              ۰
+            </div>
+          </div>
+
+        </div>
+
+        <div class="card">
+
+          <h3 style="margin-bottom:15px">
+            فعالیت‌های اخیر
+          </h3>
+
+          <div
+            id="recentProjects"
+          ></div>
+
+        </div>
+
+      </div>
+
+
+      <!-- PROJECTS -->
+
+      <div
+        id="page-projects"
+        class="app-section hidden"
+      >
+
+        <div class="page-title">
+
+          <h1>
+            پروژه‌ها
+          </h1>
+
+          <p>
+            پروژه مناسب خود را پیدا کنید.
+          </p>
+
+        </div>
+
+        <div
+          id="projectActions"
+          style="margin-bottom:18px"
+        ></div>
+
+        <div
+          class="cards"
+          id="projectList"
+        ></div>
+
+      </div>
+
+
+      <!-- APPLICATIONS -->
+
+      <div
+        id="page-applications"
+        class="app-section hidden"
+      >
+
+        <div class="page-title">
+
+          <h1>
+            درخواست‌ها
+          </h1>
+
+          <p>
+            درخواست‌های همکاری خود را مدیریت کنید.
+          </p>
+
+        </div>
+
+        <div
+          id="applicationsContent"
+        ></div>
+
+      </div>
+
+
+      <!-- WALLET -->
+
+      <div
+        id="page-wallet"
+        class="app-section hidden"
+      >
+
+        <div class="page-title">
+
+          <h1>
+            کیف پول
+          </h1>
+
+          <p>
+            مدیریت موجودی و تراکنش‌ها
+          </p>
+
+        </div>
+
+        <div class="stats">
+
+          <div class="stat">
+
+            <div class="stat-label">
+              موجودی
+            </div>
+
+            <div
+              class="stat-value"
+              id="walletBalance"
+            >
+              ۰
+            </div>
+
+          </div>
+
+          <div class="stat">
+
+            <div class="stat-label">
+              کل درآمد
+            </div>
+
+            <div
+              class="stat-value"
+              id="walletIncome"
+            >
+              ۰
+            </div>
+
+          </div>
+
+          <div class="stat">
+
+            <div class="stat-label">
+              کل هزینه
+            </div>
+
+            <div
+              class="stat-value"
+              id="walletSpent"
+            >
+              ۰
+            </div>
+
+          </div>
+
+        </div>
+
+        <div
+          class="card"
+          style="margin-bottom:20px"
+        >
+
+          <h3 style="margin-bottom:10px">
+            شارژ آزمایشی
+          </h3>
+
+          <p
+            style="color:var(--muted);font-size:12px;margin-bottom:15px"
+          >
+            این بخش فعلاً برای تست سیستم است.
+            در نسخه عملیاتی به درگاه پرداخت متصل می‌شود.
+          </p>
+
+          <div
+            style="display:flex;gap:10px;flex-wrap:wrap"
+          >
+
+            <input
+              id="demoAmount"
+              type="number"
+              placeholder="مثلاً 1000000"
+              style="max-width:230px"
+            />
+
+            <button
+              class="btn btn-primary"
+              onclick="demoDeposit()"
+            >
+              شارژ آزمایشی
+            </button>
+
+          </div>
+
+        </div>
+
+        <div class="card">
+
+          <h3 style="margin-bottom:15px">
+            تراکنش‌ها
+          </h3>
+
+          <div
+            class="table-wrap"
+            id="walletTransactions"
+          ></div>
+
+        </div>
+
+      </div>
+
+
+      <!-- REWARDS -->
+
+      <div
+        id="page-rewards"
+        class="app-section hidden"
+      >
+
+        <div class="page-title">
+
+          <h1>
+            پاداش‌ها
+          </h1>
+
+          <p>
+            با فعالیت در Skillora امتیاز بگیر.
+          </p>
+
+        </div>
+
+        <div class="card">
+
+          <div
+            style="font-size:13px;color:var(--muted)"
+          >
+            امتیاز فعلی شما
+          </div>
+
+          <div
+            id="rewardPoints"
+            style="font-size:42px;font-weight:900;color:var(--primary);margin:10px 0 25px"
+          >
+            ۰
+          </div>
+
+          <div
+            class="cards"
+            style="grid-template-columns:repeat(3,1fr)"
+          >
+
+            <div class="card">
+
+              <h3>
+                🎯 شروع
+              </h3>
+
+              <p
+                style="font-size:11px;color:var(--muted)"
+              >
+                پاداش شروع فعالیت
+              </p>
+
+              <button
+                class="btn btn-light"
+                style="margin-top:12px"
+                onclick="claimReward('starter')"
+              >
+                دریافت
+              </button>
+
+            </div>
+
+            <div class="card">
+
+              <h3>
+                ⚡ فعالیت
+              </h3>
+
+              <p
+                style="font-size:11px;color:var(--muted)"
+              >
+                پاداش فعالیت
+              </p>
+
+              <button
+                class="btn btn-light"
+                style="margin-top:12px"
+                onclick="claimReward('active')"
+              >
+                دریافت
+              </button>
+
+            </div>
+
+            <div class="card">
+
+              <h3>
+                ⭐ حرفه‌ای
+              </h3>
+
+              <p
+                style="font-size:11px;color:var(--muted)"
+              >
+                پاداش سطح حرفه‌ای
+              </p>
+
+              <button
+                class="btn btn-light"
+                style="margin-top:12px"
+                onclick="claimReward('pro')"
+              >
+                دریافت
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- PROFILE -->
+
+      <div
+        id="page-profile"
+        class="app-section hidden"
+      >
+
+        <div class="page-title">
+
+          <h1>
+            پروفایل
+          </h1>
+
+          <p>
+            اطلاعات حرفه‌ای خود را تکمیل کنید.
+          </p>
+
+        </div>
+
+        <div class="card">
+
+          <form
+            onsubmit="updateProfile(event)"
+          >
+
+            <div class="form-group">
+
+              <label>
+                نام
+              </label>
+
+              <input
+                id="profileName"
+                required
+              />
+
+            </div>
+
+            <div class="form-group">
+
+              <label>
+                درباره من
+              </label>
+
+              <textarea
+                id="profileBio"
+                placeholder="چند خط درباره خودت بنویس..."
+              ></textarea>
+
+            </div>
+
+            <div class="form-group">
+
+              <label>
+                مهارت‌ها
+              </label>
+
+              <input
+                id="profileSkills"
+                placeholder="طراحی، برنامه‌نویسی، تولید محتوا..."
+              />
+
+            </div>
+
+            <button
+              class="btn btn-primary"
+            >
+              ذخیره تغییرات
+            </button>
+
+          </form>
+
+        </div>
+
+      </div>
+
+
+      <!-- ADMIN -->
+
+      <div
+        id="page-admin"
+        class="app-section hidden"
+      >
+
+        <div class="page-title">
+
+          <h1>
+            مدیریت Skillora
+          </h1>
+
+          <p>
+            وضعیت کاربران، پروژه‌ها و درآمد پلتفرم
+          </p>
+
+        </div>
+
+        <div class="stats">
+
+          <div class="stat">
+            <div class="stat-label">
+              کاربران
+            </div>
+            <div
+              class="stat-value"
+              id="adminUsers"
+            >
+              ۰
+            </div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">
+              پروژه‌ها
+            </div>
+            <div
+              class="stat-value"
+              id="adminProjects"
+            >
+              ۰
+            </div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">
+              گردش مالی
+            </div>
+            <div
+              class="stat-value"
+              id="adminGross"
+            >
+              ۰
+            </div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">
+              درآمد Skillora
+            </div>
+            <div
+              class="stat-value"
+              id="adminCommission"
+            >
+              ۰
+            </div>
+          </div>
+
+        </div>
+
+        <div
+          class="card"
+          style="margin-bottom:20px"
+        >
+
+          <h3>
+            کمیسیون پلتفرم
+          </h3>
+
+          <p
+            style="color:var(--muted);font-size:12px;margin:5px 0 15px"
+          >
+            درصد کمیسیون Skillora از هر پروژه
+          </p>
+
+          <div
+            style="display:flex;gap:10px;align-items:center"
+          >
+
+            <input
+              id="commissionInput"
+              type="number"
+              min="0"
+              max="50"
+              step="0.1"
+              style="max-width:160px"
+            />
+
+            <span>
+              درصد
+            </span>
+
+            <button
+              class="btn btn-primary"
+              onclick="saveCommission()"
+            >
+              ذخیره
+            </button>
+
+          </div>
+
+        </div>
+
+        <div class="card">
+
+          <h3 style="margin-bottom:15px">
+            دفتر درآمد Skillora
+          </h3>
+
+          <div
+            class="table-wrap"
+            id="adminLedger"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     PROJECT MODAL
+========================= -->
+
+<div
+  id="projectModal"
+  class="modal hidden"
+>
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+
+      <h2 id="modalTitle">
+        پروژه جدید
+      </h2>
+
+      <button
+        class="close"
+        onclick="closeModal()"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <form
+      id="projectForm"
+      onsubmit="createProject(event)"
+    >
+
+      <div class="form-group">
+
+        <label>
+          عنوان پروژه
+        </label>
+
+        <input
+          id="projectTitle"
+          required
+        />
+
+      </div>
+
+      <div class="form-group">
+
+        <label>
+          دسته‌بندی
+        </label>
+
+        <input
+          id="projectCategory"
+          placeholder="طراحی، برنامه‌نویسی، محتوا..."
+        />
+
+      </div>
+
+      <div class="form-group">
+
+        <label>
+          بودجه
+        </label>
+
+        <input
+          id="projectBudget"
+          type="number"
+          min="1"
+          required
+        />
+
+      </div>
+
+      <div class="form-group">
+
+        <label>
+          توضیحات
+        </label>
+
+        <textarea
+          id="projectDescription"
+          required
+        ></textarea>
+
+      </div>
+
+      <button
+        class="btn btn-primary"
+      >
+        ثبت پروژه
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<!-- =========================
+     APPLICATION MODAL
+========================= -->
